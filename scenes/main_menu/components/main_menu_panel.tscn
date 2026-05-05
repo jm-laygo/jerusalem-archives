@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/interface/ui/main_menu/glass_pane_background.png" id="1_glass"]
+[ext_resource type="Texture2D" path="res://assets/interface/ui/main_menu/main_menu_frame.png" id="2_frame"]
+
+[node name="MainMenuPanel" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GlassPaneBackground" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -418.0
+offset_top = 63.0
+offset_right = 423.0
+offset_bottom = 1870.0
+grow_horizontal = 2
+texture = ExtResource("1_glass")
+stretch_mode = 6
+
+[node name="MainMenuFrame" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -528.5
+offset_top = 10.0
+offset_right = 529.5
+offset_bottom = 1930.0
+grow_horizontal = 2
+texture = ExtResource("2_frame")
+stretch_mode = 6

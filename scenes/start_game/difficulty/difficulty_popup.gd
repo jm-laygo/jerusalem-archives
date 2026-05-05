@@ -1,0 +1,339 @@
+extends Popup
+
+const CONTAINER_SHOW_SOUND: AudioStream = preload("res://assets/sounds/ui/main_menu_container_show.wav")
+const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/generic_select.wav")
+
+const POPUP_SIZE := Vector2i(900, 1400)
+
+const OVERLAY_COLOR := Color(0, 0, 0, 0.62)
+
+const SHOW_TIME := 0.28
+const HIDE_TIME := 0.24
+
+const SHOW_OFFSET := Vector2(0, 80)
+const HIDE_OFFSET := Vector2(0, 80)
+
+const X_NORMAL := Color(1, 1, 1, 1)
+const X_CLICKED := Color(1.35, 1.15, 0.85, 1)
+
+@onready var container: Control = $DifficultyContainer
+
+@onready var easy_button: TextureButton = $DifficultyContainer/ButtonsVBox/EasyButton
+@onready var normal_button: TextureButton = $DifficultyContainer/ButtonsVBox/NormalButton
+@onready var hard_button: TextureButton = $DifficultyContainer/ButtonsVBox/HardButton
+@onready var close_button: TextureButton = $DifficultyContainer/CloseButton
+
+var container_show_player: AudioStreamPlayer
+var click_player: AudioStreamPlayer
+
+var overlay: ColorRect
+var popup_tween: Tween
+var overlay_tween: Tween
+
+var container_original_position := Vector2.ZERO
+
+var is_showing := false
+var is_closing := false
+var allow_hide := false
+
+
+func _ready() -> void:
+	exclusive = true
+
+	_setup_audio()
+	_setup_buttons()
+
+	await get_tree().process_frame
+
+	if container != null:
+		container_original_position = container.position
+		container.modulate = Color(1, 1, 1, 0)
+
+	if not popup_hide.is_connected(_on_popup_hide):
+		popup_hide.connect(_on_popup_hide)
+
+
+func _setup_audio() -> void:
+	container_show_player = AudioStreamPlayer.new()
+	container_show_player.stream = CONTAINER_SHOW_SOUND
+	container_show_player.bus = "Master"
+	add_child(container_show_player)
+
+	click_player = AudioStreamPlayer.new()
+	click_player.stream = CLICK_SOUND
+	click_player.bus = "Master"
+	add_child(click_player)
+
+
+func _setup_buttons() -> void:
+	_setup_difficulty_button(easy_button)
+	_setup_difficulty_button(normal_button)
+	_setup_difficulty_button(hard_button)
+	_setup_close_button()
+
+	if easy_button != null and not easy_button.pressed.is_connected(_on_easy_pressed):
+		easy_button.pressed.connect(_on_easy_pressed)
+
+	if normal_button != null and not normal_button.pressed.is_connected(_on_normal_pressed):
+		normal_button.pressed.connect(_on_normal_pressed)
+
+	if hard_button != null and not hard_button.pressed.is_connected(_on_hard_pressed):
+		hard_button.pressed.connect(_on_hard_pressed)
+
+	if close_button != null and not close_button.pressed.is_connected(_on_close_pressed):
+		close_button.pressed.connect(_on_close_pressed)
+
+
+func _setup_difficulty_button(button: TextureButton) -> void:
+	if button == null:
+		return
+
+	button.focus_mode = Control.FOCUS_NONE
+	button.modulate = Color(1, 1, 1, 1)
+
+	for child in button.get_children():
+		if child is Control:
+			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _setup_close_button() -> void:
+	if close_button == null:
+		return
+
+	close_button.focus_mode = Control.FOCUS_NONE
+	close_button.modulate = X_NORMAL
+
+	if not close_button.button_down.is_connected(_on_close_button_down):
+		close_button.button_down.connect(_on_close_button_down)
+
+	if not close_button.button_up.is_connected(_on_close_button_up):
+		close_button.button_up.connect(_on_close_button_up)
+
+	if not close_button.mouse_exited.is_connected(_on_close_button_up):
+		close_button.mouse_exited.connect(_on_close_button_up)
+
+	for child in close_button.get_children():
+		if child is Control:
+			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func show_with_animation() -> void:
+	if is_showing or is_closing:
+		return
+
+	is_showing = true
+	is_closing = false
+	allow_hide = false
+
+	_kill_tweens()
+	_create_overlay()
+
+	popup_centered(POPUP_SIZE)
+
+	await get_tree().process_frame
+
+	if container != null:
+		container_original_position = container.position
+		container.position = container_original_position + SHOW_OFFSET
+		container.modulate = Color(1, 1, 1, 0)
+
+	if container_show_player != null:
+		container_show_player.stop()
+		container_show_player.play()
+
+	overlay_tween = create_tween()
+
+	if overlay != null:
+		overlay.color = Color(0, 0, 0, 0)
+		overlay.visible = true
+
+		overlay_tween.tween_property(
+			overlay,
+			"color",
+			OVERLAY_COLOR,
+			SHOW_TIME
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	popup_tween = create_tween()
+	popup_tween.set_parallel(true)
+
+	if container != null:
+		popup_tween.tween_property(
+			container,
+			"position",
+			container_original_position,
+			SHOW_TIME
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+		popup_tween.tween_property(
+			container,
+			"modulate",
+			Color(1, 1, 1, 1),
+			SHOW_TIME
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	await popup_tween.finished
+
+	is_showing = false
+
+
+func close_with_animation() -> void:
+	if is_closing:
+		return
+
+	is_closing = true
+	is_showing = false
+	allow_hide = true
+
+	_kill_tweens()
+
+	if click_player != null:
+		click_player.stop()
+		click_player.play()
+
+	popup_tween = create_tween()
+	popup_tween.set_parallel(true)
+
+	if container != null:
+		container.position = container_original_position
+		container.modulate = Color(1, 1, 1, 1)
+
+		popup_tween.tween_property(
+			container,
+			"position",
+			container_original_position + HIDE_OFFSET,
+			HIDE_TIME
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+		popup_tween.tween_property(
+			container,
+			"modulate",
+			Color(1, 1, 1, 0),
+			HIDE_TIME
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	if overlay != null:
+		popup_tween.tween_property(
+			overlay,
+			"color",
+			Color(0, 0, 0, 0),
+			HIDE_TIME
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	await popup_tween.finished
+
+	hide()
+	_remove_overlay()
+
+	is_closing = false
+	allow_hide = false
+
+
+func _create_overlay() -> void:
+	if overlay != null and is_instance_valid(overlay):
+		return
+
+	var parent_node := get_parent()
+	if parent_node == null:
+		return
+
+	overlay = ColorRect.new()
+	overlay.name = "DifficultyDarkOverlay"
+	overlay.color = Color(0, 0, 0, 0)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.visible = true
+
+	parent_node.add_child(overlay)
+	parent_node.move_child(overlay, get_index())
+
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.offset_left = 0
+	overlay.offset_top = 0
+	overlay.offset_right = 0
+	overlay.offset_bottom = 0
+
+
+func _remove_overlay() -> void:
+	if overlay != null and is_instance_valid(overlay):
+		overlay.queue_free()
+
+	overlay = null
+
+
+func _kill_tweens() -> void:
+	if popup_tween != null and popup_tween.is_valid():
+		popup_tween.kill()
+
+	if overlay_tween != null and overlay_tween.is_valid():
+		overlay_tween.kill()
+
+
+func _on_popup_hide() -> void:
+	if allow_hide:
+		return
+
+	if is_closing:
+		return
+
+	call_deferred("_force_restore_popup")
+
+
+func _force_restore_popup() -> void:
+	if is_closing:
+		return
+
+	_create_overlay()
+
+	if overlay != null:
+		overlay.color = OVERLAY_COLOR
+		overlay.visible = true
+
+	popup_centered(POPUP_SIZE)
+
+	await get_tree().process_frame
+
+	if container != null:
+		container.position = container_original_position
+		container.modulate = Color(1, 1, 1, 1)
+
+
+func _on_close_button_down() -> void:
+	if close_button == null:
+		return
+
+	close_button.modulate = X_CLICKED
+
+
+func _on_close_button_up() -> void:
+	if close_button == null:
+		return
+
+	close_button.modulate = X_NORMAL
+
+
+func _on_close_pressed() -> void:
+	_on_close_button_up()
+	close_with_animation()
+
+
+func _on_easy_pressed() -> void:
+	_play_click_sound()
+	print("Selected difficulty: Easy")
+
+
+func _on_normal_pressed() -> void:
+	_play_click_sound()
+	print("Selected difficulty: Normal")
+
+
+func _on_hard_pressed() -> void:
+	_play_click_sound()
+	print("Selected difficulty: Hard")
+
+
+func _play_click_sound() -> void:
+	if click_player == null:
+		return
+
+	click_player.stop()
+	click_player.play()

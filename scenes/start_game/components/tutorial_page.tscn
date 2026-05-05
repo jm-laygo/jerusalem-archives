@@ -1,0 +1,146 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/interface/ui/start_game/tutorial_header.png" id="1_tutorial_header"]
+[ext_resource type="Texture2D" path="res://assets/interface/illustrations/tutorial_illustration.png" id="2_tutorial_illustration"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/start_game_back_button.png" id="3_back_btn"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/start_game_next_button.png" id="4_next_btn"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/start_game_select_button.png" id="5_select_btn"]
+[ext_resource type="FontFile" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="6_map_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/Fondamento/Fondamento-Regular.ttf" id="7_fondamento"]
+[ext_resource type="FontFile" path="res://assets/fonts/Open_Sans_Condensed/OpenSansCondensed-Light.ttf" id="8_open_sans_condensed"]
+[ext_resource type="Script" path="res://scenes/start_game/components/tutorial_page.gd" id="9_tutorial_script"]
+
+[node name="TutorialPage" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TutorialIllustration" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_tutorial_illustration")
+stretch_mode = 6
+
+[node name="TutorialHeader" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 171.0
+grow_horizontal = 2
+texture = ExtResource("1_tutorial_header")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LevelTitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = -920.0
+offset_right = -60.0
+offset_bottom = -794.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.76, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("7_fondamento")
+theme_override_font_sizes/font_size = 90
+text = "Tutorial"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LevelDescription" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 90.0
+offset_top = -688.0
+offset_right = -90.0
+offset_bottom = -517.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.78, 0.72, 0.65, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_open_sans_condensed")
+theme_override_font_sizes/font_size = 40
+text = "Before reaching the Port of Jaffa, the journey begins upon open waters, where the first lessons unfold aboard a weathered vessel bound for Jerusalem."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="SelectChapterBackButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.47
+anchor_bottom = 0.47
+offset_left = -10.0
+offset_top = -35.0
+offset_right = 191.0
+offset_bottom = 176.0
+focus_mode = 0
+texture_normal = ExtResource("3_back_btn")
+stretch_mode = 5
+
+[node name="SelectChapterNextButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.47
+anchor_right = 1.0
+anchor_bottom = 0.47
+offset_left = -190.0
+offset_top = -35.0
+offset_right = 11.0
+offset_bottom = 176.0
+focus_mode = 0
+texture_normal = ExtResource("4_next_btn")
+stretch_mode = 5
+
+[node name="SelectButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -475.0
+offset_right = 350.0
+offset_bottom = -100.0
+focus_mode = 0
+texture_normal = ExtResource("5_select_btn")
+stretch_mode = 5
+
+[node name="SelectLabel" type="Label" parent="SelectButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 144.0
+offset_top = 64.00003
+offset_right = -143.00024
+offset_bottom = -36.99997
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.76, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("6_map_font")
+theme_override_font_sizes/font_size = 64
+text = "SELECT"
+horizontal_alignment = 1
+vertical_alignment = 1

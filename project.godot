@@ -1,0 +1,42 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Jerusalem-Archives"
+run/main_scene="res://scenes/start_screen/start_screen.tscn"
+config/features=PackedStringArray("4.6", "Mobile")
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/stretch_mode=4
+boot_splash/image="uid://b6qriy0m6sgc4"
+config/icon="res://assets/interface/logos/app_logo.png"
+
+[autoload]
+
+MusicManager="*res://scripts/autoload/music_manager/music_manager.gd"
+SceneTransitionManager="*res://scripts/autoload/scene_transition_manager/scene_transition_manager.gd"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

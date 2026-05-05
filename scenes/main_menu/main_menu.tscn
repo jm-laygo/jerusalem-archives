@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://dyd5y13uha0bx"]
+
+[ext_resource type="Script" uid="uid://b3qc8q60qfe03" path="res://scenes/main_menu/main_menu.gd" id="1_main_menu_script"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu/components/main_menu_background.tscn" id="2_background"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu/components/main_menu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu/components/main_menu_title.tscn" id="4_title"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu/components/buttons/main_menu_buttons.tscn" id="5_buttons"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu/components/footer/main_menu_footer.tscn" id="6_footer"]
+
+[node name="MainMenu" type="Control" unique_id=1534000715]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main_menu_script")
+
+[node name="MainMenuBackground" parent="." unique_id=1600995971 instance=ExtResource("2_background")]
+layout_mode = 1
+
+[node name="MenuContent" type="Control" parent="." unique_id=1674785766]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -960.0
+offset_right = 540.0
+offset_bottom = 960.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainMenuPanel" parent="MenuContent" unique_id=698689642 instance=ExtResource("3_panel")]
+
+[node name="MainMenuTitle" parent="MenuContent" unique_id=1958062703 instance=ExtResource("4_title")]
+
+[node name="MainMenuButtons" parent="MenuContent" unique_id=639260295 instance=ExtResource("5_buttons")]
+
+[node name="MainMenuFooter" parent="MenuContent" unique_id=312823968 instance=ExtResource("6_footer")]
+
+[node name="PopupLayer" type="Control" parent="." unique_id=969565107]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

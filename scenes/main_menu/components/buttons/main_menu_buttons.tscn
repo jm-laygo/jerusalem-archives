@@ -1,0 +1,125 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_button.png" id="1_button"]
+[ext_resource type="FontFile" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="2_font"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_button_clicked.png" id="3_button_clicked"]
+[ext_resource type="Script" path="res://scenes/main_menu/components/buttons/main_menu_buttons.gd" id="4_buttons_script"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_menu_button"]
+texture = ExtResource("1_button")
+texture_margin_left = 48.0
+texture_margin_top = 18.0
+texture_margin_right = 48.0
+texture_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_menu_button_clicked"]
+texture = ExtResource("3_button_clicked")
+texture_margin_left = 48.0
+texture_margin_top = 18.0
+texture_margin_right = 48.0
+texture_margin_bottom = 18.0
+
+[node name="MainMenuButtons" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_buttons_script")
+
+[node name="StartGameButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 834.0
+offset_right = 300.0
+offset_bottom = 954.0
+grow_horizontal = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.83137256, 0.8235294, 0.84313726, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_menu_button_clicked")
+theme_override_styles/hover = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_menu_button")
+text = "Start Game"
+
+[node name="ProfileButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 1014.0
+offset_right = 300.0
+offset_bottom = 1134.0
+grow_horizontal = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.83137256, 0.8235294, 0.84313726, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_menu_button_clicked")
+theme_override_styles/hover = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_menu_button")
+text = "Profile"
+
+[node name="SettingsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 1194.0
+offset_right = 300.0
+offset_bottom = 1314.0
+grow_horizontal = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.83137256, 0.8235294, 0.84313726, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_menu_button_clicked")
+theme_override_styles/hover = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_menu_button")
+text = "Settings"
+
+[node name="ExitGameButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 1374.0
+offset_right = 300.0
+offset_bottom = 1494.0
+grow_horizontal = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.83137256, 0.8235294, 0.84313726, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_menu_button_clicked")
+theme_override_styles/hover = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_menu_button")
+theme_override_styles/focus = SubResource("StyleBoxTexture_menu_button")
+text = "Exit Game"
