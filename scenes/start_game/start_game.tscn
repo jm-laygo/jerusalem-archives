@@ -1,9 +1,9 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/start_game/start_game.gd" id="1_start_game_script"]
-[ext_resource type="PackedScene" path="res://scenes/start_game/components/start_game_background.tscn" id="2_background"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/start_game_background.tscn" id="2_background"]
 [ext_resource type="PackedScene" path="res://scenes/start_game/components/tutorial_page.tscn" id="3_tutorial_page"]
-[ext_resource type="PackedScene" path="res://scenes/start_game/components/footer/start_game_footer.tscn" id="4_footer"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/start_game_footer.tscn" id="4_footer"]
 
 [node name="StartGame" type="Control"]
 layout_mode = 3

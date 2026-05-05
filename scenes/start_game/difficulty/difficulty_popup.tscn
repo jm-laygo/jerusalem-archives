@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://d4e76y7xb4bqt" path="res://assets/interface/icons/disabled_achievements_icon.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://carbu324n34nj" path="res://assets/interface/icons/achievements_icon.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://l47460ctfida" path="res://assets/interface/icons/x_icon.png" id="7"]
+[ext_resource type="FontFile" uid="uid://ca2eduxjra50j" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="7_4ni3m"]
 
 [node name="DifficultyPopup" type="Popup" unique_id=11196980]
 transparent_bg = true
@@ -100,8 +101,9 @@ offset_right = -233.0
 offset_bottom = -41.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.81960785, 0.57254905, 0.3764706, 1)
-theme_override_font_sizes/font_size = 54
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_4ni3m")
+theme_override_font_sizes/font_size = 50
 text = "Easy"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -120,14 +122,15 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 225.0
-offset_top = 35.0
-offset_right = -179.0
-offset_bottom = -41.0
+offset_left = 227.0
+offset_top = 41.0
+offset_right = -177.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.81960785, 0.57254905, 0.3764706, 1)
-theme_override_font_sizes/font_size = 54
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_4ni3m")
+theme_override_font_sizes/font_size = 50
 text = "Normal"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -167,8 +170,9 @@ offset_right = -221.0
 offset_bottom = -41.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.81960785, 0.57254905, 0.3764706, 1)
-theme_override_font_sizes/font_size = 54
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_4ni3m")
+theme_override_font_sizes/font_size = 50
 text = "Hard"
 horizontal_alignment = 1
 vertical_alignment = 1
