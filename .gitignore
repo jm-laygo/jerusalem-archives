@@ -1,5 +1,5 @@
 .godot/
-/android/
+.android/
 exports/
 *.apk
 *.aab
