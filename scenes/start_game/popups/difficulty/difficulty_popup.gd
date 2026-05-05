@@ -92,6 +92,8 @@ func show_with_animation() -> void:
 		container_original_position = container.position
 		container.position = container_original_position + SHOW_OFFSET
 		container.modulate = Color(1, 1, 1, 0)
+		if container.has_method("prepare_intro_state"):
+			container.call("prepare_intro_state")
 
 	if container_show_player != null:
 		container_show_player.stop()
@@ -127,6 +129,9 @@ func show_with_animation() -> void:
 			Color(1, 1, 1, 1),
 			SHOW_TIME
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+		if container.has_method("play_intro_animation"):
+			container.call("play_intro_animation")
 
 	await popup_tween.finished
 

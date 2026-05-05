@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scenes/start_game/start_game.gd" id="1_start_game_script"]
-[ext_resource type="PackedScene" path="res://scenes/start_game/components/start_game_background.tscn" id="2_background"]
+[ext_resource type="Script" uid="uid://djqwbgqasplxb" path="res://scenes/start_game/start_game.gd" id="1_start_game_script"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/components/background/start_game_background.tscn" id="2_background"]
 [ext_resource type="PackedScene" path="res://scenes/start_game/carousel/chapter_carousel.tscn" id="3_chapter_carousel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/components/game_footer/game_footer.tscn" id="4_footer"]
 

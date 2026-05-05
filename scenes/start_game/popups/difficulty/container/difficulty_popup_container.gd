@@ -7,7 +7,7 @@ const X_NORMAL := Color(1, 1, 1, 1)
 const X_CLICKED := Color(1.35, 1.15, 0.85, 1)
 
 @onready var close_button: TextureButton = $CloseButton
-@onready var difficulty_buttons: VBoxContainer = $DifficultyButtons
+@onready var difficulty_buttons: Control = $DifficultyButtons
 
 
 func _ready() -> void:
@@ -46,7 +46,24 @@ func _connect_buttons() -> void:
 		return
 
 	if difficulty_buttons.has_signal("difficulty_selected"):
-		difficulty_buttons.connect("difficulty_selected", _on_difficulty_selected)
+		if not difficulty_buttons.is_connected("difficulty_selected", _on_difficulty_selected):
+			difficulty_buttons.connect("difficulty_selected", _on_difficulty_selected)
+
+
+func prepare_intro_state() -> void:
+	if difficulty_buttons == null:
+		return
+
+	if difficulty_buttons.has_method("prepare_intro_state"):
+		difficulty_buttons.call("prepare_intro_state")
+
+
+func play_intro_animation() -> void:
+	if difficulty_buttons == null:
+		return
+
+	if difficulty_buttons.has_method("play_intro_animation"):
+		difficulty_buttons.call("play_intro_animation")
 
 
 func _on_close_button_down() -> void:

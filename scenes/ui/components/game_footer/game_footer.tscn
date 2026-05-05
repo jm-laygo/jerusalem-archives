@@ -1,118 +1,101 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://btbe6ygcwjmdp"]
 
-[ext_resource type="Texture2D" path="res://assets/interface/ui/generic/generic_game_footer.png" id="1_footer"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_back_button.png" id="2_back_btn"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_settings_button.png" id="3_settings_btn"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_achievements_button.png" id="4_achievement_btn"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_back_button_clicked.png" id="5_back_btn_clicked"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_settings_button_clicked.png" id="6_settings_btn_clicked"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_achievements_button_clicked.png" id="7_achievement_btn_clicked"]
-[ext_resource type="FontFile" path="res://assets/fonts/Noto_Sans_SC/NotoSans-VariableFont_wdth,wght.ttf" id="8_font"]
-[ext_resource type="Script" path="res://scenes/ui/components/game_footer/game_footer.gd" id="9_footer_script"]
+[ext_resource type="Texture2D" uid="uid://deeflkj5prsup" path="res://assets/interface/ui/generic/generic_game_footer.png" id="1_footer"]
+[ext_resource type="Texture2D" uid="uid://dj317f7drulk8" path="res://assets/interface/buttons/generic_back_button.png" id="2_back_btn"]
+[ext_resource type="Texture2D" uid="uid://baixsse7ewh40" path="res://assets/interface/buttons/generic_settings_button.png" id="3_settings_btn"]
+[ext_resource type="Texture2D" uid="uid://cwaisrwmf7h3e" path="res://assets/interface/buttons/generic_achievements_button.png" id="4_achievement_btn"]
+[ext_resource type="FontFile" uid="uid://ca2eduxjra50j" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="5_0dedi"]
+[ext_resource type="Texture2D" uid="uid://ce5qlaitt1gm6" path="res://assets/interface/buttons/generic_back_button_clicked.png" id="5_back_btn_clicked"]
+[ext_resource type="Texture2D" uid="uid://2idyimqk711e" path="res://assets/interface/buttons/generic_settings_button_clicked.png" id="6_settings_btn_clicked"]
+[ext_resource type="Texture2D" uid="uid://gvk4owxfmgsr" path="res://assets/interface/buttons/generic_achievements_button_clicked.png" id="7_achievement_btn_clicked"]
+[ext_resource type="Script" uid="uid://bxsupr7yg12i2" path="res://scenes/ui/components/game_footer/game_footer.gd" id="9_footer_script"]
 
-[node name="Footer" type="TextureRect"]
-layout_mode = 1
+[node name="Footer" type="TextureRect" unique_id=1336708146]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -218.0
-offset_right = 1.0
+offset_top = -200.0
 grow_horizontal = 2
 grow_vertical = 0
-mouse_filter = 1
 texture = ExtResource("1_footer")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("9_footer_script")
 
-[node name="FooterButtons" type="HBoxContainer" parent="."]
+[node name="FooterButtons" type="HBoxContainer" parent="." unique_id=1629108819]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 55.0
-offset_right = 1.0
-offset_bottom = -28.0
+offset_top = -176.0
+offset_bottom = 4.0
 grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-theme_override_constants/separation = 14
-alignment = 1
+grow_vertical = 0
+theme_override_constants/separation = 30
 
-[node name="BackButton" type="TextureButton" parent="FooterButtons"]
-custom_minimum_size = Vector2(112, 42)
+[node name="BackButton" type="TextureButton" parent="FooterButtons" unique_id=506882750]
+custom_minimum_size = Vector2(340, 180)
 layout_mode = 2
 focus_mode = 0
-mouse_filter = 0
 texture_normal = ExtResource("2_back_btn")
 texture_pressed = ExtResource("5_back_btn_clicked")
 stretch_mode = 0
 
-[node name="BackLabel" type="Label" parent="FooterButtons/BackButton"]
+[node name="BackLabel" type="Label" parent="FooterButtons/BackButton" unique_id=1763390968]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 70.0
-offset_right = 34.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
-theme_override_fonts/font = ExtResource("8_font")
-theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("5_0dedi")
+theme_override_font_sizes/font_size = 80
 text = "Back"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SettingsButton" type="TextureButton" parent="FooterButtons"]
-custom_minimum_size = Vector2(128, 42)
+[node name="SettingsButton" type="TextureButton" parent="FooterButtons" unique_id=19143065]
+custom_minimum_size = Vector2(340, 180)
 layout_mode = 2
 focus_mode = 0
-mouse_filter = 0
 texture_normal = ExtResource("3_settings_btn")
 texture_pressed = ExtResource("6_settings_btn_clicked")
 stretch_mode = 0
 
-[node name="SettingsLabel" type="Label" parent="FooterButtons/SettingsButton"]
+[node name="SettingsLabel" type="Label" parent="FooterButtons/SettingsButton" unique_id=1991782706]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 86.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
-theme_override_fonts/font = ExtResource("8_font")
-theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("5_0dedi")
+theme_override_font_sizes/font_size = 60
 text = "Settings"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AchievementsButton" type="TextureButton" parent="FooterButtons"]
-custom_minimum_size = Vector2(146, 42)
+[node name="AchievementsButton" type="TextureButton" parent="FooterButtons" unique_id=652322478]
+custom_minimum_size = Vector2(340, 180)
 layout_mode = 2
 focus_mode = 0
-mouse_filter = 0
 texture_normal = ExtResource("4_achievement_btn")
 texture_pressed = ExtResource("7_achievement_btn_clicked")
 stretch_mode = 0
 
-[node name="AchievementsLabel" type="Label" parent="FooterButtons/AchievementsButton"]
+[node name="AchievementsLabel" type="Label" parent="FooterButtons/AchievementsButton" unique_id=2023343121]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 92.0
-offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
-theme_override_fonts/font = ExtResource("8_font")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("5_0dedi")
 theme_override_font_sizes/font_size = 40
 text = "Achievements"
 horizontal_alignment = 1
