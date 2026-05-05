@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/start_game/popups/difficulty/difficulty_popup.gd" id="1_popup_script"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/popups/difficulty/container/difficulty_popup_container.tscn" id="2_container"]
+
+[node name="DifficultyPopup" type="Popup"]
+transparent_bg = true
+oversampling_override = 1.0
+size = Vector2i(900, 1400)
+transparent = true
+script = ExtResource("1_popup_script")
+
+[node name="DifficultyContainer" parent="." instance=ExtResource("2_container")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

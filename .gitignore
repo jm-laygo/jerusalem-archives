@@ -2,4 +2,4 @@
 .android/
 exports/
 *.apk
-*.aab
+*.aabgit rm -r --cached exports/

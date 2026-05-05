@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_settings_button_clicked.png" id="6_settings_btn_clicked"]
 [ext_resource type="Texture2D" path="res://assets/interface/buttons/generic_achievements_button_clicked.png" id="7_achievement_btn_clicked"]
 [ext_resource type="FontFile" path="res://assets/fonts/Noto_Sans_SC/NotoSans-VariableFont_wdth,wght.ttf" id="8_font"]
+[ext_resource type="Script" path="res://scenes/ui/components/game_footer/game_footer.gd" id="9_footer_script"]
 
 [node name="Footer" type="TextureRect"]
 layout_mode = 1
@@ -19,9 +20,11 @@ offset_top = -218.0
 offset_right = 1.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 1
 texture = ExtResource("1_footer")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("9_footer_script")
 
 [node name="FooterButtons" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -34,6 +37,7 @@ offset_right = 1.0
 offset_bottom = -28.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 theme_override_constants/separation = 14
 alignment = 1
 
@@ -41,6 +45,7 @@ alignment = 1
 custom_minimum_size = Vector2(112, 42)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
 texture_normal = ExtResource("2_back_btn")
 texture_pressed = ExtResource("5_back_btn_clicked")
 stretch_mode = 0
@@ -54,6 +59,7 @@ offset_left = 70.0
 offset_right = 34.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
 theme_override_fonts/font = ExtResource("8_font")
 theme_override_font_sizes/font_size = 40
@@ -65,6 +71,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(128, 42)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
 texture_normal = ExtResource("3_settings_btn")
 texture_pressed = ExtResource("6_settings_btn_clicked")
 stretch_mode = 0
@@ -77,6 +84,7 @@ anchor_bottom = 1.0
 offset_left = 86.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
 theme_override_fonts/font = ExtResource("8_font")
 theme_override_font_sizes/font_size = 40
@@ -88,6 +96,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(146, 42)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
 texture_normal = ExtResource("4_achievement_btn")
 texture_pressed = ExtResource("7_achievement_btn_clicked")
 stretch_mode = 0
@@ -101,6 +110,7 @@ offset_left = 92.0
 offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(0.86, 0.62, 0.38, 1)
 theme_override_fonts/font = ExtResource("8_font")
 theme_override_font_sizes/font_size = 40

@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://bvsabrpavgikf"]
+
+[ext_resource type="Texture2D" uid="uid://biq1byrvqtao5" path="res://assets/interface/ui/start_game/difficulty/difficulty_container.png" id="1_container"]
+[ext_resource type="Texture2D" uid="uid://l47460ctfida" path="res://assets/interface/icons/x_icon.png" id="2_close_icon"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/popups/difficulty/buttons/difficulty_popup_buttons.tscn" id="4_buttons"]
+[ext_resource type="Script" uid="uid://60oei7cqwfs5" path="res://scenes/start_game/popups/difficulty/container/difficulty_popup_container.gd" id="5_container_script"]
+
+[node name="DifficultyContainer" type="Control" unique_id=1319027113]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_container_script")
+
+[node name="ContainerImage" type="TextureRect" parent="." unique_id=1700320142]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_container")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=1778448168]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -193.0
+offset_top = 431.0
+offset_right = -117.0
+offset_bottom = 509.0
+grow_horizontal = 0
+texture_normal = ExtResource("2_close_icon")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="DifficultyButtons" parent="." unique_id=1213033458 instance=ExtResource("4_buttons")]

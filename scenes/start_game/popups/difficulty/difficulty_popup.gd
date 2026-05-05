@@ -13,15 +13,7 @@ const HIDE_TIME := 0.24
 const SHOW_OFFSET := Vector2(0, 80)
 const HIDE_OFFSET := Vector2(0, 80)
 
-const X_NORMAL := Color(1, 1, 1, 1)
-const X_CLICKED := Color(1.35, 1.15, 0.85, 1)
-
 @onready var container: Control = $DifficultyContainer
-
-@onready var easy_button: TextureButton = $DifficultyContainer/ButtonsVBox/EasyButton
-@onready var normal_button: TextureButton = $DifficultyContainer/ButtonsVBox/NormalButton
-@onready var hard_button: TextureButton = $DifficultyContainer/ButtonsVBox/HardButton
-@onready var close_button: TextureButton = $DifficultyContainer/CloseButton
 
 var container_show_player: AudioStreamPlayer
 var click_player: AudioStreamPlayer
@@ -41,7 +33,7 @@ func _ready() -> void:
 	exclusive = true
 
 	_setup_audio()
-	_setup_buttons()
+	_connect_component_signals()
 
 	await get_tree().process_frame
 
@@ -65,56 +57,20 @@ func _setup_audio() -> void:
 	add_child(click_player)
 
 
-func _setup_buttons() -> void:
-	_setup_difficulty_button(easy_button)
-	_setup_difficulty_button(normal_button)
-	_setup_difficulty_button(hard_button)
-	_setup_close_button()
-
-	if easy_button != null and not easy_button.pressed.is_connected(_on_easy_pressed):
-		easy_button.pressed.connect(_on_easy_pressed)
-
-	if normal_button != null and not normal_button.pressed.is_connected(_on_normal_pressed):
-		normal_button.pressed.connect(_on_normal_pressed)
-
-	if hard_button != null and not hard_button.pressed.is_connected(_on_hard_pressed):
-		hard_button.pressed.connect(_on_hard_pressed)
-
-	if close_button != null and not close_button.pressed.is_connected(_on_close_pressed):
-		close_button.pressed.connect(_on_close_pressed)
-
-
-func _setup_difficulty_button(button: TextureButton) -> void:
-	if button == null:
+func _connect_component_signals() -> void:
+	if container == null:
+		push_error("DifficultyContainer not found.")
 		return
 
-	button.focus_mode = Control.FOCUS_NONE
-	button.modulate = Color(1, 1, 1, 1)
+	if container.has_signal("close_pressed"):
+		container.connect("close_pressed", _on_close_pressed)
+	else:
+		push_error("DifficultyContainer has no close_pressed signal.")
 
-	for child in button.get_children():
-		if child is Control:
-			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-
-func _setup_close_button() -> void:
-	if close_button == null:
-		return
-
-	close_button.focus_mode = Control.FOCUS_NONE
-	close_button.modulate = X_NORMAL
-
-	if not close_button.button_down.is_connected(_on_close_button_down):
-		close_button.button_down.connect(_on_close_button_down)
-
-	if not close_button.button_up.is_connected(_on_close_button_up):
-		close_button.button_up.connect(_on_close_button_up)
-
-	if not close_button.mouse_exited.is_connected(_on_close_button_up):
-		close_button.mouse_exited.connect(_on_close_button_up)
-
-	for child in close_button.get_children():
-		if child is Control:
-			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if container.has_signal("difficulty_selected"):
+		container.connect("difficulty_selected", _on_difficulty_selected)
+	else:
+		push_error("DifficultyContainer has no difficulty_selected signal.")
 
 
 func show_with_animation() -> void:
@@ -186,10 +142,7 @@ func close_with_animation() -> void:
 	allow_hide = true
 
 	_kill_tweens()
-
-	if click_player != null:
-		click_player.stop()
-		click_player.play()
+	_play_click_sound()
 
 	popup_tween = create_tween()
 	popup_tween.set_parallel(true)
@@ -297,38 +250,13 @@ func _force_restore_popup() -> void:
 		container.modulate = Color(1, 1, 1, 1)
 
 
-func _on_close_button_down() -> void:
-	if close_button == null:
-		return
-
-	close_button.modulate = X_CLICKED
-
-
-func _on_close_button_up() -> void:
-	if close_button == null:
-		return
-
-	close_button.modulate = X_NORMAL
-
-
 func _on_close_pressed() -> void:
-	_on_close_button_up()
 	close_with_animation()
 
 
-func _on_easy_pressed() -> void:
+func _on_difficulty_selected(difficulty_name: String) -> void:
 	_play_click_sound()
-	print("Selected difficulty: Easy")
-
-
-func _on_normal_pressed() -> void:
-	_play_click_sound()
-	print("Selected difficulty: Normal")
-
-
-func _on_hard_pressed() -> void:
-	_play_click_sound()
-	print("Selected difficulty: Hard")
+	print("Selected difficulty: ", difficulty_name)
 
 
 func _play_click_sound() -> void:
