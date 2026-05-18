@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5mge7jyb0qdb"
-path="res://.godot/imported/glass_pane_background.png-1e7e921e2f5f80a0ba3ec9f8170b2d79.ctex"
+uid="uid://bd1wjgruy7ogb"
+path="res://.godot/imported/ui_row_title_header_container.png-15a64e6f04e594db516eac7f6e6ba884.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/ui/main_menu/glass_pane_background.png"
-dest_files=["res://.godot/imported/glass_pane_background.png-1e7e921e2f5f80a0ba3ec9f8170b2d79.ctex"]
+source_file="res://assets/interface/ui/level_gameplay/ui_row_title_header_container.png"
+dest_files=["res://.godot/imported/ui_row_title_header_container.png-15a64e6f04e594db516eac7f6e6ba884.ctex"]
 
 [params]
 

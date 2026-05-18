@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3nk6ta807f1"
-path="res://.godot/imported/data_container_long.png-be921446437e2be0ff9a9cb25c937334.ctex"
+uid="uid://bsoob8nua66nu"
+path="res://.godot/imported/ui_main_menu_frame.png-bc3019c501a4b14edbaa002c53299e09.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/ui/level_gameplay/data_container_long.png"
-dest_files=["res://.godot/imported/data_container_long.png-be921446437e2be0ff9a9cb25c937334.ctex"]
+source_file="res://assets/interface/ui/main_menu/ui_main_menu_frame.png"
+dest_files=["res://.godot/imported/ui_main_menu_frame.png-bc3019c501a4b14edbaa002c53299e09.ctex"]
 
 [params]
 
