@@ -19,7 +19,7 @@ func _init(gameplayOwner: Control) -> void:
 
 # Loads level data and resets gameplay state.
 func loadLevel(levelNumber: int) -> void:
-	gameplay.currentLevel = gameplay.CHAPTER_1_LEVELS.get_level(levelNumber)
+	gameplay.currentLevel = loadLevelFromDatabase(levelNumber)
 
 	if gameplay.currentLevel.is_empty():
 		push_error("Level data not found: %s" % levelNumber)
@@ -250,6 +250,21 @@ func onHintPressed() -> void:
 	gameplay.hintsUsed += 1
 
 	gameplay.hudSystem.updateStarDisplay(true)
+
+# Loads one level from SQLite through the level repository.
+func loadLevelFromDatabase(levelNumber: int) -> Dictionary:
+	if gameplay.levelRepository == null:
+		push_error("LevelRepository is not available.")
+		return {}
+
+	if not gameplay.levelRepository.openDatabase():
+		return {}
+
+	var levelData: Dictionary = gameplay.levelRepository.getLevel(1, levelNumber)
+
+	gameplay.levelRepository.closeDatabase()
+
+	return levelData
 
 
 # Shows the level story/objective info.
