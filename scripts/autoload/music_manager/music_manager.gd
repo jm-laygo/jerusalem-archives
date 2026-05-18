@@ -1,25 +1,98 @@
 extends Node
 
-const MAIN_THEME: AudioStream = preload("res://assets/music/main_theme.mp3")
+const MAIN_THEME: AudioStream = preload("res://assets/music/mx_main_theme.mp3")
 
-var _player: AudioStreamPlayer
-var _has_started: bool = false
+const DEFAULT_MAIN_THEME_VOLUME := 1.0
+const DUCKED_MAIN_THEME_VOLUME := 0.2
+const VOLUME_DUCK_TIME := 0.35
+const STOP_HOLD_TIME := 0.15
+
+var mainThemePlayer: AudioStreamPlayer
+var volumeTween: Tween
+
+var hasStarted := false
 
 
+# Creates the main theme player and prepares the music stream.
 func _ready() -> void:
-	_player = AudioStreamPlayer.new()
-	_player.stream = MAIN_THEME
-	_player.bus = "Master"
+	mainThemePlayer = AudioStreamPlayer.new()
+	mainThemePlayer.stream = MAIN_THEME
+	mainThemePlayer.bus = "Master"
+	mainThemePlayer.volume_db = linear_to_db(DEFAULT_MAIN_THEME_VOLUME)
 
-	if _player.stream is AudioStreamMP3:
-		(_player.stream as AudioStreamMP3).loop = false
+	if mainThemePlayer.stream is AudioStreamMP3:
+		(mainThemePlayer.stream as AudioStreamMP3).loop = false
 
-	add_child(_player)
+	add_child(mainThemePlayer)
 
 
-func play_main_theme_once() -> void:
-	if _has_started:
+# Plays the main theme only once.
+func playMainThemeOnce() -> void:
+	if hasStarted:
 		return
 
-	_has_started = true
-	_player.play()
+	hasStarted = true
+	mainThemePlayer.play()
+
+
+# Lowers the main theme volume smoothly.
+func duckMainTheme(
+	targetVolume: float = DUCKED_MAIN_THEME_VOLUME,
+	duration: float = VOLUME_DUCK_TIME
+) -> void:
+	if mainThemePlayer == null:
+		return
+
+	killVolumeTween()
+
+	var targetDb := getVolumeDb(targetVolume)
+
+	volumeTween = create_tween()
+	volumeTween.tween_property(
+		mainThemePlayer,
+		"volume_db",
+		targetDb,
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+# Lowers the main theme volume, waits briefly, then stops it.
+func duckMainThemeThenStop(
+	targetVolume: float = DUCKED_MAIN_THEME_VOLUME,
+	duration: float = VOLUME_DUCK_TIME,
+	holdTime: float = STOP_HOLD_TIME
+) -> void:
+	if mainThemePlayer == null:
+		return
+
+	killVolumeTween()
+
+	var targetDb := getVolumeDb(targetVolume)
+
+	volumeTween = create_tween()
+	volumeTween.tween_property(
+		mainThemePlayer,
+		"volume_db",
+		targetDb,
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	await volumeTween.finished
+
+	if holdTime > 0.0:
+		await get_tree().create_timer(holdTime).timeout
+
+	if mainThemePlayer != null:
+		mainThemePlayer.stop()
+
+
+# Converts a linear volume value into decibels safely.
+func getVolumeDb(volume: float) -> float:
+	var clampedVolume := clampf(volume, 0.0, 1.0)
+	return linear_to_db(max(clampedVolume, 0.001))
+
+
+# Stops the active volume tween.
+func killVolumeTween() -> void:
+	if volumeTween != null and volumeTween.is_valid():
+		volumeTween.kill()

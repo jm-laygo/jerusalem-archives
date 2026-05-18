@@ -1,43 +1,62 @@
 extends CanvasLayer
 
 const OVERLAY_COLOR := Color(0, 0, 0, 1)
+const TRANSITION_LAYER := 100
 
-var _overlay: ColorRect
-var _is_transitioning: bool = false
+var overlay: ColorRect
+var isTransitioning := false
 
 
+# Creates the full-screen fade overlay.
 func _ready() -> void:
-	layer = 100
+	layer = TRANSITION_LAYER
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-	_overlay = ColorRect.new()
-	_overlay.name = "Overlay"
-	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_overlay.color = OVERLAY_COLOR
-	_overlay.modulate.a = 0.0
-	_overlay.visible = false
-	add_child(_overlay)
+	overlay = ColorRect.new()
+	overlay.name = "Overlay"
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.color = OVERLAY_COLOR
+	overlay.modulate.a = 0.0
+	overlay.visible = false
+
+	add_child(overlay)
 
 
-func change_scene_with_fade(scene_path: String, fade_out_duration: float = 0.95, fade_in_duration: float = 0.55) -> void:
-	if _is_transitioning:
+# Changes scene using a fade-out and fade-in transition.
+func changeSceneWithFade(
+	scenePath: String,
+	fadeOutDuration: float = 0.95,
+	fadeInDuration: float = 0.55
+) -> void:
+	if isTransitioning:
 		return
 
-	_is_transitioning = true
-	_overlay.visible = true
+	isTransitioning = true
+	overlay.visible = true
 
-	var fade_out: Tween = create_tween()
-	fade_out.tween_property(_overlay, "modulate:a", 1.0, fade_out_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	await fade_out.finished
+	await fadeOverlay(1.0, fadeOutDuration, Tween.EASE_IN)
 
-	get_tree().change_scene_to_file(scene_path)
+	get_tree().change_scene_to_file(scenePath)
+
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	var fade_in: Tween = create_tween()
-	fade_in.tween_property(_overlay, "modulate:a", 0.0, fade_in_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	await fade_in.finished
+	await fadeOverlay(0.0, fadeInDuration, Tween.EASE_OUT)
 
-	_overlay.visible = false
-	_is_transitioning = false
+	overlay.visible = false
+	isTransitioning = false
+
+
+# Fades the overlay alpha to the target value.
+func fadeOverlay(targetAlpha: float, duration: float, easeType: Tween.EaseType) -> void:
+	var fadeTween := create_tween()
+
+	fadeTween.tween_property(
+		overlay,
+		"modulate:a",
+		targetAlpha,
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(easeType)
+
+	await fadeTween.finished
