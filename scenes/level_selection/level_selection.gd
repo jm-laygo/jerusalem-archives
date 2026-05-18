@@ -1,47 +1,76 @@
 extends Control
 
-const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/generic_select.wav")
-const START_GAME_SCENE := "res://scenes/start_game/start_game.tscn"
-const LEVEL_GAMEPLAY_SCENE := "res://scenes/level_gameplay/level_gameplay.tscn"
+const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_generic_select.wav")
+const PLAY_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_play.wav")
+
+const START_GAME_SCENE_PATH := "res://scenes/start_game/start_game.tscn"
+const LEVEL_GAMEPLAY_SCENE_PATH := "res://scenes/level_gameplay/level_gameplay.tscn"
 
 const DESIGN_WIDTH := 1080.0
 const DESIGN_HEIGHT := 1920.0
 
+const HEADER_LEFT := -182.0
+const HEADER_TOP := -31.0
+const HEADER_RIGHT := 1342.0
+const HEADER_BOTTOM := 1263.0
+
+const PLAY_BUTTON_POSITION := Vector2(735.0, 1060.0)
+const PLAY_BUTTON_SIZE := Vector2(380.0, 145.0)
+
+const FOOTER_LEFT := 0.0
+const FOOTER_RIGHT := 1080.0
+const FOOTER_HEIGHT := 200.0
+
+const SCENE_FADE_OUT_TIME := 0.50
+const SCENE_FADE_IN_TIME := 0.30
+
+const DUCKED_MAIN_THEME_VOLUME := 0.2
+const MUSIC_DUCK_TIME := 0.35
+const MUSIC_STOP_HOLD_TIME := 0.15
+
 @onready var background: TextureRect = get_node_or_null("Background")
 @onready var header: TextureRect = get_node_or_null("Header")
-@onready var content_layer: Control = get_node_or_null("ContentLayer")
+@onready var contentLayer: Control = get_node_or_null("ContentLayer")
 @onready var footer: Control = get_node_or_null("GameFooter")
-@onready var play_button: TextureButton = get_node_or_null("ContentLayer/PlayButton")
+@onready var playButton: TextureButton = get_node_or_null("ContentLayer/PlayButton")
 
-var click_player: AudioStreamPlayer
+var clickPlayer: AudioStreamPlayer
 
 
+# Prepares audio, connects buttons, and applies the responsive phone layout.
 func _ready() -> void:
-	_setup_audio()
-	connect_footer_signals()
-	connect_play_button_signal()
+	setupAudioPlayer()
+	connectFooterSignals()
+	connectPlayButtonSignal()
 
-	apply_phone_layout()
+	applyPhoneLayout()
 
 	await get_tree().process_frame
-	apply_phone_layout()
+	applyPhoneLayout()
 
 
+# Re-applies layout when the viewport size changes.
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
-		apply_phone_layout()
+		applyPhoneLayout()
 
 
-func apply_phone_layout() -> void:
-	var viewport_size := get_viewport_rect().size
+# Applies the 1080x1920 design layout to the current viewport.
+func applyPhoneLayout() -> void:
+	var viewportSize := get_viewport_rect().size
+	var scaleFactor: float = viewportSize.x / DESIGN_WIDTH
+	var phoneOrigin := Vector2.ZERO
 
-	# IMPORTANT:
-	# Use width scaling so the UI does not become too big or get cut.
-	var scale_factor: float = viewport_size.x / DESIGN_WIDTH
+	forceRootLayout()
+	forceBackgroundLayout()
+	placeDesignNode(header, phoneOrigin, scaleFactor, HEADER_LEFT, HEADER_TOP, HEADER_RIGHT, HEADER_BOTTOM)
+	forceContentLayerLayout(phoneOrigin, scaleFactor)
+	forcePlayButtonLayout()
+	placeBottomDesignNode(footer, scaleFactor, FOOTER_LEFT, FOOTER_RIGHT, FOOTER_HEIGHT)
 
-	var phone_origin := Vector2(0.0, 0.0)
 
-	# Root fills real viewport.
+# Makes the root fill the real viewport.
+func forceRootLayout() -> void:
 	anchor_left = 0.0
 	anchor_top = 0.0
 	anchor_right = 1.0
@@ -51,53 +80,60 @@ func apply_phone_layout() -> void:
 	offset_right = 0.0
 	offset_bottom = 0.0
 
-	# Background fills the real screen.
-	if background != null:
-		background.anchor_left = 0.0
-		background.anchor_top = 0.0
-		background.anchor_right = 1.0
-		background.anchor_bottom = 1.0
-		background.offset_left = 0.0
-		background.offset_top = 0.0
-		background.offset_right = 0.0
-		background.offset_bottom = 0.0
-		background.scale = Vector2.ONE
 
-	# Header: stick to top, scaled by width.
-	place_design_node(header, phone_origin, scale_factor, -182, -31, 1342, 1263)
+# Makes the background fill the real screen.
+func forceBackgroundLayout() -> void:
+	if background == null:
+		return
 
-	# ContentLayer: design space scaled by width.
-	if content_layer != null:
-		content_layer.anchor_left = 0.0
-		content_layer.anchor_top = 0.0
-		content_layer.anchor_right = 0.0
-		content_layer.anchor_bottom = 0.0
-		content_layer.position = phone_origin
-		content_layer.size = Vector2(DESIGN_WIDTH, DESIGN_HEIGHT)
-		content_layer.scale = Vector2(scale_factor, scale_factor)
-
-	# Play button: smaller and fully inside the 1080x1920 phone frame.
-	if play_button != null:
-		play_button.anchor_left = 0.0
-		play_button.anchor_top = 0.0
-		play_button.anchor_right = 0.0
-		play_button.anchor_bottom = 0.0
-
-		play_button.position = Vector2(735, 1060)
-		play_button.size = Vector2(380, 145)
-		play_button.scale = Vector2.ONE
-
-		play_button.stretch_mode = TextureButton.STRETCH_SCALE
-		play_button.ignore_texture_size = true
-
-	# Footer: stick to actual bottom, not design bottom.
-	place_bottom_design_node(footer, scale_factor, 0, 1080, 200)
+	background.anchor_left = 0.0
+	background.anchor_top = 0.0
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	background.offset_left = 0.0
+	background.offset_top = 0.0
+	background.offset_right = 0.0
+	background.offset_bottom = 0.0
+	background.scale = Vector2.ONE
 
 
-func place_design_node(
+# Applies the scaled design space to the content layer.
+func forceContentLayerLayout(phoneOrigin: Vector2, scaleFactor: float) -> void:
+	if contentLayer == null:
+		return
+
+	contentLayer.anchor_left = 0.0
+	contentLayer.anchor_top = 0.0
+	contentLayer.anchor_right = 0.0
+	contentLayer.anchor_bottom = 0.0
+	contentLayer.position = phoneOrigin
+	contentLayer.size = Vector2(DESIGN_WIDTH, DESIGN_HEIGHT)
+	contentLayer.scale = Vector2(scaleFactor, scaleFactor)
+
+
+# Places and sizes the play button inside the design frame.
+func forcePlayButtonLayout() -> void:
+	if playButton == null:
+		return
+
+	playButton.anchor_left = 0.0
+	playButton.anchor_top = 0.0
+	playButton.anchor_right = 0.0
+	playButton.anchor_bottom = 0.0
+
+	playButton.position = PLAY_BUTTON_POSITION
+	playButton.size = PLAY_BUTTON_SIZE
+	playButton.scale = Vector2.ONE
+
+	playButton.stretch_mode = TextureButton.STRETCH_SCALE
+	playButton.ignore_texture_size = true
+
+
+# Places a control using design coordinates and viewport width scaling.
+func placeDesignNode(
 	node: Control,
-	phone_origin: Vector2,
-	scale_factor: float,
+	phoneOrigin: Vector2,
+	scaleFactor: float,
 	left: float,
 	top: float,
 	right: float,
@@ -111,13 +147,15 @@ func place_design_node(
 	node.anchor_right = 0.0
 	node.anchor_bottom = 0.0
 
-	node.position = phone_origin + Vector2(left, top) * scale_factor
+	node.position = phoneOrigin + Vector2(left, top) * scaleFactor
 	node.size = Vector2(right - left, bottom - top)
-	node.scale = Vector2(scale_factor, scale_factor)
+	node.scale = Vector2(scaleFactor, scaleFactor)
 
-func place_bottom_design_node(
+
+# Places a control at the real bottom of the viewport.
+func placeBottomDesignNode(
 	node: Control,
-	scale_factor: float,
+	scaleFactor: float,
 	left: float,
 	right: float,
 	height: float
@@ -125,90 +163,131 @@ func place_bottom_design_node(
 	if node == null:
 		return
 
-	var viewport_size := get_viewport_rect().size
-	var scaled_height := height * scale_factor
+	var viewportSize := get_viewport_rect().size
+	var scaledHeight := height * scaleFactor
 
 	node.anchor_left = 0.0
 	node.anchor_top = 0.0
 	node.anchor_right = 0.0
 	node.anchor_bottom = 0.0
 
-	node.position = Vector2(left * scale_factor, viewport_size.y - scaled_height)
-	node.size = Vector2((right - left), height)
-	node.scale = Vector2(scale_factor, scale_factor)
+	node.position = Vector2(left * scaleFactor, viewportSize.y - scaledHeight)
+	node.size = Vector2(right - left, height)
+	node.scale = Vector2(scaleFactor, scaleFactor)
 
 
-func _setup_audio() -> void:
-	click_player = AudioStreamPlayer.new()
-	click_player.stream = CLICK_SOUND
-	add_child(click_player)
+# Creates the audio player used for simple UI sounds.
+func setupAudioPlayer() -> void:
+	clickPlayer = AudioStreamPlayer.new()
+	clickPlayer.stream = CLICK_SOUND
+	clickPlayer.bus = "Master"
+	add_child(clickPlayer)
 
 
-func connect_footer_signals() -> void:
+# Connects shared footer signals.
+func connectFooterSignals() -> void:
 	if footer == null:
-		print("GameFooter not found in LevelSelection.")
+		push_error("GameFooter not found in LevelSelection.")
 		return
 
-	if footer.has_signal("back_pressed"):
-		var back_callable := Callable(self, "_on_footer_back_pressed")
-		if not footer.is_connected("back_pressed", back_callable):
-			footer.connect("back_pressed", back_callable)
-
-	if footer.has_signal("settings_pressed"):
-		var settings_callable := Callable(self, "_on_footer_settings_pressed")
-		if not footer.is_connected("settings_pressed", settings_callable):
-			footer.connect("settings_pressed", settings_callable)
-
-	if footer.has_signal("achievements_pressed"):
-		var achievements_callable := Callable(self, "_on_footer_achievements_pressed")
-		if not footer.is_connected("achievements_pressed", achievements_callable):
-			footer.connect("achievements_pressed", achievements_callable)
+	connectSignalIfAvailable(footer, "backPressed", Callable(self, "onFooterBackPressed"))
+	connectSignalIfAvailable(footer, "settingsPressed", Callable(self, "onFooterSettingsPressed"))
+	connectSignalIfAvailable(footer, "achievementsPressed", Callable(self, "onFooterAchievementsPressed"))
 
 
-func connect_play_button_signal() -> void:
-	if play_button == null:
-		print("PlayButton not found in LevelSelection.")
+# Connects the play button signal.
+func connectPlayButtonSignal() -> void:
+	if playButton == null:
+		push_error("PlayButton not found in LevelSelection.")
 		return
 
-	if not play_button.is_connected("pressed", Callable(self, "_on_play_button_pressed")):
-		play_button.connect("pressed", Callable(self, "_on_play_button_pressed"))
+	var playCallable := Callable(self, "onPlayButtonPressed")
+
+	if not playButton.pressed.is_connected(playCallable):
+		playButton.pressed.connect(playCallable)
 
 
-func _on_footer_back_pressed() -> void:
-	_play_click_sound()
-
-	var transition_manager: Node = get_node_or_null("/root/SceneTransitionManager")
-
-	if transition_manager != null and transition_manager.has_method("change_scene_with_fade"):
-		transition_manager.call("change_scene_with_fade", START_GAME_SCENE, 0.5, 0.3)
+# Connects a signal only when it exists and is not already connected.
+func connectSignalIfAvailable(target: Object, signalName: String, callback: Callable) -> void:
+	if target == null:
 		return
 
-	get_tree().change_scene_to_file(START_GAME_SCENE)
+	if not target.has_signal(signalName):
+		push_error("%s has no %s signal." % [target.name, signalName])
+		return
+
+	if not target.is_connected(signalName, callback):
+		target.connect(signalName, callback)
 
 
-func _on_footer_settings_pressed() -> void:
+# Returns to the start game screen.
+func onFooterBackPressed() -> void:
+	playPersistentSound(CLICK_SOUND)
+	changeSceneWithFade(START_GAME_SCENE_PATH)
+
+
+# Placeholder for opening settings.
+func onFooterSettingsPressed() -> void:
+	playSound(CLICK_SOUND)
 	print("Footer settings pressed in LevelSelection.")
 
 
-func _on_footer_achievements_pressed() -> void:
+# Placeholder for opening achievements.
+func onFooterAchievementsPressed() -> void:
+	playSound(CLICK_SOUND)
 	print("Footer achievements pressed in LevelSelection.")
 
 
-func _play_click_sound() -> void:
-	if click_player == null:
+# Starts gameplay from the selected level.
+func onPlayButtonPressed() -> void:
+	playPersistentSound(PLAY_SOUND)
+	duckMainThemeMusicThenStop()
+	changeSceneWithFade(LEVEL_GAMEPLAY_SCENE_PATH)
+
+
+# Changes scene using the global transition manager when available.
+func changeSceneWithFade(scenePath: String) -> void:
+	var transitionManager: Node = get_node_or_null("/root/SceneTransitionManager")
+
+	if transitionManager != null and transitionManager.has_method("changeSceneWithFade"):
+		transitionManager.call(
+			"changeSceneWithFade",
+			scenePath,
+			SCENE_FADE_OUT_TIME,
+			SCENE_FADE_IN_TIME
+		)
 		return
 
-	click_player.stop()
-	click_player.play()
+	get_tree().change_scene_to_file(scenePath)
 
 
-func _on_play_button_pressed() -> void:
-	_play_click_sound()
-
-	var transition_manager: Node = get_node_or_null("/root/SceneTransitionManager")
-
-	if transition_manager != null and transition_manager.has_method("change_scene_with_fade"):
-		transition_manager.call("change_scene_with_fade", LEVEL_GAMEPLAY_SCENE, 0.5, 0.3)
+# Plays a sound through the reusable UI audio player.
+func playSound(sound: AudioStream) -> void:
+	if clickPlayer == null:
 		return
 
-	get_tree().change_scene_to_file(LEVEL_GAMEPLAY_SCENE)
+	clickPlayer.stream = sound
+	clickPlayer.stop()
+	clickPlayer.play()
+
+
+# Plays a sound that can continue after this scene changes.
+func playPersistentSound(sound: AudioStream) -> void:
+	var soundPlayer := AudioStreamPlayer.new()
+	soundPlayer.stream = sound
+	get_tree().root.add_child(soundPlayer)
+	soundPlayer.play()
+	soundPlayer.finished.connect(soundPlayer.queue_free)
+
+
+# Ducks and stops the main theme before gameplay starts.
+func duckMainThemeMusicThenStop() -> void:
+	var musicManager: Node = get_node_or_null("/root/MusicManager")
+
+	if musicManager != null and musicManager.has_method("duckMainThemeThenStop"):
+		musicManager.call(
+			"duckMainThemeThenStop",
+			DUCKED_MAIN_THEME_VOLUME,
+			MUSIC_DUCK_TIME,
+			MUSIC_STOP_HOLD_TIME
+		)
