@@ -16,6 +16,14 @@ const OBJECTIVE_TEXT_OFFSET_BOTTOM := -45.0
 const SEARCH_BUTTONS_SIZE := Vector2(240.0, 120.0)
 const SEARCH_BUTTON_SIZE := Vector2(120.0, 120.0)
 
+const SELECTED_PANEL_SIZE := Vector2(1048.0, 72.0)
+const SELECTED_PANEL_TOP := 725.0
+const SELECTED_PANEL_BOTTOM := 797.0
+
+const SELECTED_LABEL_WIDTH := 220.0
+const SELECTED_ID_SCROLL_LEFT := 235.0
+const SELECTED_ID_SCROLL_RIGHT := 1048.0
+
 var gameplay: Control
 
 
@@ -33,6 +41,7 @@ func applyFixedPhoneLayout() -> void:
 	positionCenteredNode(gameplay.dataHeader, -540.0, 562.0, 540.0, 903.0)
 	positionCenteredNode(gameplay.searchBar, -524.0, 590.0, 292.0, 710.0)
 	positionCenteredNode(gameplay.searchButtons, 300.0, 590.0, 540.0, 710.0)
+	positionCenteredNode(gameplay.selectedPanel, -524.0, SELECTED_PANEL_TOP, 524.0, SELECTED_PANEL_BOTTOM)
 
 	positionCenteredBottomNode(gameplay.footer, -540.0, 540.0, FOOTER_HEIGHT)
 
@@ -137,6 +146,53 @@ func fixSearchButtonsLayout() -> void:
 		gameplay.clearButton.size = SEARCH_BUTTON_SIZE
 		gameplay.clearButton.ignore_texture_size = true
 		gameplay.clearButton.stretch_mode = TextureButton.STRETCH_SCALE
+
+# Fixes the selected record display below the search tools.
+func setupSelectedPanelLayout() -> void:
+	if gameplay.selectedPanel == null:
+		return
+
+	gameplay.selectedPanel.visible = true
+	gameplay.selectedPanel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gameplay.selectedPanel.size = SELECTED_PANEL_SIZE
+
+	if gameplay.selectedCountLabel != null:
+		gameplay.selectedCountLabel.anchor_left = 0.0
+		gameplay.selectedCountLabel.anchor_top = 0.0
+		gameplay.selectedCountLabel.anchor_right = 0.0
+		gameplay.selectedCountLabel.anchor_bottom = 1.0
+
+		gameplay.selectedCountLabel.offset_left = 0.0
+		gameplay.selectedCountLabel.offset_top = 0.0
+		gameplay.selectedCountLabel.offset_right = SELECTED_LABEL_WIDTH
+		gameplay.selectedCountLabel.offset_bottom = 0.0
+
+		gameplay.selectedCountLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		gameplay.selectedCountLabel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	if gameplay.selectedIdScroll != null:
+		gameplay.selectedIdScroll.anchor_left = 0.0
+		gameplay.selectedIdScroll.anchor_top = 0.0
+		gameplay.selectedIdScroll.anchor_right = 0.0
+		gameplay.selectedIdScroll.anchor_bottom = 1.0
+
+		gameplay.selectedIdScroll.offset_left = SELECTED_ID_SCROLL_LEFT
+		gameplay.selectedIdScroll.offset_top = 0.0
+		gameplay.selectedIdScroll.offset_right = SELECTED_ID_SCROLL_RIGHT
+		gameplay.selectedIdScroll.offset_bottom = 0.0
+
+	if gameplay.selectedIdHBox != null:
+		gameplay.selectedIdHBox.anchor_left = 0.0
+		gameplay.selectedIdHBox.anchor_top = 0.0
+		gameplay.selectedIdHBox.anchor_right = 0.0
+		gameplay.selectedIdHBox.anchor_bottom = 1.0
+
+		gameplay.selectedIdHBox.offset_left = 0.0
+		gameplay.selectedIdHBox.offset_top = 0.0
+		gameplay.selectedIdHBox.offset_right = 0.0
+		gameplay.selectedIdHBox.offset_bottom = 0.0
+
+		gameplay.selectedIdHBox.add_theme_constant_override("separation", 12)
 
 
 # Fixes the gameplay footer and its three action buttons.

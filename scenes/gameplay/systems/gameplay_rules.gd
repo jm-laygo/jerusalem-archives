@@ -47,6 +47,10 @@ func loadLevel(levelNumber: int) -> void:
 	gameplay.selectedRecord = {}
 	gameplay.selectedRow = null
 
+	if gameplay.selectionSystem != null:
+		gameplay.selectionSystem.configureFromLevel(gameplay.currentLevel)
+		gameplay.selectionSystem.resetSelection()
+
 	gameplay.scrollX = 0.0
 	gameplay.scrollY = 0.0
 	gameplay.dragAxis = ""
@@ -94,6 +98,10 @@ func handleTimerExpired() -> void:
 func onRowSelected(record: Dictionary, row: Button) -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.rowClickSound)
 
+	if gameplay.selectionSystem != null:
+		gameplay.selectionSystem.toggleRowSelection(record, row)
+		return
+
 	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("setSelected"):
 		gameplay.selectedRow.setSelected(false)
 
@@ -103,13 +111,22 @@ func onRowSelected(record: Dictionary, row: Button) -> void:
 	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("setSelected"):
 		gameplay.selectedRow.setSelected(true)
 
-	# Do not change the objective header here.
-	# The objective must stay as the actual level objective.
-
 
 # Checks whether the selected record is correct.
 func onCheckPressed() -> void:
 	if gameplay.levelFinished:
+		return
+
+	if gameplay.selectionSystem != null:
+		if not gameplay.selectionSystem.hasSelection():
+			gameplay.setObjectiveText("Select a record first.", OBJECTIVE_WARNING_FONT_SIZE)
+			return
+
+		if isSelectionCorrect():
+			handleCorrectSelection()
+		else:
+			handleWrongRecord()
+
 		return
 
 	if gameplay.selectedRecord.is_empty():
@@ -122,6 +139,57 @@ func onCheckPressed() -> void:
 		handleCorrectRecord(selectedId)
 	else:
 		handleWrongRecord()
+
+# Checks if the selected record IDs match the correct answer IDs.
+func isSelectionCorrect() -> bool:
+	var selectedIds: Array[String] = gameplay.selectionSystem.getSelectedRecordIds()
+	var correctIds: Array[String] = getCorrectRecordIds()
+
+	if selectedIds.size() != correctIds.size():
+		return false
+
+	selectedIds.sort()
+	correctIds.sort()
+
+	for index in range(correctIds.size()):
+		if selectedIds[index] != correctIds[index]:
+			return false
+
+	return true
+
+
+# Returns the correct record IDs from level data.
+func getCorrectRecordIds() -> Array[String]:
+	var correctIds: Array[String] = []
+
+	if gameplay.currentLevel.has("correct_record_ids"):
+		for id in gameplay.currentLevel.get("correct_record_ids", []):
+			correctIds.append(str(id))
+
+		return correctIds
+
+	correctIds.append(str(gameplay.currentLevel.get("correct_record_id", "")))
+	return correctIds
+
+
+# Handles correct answer state for single or multiple selected records.
+func handleCorrectSelection() -> void:
+	gameplay.levelFinished = true
+	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
+
+	gameplay.hudSystem.updateHud()
+	gameplay.hudSystem.updateStarDisplay(true)
+
+	for row in gameplay.selectionSystem.selectedRows:
+		if row != null and is_instance_valid(row) and row.has_method("playCorrectAnimation"):
+			row.playCorrectAnimation()
+
+	var selectedIds: Array[String] = gameplay.selectionSystem.getSelectedRecordIds()
+
+	gameplay.setObjectiveText(
+		"Case Solved! Correct record: %s" % ", ".join(selectedIds),
+		OBJECTIVE_WARNING_FONT_SIZE
+	)
 
 
 # Handles correct answer state.

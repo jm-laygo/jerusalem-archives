@@ -9,6 +9,7 @@ const GameplayScroll = preload("res://scenes/gameplay/systems/gameplay_scroll.gd
 const GameplayPause = preload("res://scenes/gameplay/systems/gameplay_pause.gd")
 const GameplayRules = preload("res://scenes/gameplay/systems/gameplay_rules.gd")
 const GameplaySearch = preload("res://scenes/gameplay/systems/gameplay_search.gd")
+const GameplaySelection = preload("res://scenes/gameplay/systems/gameplay_selection.gd")
 
 const MAIN_MENU_SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
 const START_GAMEPLAY_SOUND: AudioStream = preload("res://assets/sounds/sfx/sfx_start_gameplay.wav")
@@ -23,6 +24,9 @@ const STAR_EMPTY_TEXTURE: Texture2D = preload("res://assets/interface/icons/icon
 
 const DESIGN_WIDTH := 1080.0
 const FOOTER_HEIGHT := 217.0
+
+const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_selected_id.png")
+
 
 @onready var header: TextureRect = get_node_or_null("Header") as TextureRect
 @onready var headerLevel: TextureRect = get_node_or_null("HeaderLevel") as TextureRect
@@ -83,6 +87,11 @@ const FOOTER_HEIGHT := 217.0
 @onready var filterButton: TextureButton = get_node_or_null("SearchButtons/FilterButton") as TextureButton
 @onready var clearButton: TextureButton = get_node_or_null("SearchButtons/ClearButton") as TextureButton
 
+@onready var selectedPanel: Control = get_node_or_null("SelectedPanel") as Control
+@onready var selectedCountLabel: Label = get_node_or_null("SelectedPanel/SelectedCountLabel") as Label
+@onready var selectedIdScroll: ScrollContainer = get_node_or_null("SelectedPanel/SelectedIdScroll") as ScrollContainer
+@onready var selectedIdHBox: HBoxContainer = get_node_or_null("SelectedPanel/SelectedIdScroll/SelectedIdHBox") as HBoxContainer
+
 var tableHeaderViewport: Control
 var tableRowsViewport: Control
 var headerHBox: HBoxContainer
@@ -132,6 +141,7 @@ var scrollSystem
 var pauseSystem
 var rulesSystem
 var searchSystem
+var selectionSystem
 
 
 # Creates gameplay systems and starts the first level.
@@ -157,6 +167,7 @@ func _notification(what: int) -> void:
 	layoutSystem.applyFixedPhoneLayout()
 	layoutSystem.setupFooterButtonsLayout()
 	layoutSystem.fixSearchButtonsLayout()
+	layoutSystem.setupSelectedPanelLayout()
 	layoutSystem.setupObjectiveLabel()
 	scrollSystem.setupCustomScrollbarPositions()
 	call_deferred("refreshScrollLimits")
@@ -181,6 +192,7 @@ func createSystems() -> void:
 	pauseSystem = GameplayPause.new(self)
 	rulesSystem = GameplayRules.new(self)
 	searchSystem = GameplaySearch.new(self)
+	selectionSystem = GameplaySelection.new(self)
 
 
 # Runs startup setup for all gameplay systems.

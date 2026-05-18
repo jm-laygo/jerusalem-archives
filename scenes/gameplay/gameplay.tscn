@@ -32,6 +32,7 @@
 [ext_resource type="AudioStream" uid="uid://b8wjhpp64e1u1" path="res://assets/sounds/ui/title_header_click.wav" id="31_title_header_click_sound"]
 [ext_resource type="AudioStream" uid="uid://viqbrjmlkuoa" path="res://assets/sounds/sfx/sfx_start_gameplay.wav" id="32_start_gameplay_sound"]
 [ext_resource type="Texture2D" uid="uid://br4y8hn57j0ie" path="res://assets/interface/buttons/btn_clear_pressed.png" id="33_clear_button_pressed"]
+[ext_resource type="Texture2D" path="res://assets/interface/ui/level_gameplay/ui_selected_id.png" id="35_selected_id_box"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_search_input"]
 
@@ -330,6 +331,57 @@ texture_disabled = ExtResource("24_clear_button")
 texture_focused = ExtResource("24_clear_button")
 ignore_texture_size = true
 stretch_mode = 5
+
+; Selected record display below the search tools.
+[node name="SelectedPanel" type="Control" parent="." unique_id=1818111111]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -524.0
+offset_top = 725.0
+offset_right = 524.0
+offset_bottom = 797.0
+grow_horizontal = 2
+mouse_filter = 2
+
+; Displays how many records are currently selected.
+[node name="SelectedCountLabel" type="Label" parent="SelectedPanel" unique_id=1818111112]
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 220.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_gameplay_font")
+theme_override_font_sizes/font_size = 42
+text = "Selected 0"
+horizontal_alignment = 0
+vertical_alignment = 1
+
+; Horizontally scrollable area for selected record ID boxes.
+[node name="SelectedIdScroll" type="ScrollContainer" parent="SelectedPanel" unique_id=1818111113]
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 1.0
+offset_left = 235.0
+offset_top = 0.0
+offset_right = 1048.0
+offset_bottom = 0.0
+mouse_filter = 1
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+; Holds the generated selected ID boxes.
+[node name="SelectedIdHBox" type="HBoxContainer" parent="SelectedPanel/SelectedIdScroll" unique_id=1818111114]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 0
 
 [node name="HeaderObjective" type="TextureRect" parent="." unique_id=616161616]
 layout_mode = 1
