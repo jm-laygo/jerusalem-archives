@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/gameplay/components/table_row/table_row.gd" id="1_table_row_script"]
+
+; One selectable table row used in the gameplay archive table.
+[node name="TableRow" type="Button"]
+custom_minimum_size = Vector2(1750, 130)
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+focus_mode = 0
+flat = true
+script = ExtResource("1_table_row_script")
+
+; Row background texture changed by the script when selected.
+[node name="RowBackground" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+; Holds the check cell and all generated data cells.
+[node name="CellsHBox" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 5.0
+offset_right = 1750.0
+offset_bottom = 125.0
+theme_override_constants/separation = 0
+mouse_filter = 2
+
+; Fixed left-side check cell.
+[node name="CheckCell" type="Control" parent="CellsHBox"]
+custom_minimum_size = Vector2(150, 120)
+layout_mode = 2
+mouse_filter = 2
+
+; Check cell background.
+[node name="CheckBackground" type="TextureRect" parent="CellsHBox/CheckCell"]
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+; Check icon shown only when the row is selected.
+[node name="CheckIcon" type="TextureRect" parent="CellsHBox/CheckCell"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -35.0
+offset_right = 35.0
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+visible = false
+expand_mode = 1
+stretch_mode = 5
