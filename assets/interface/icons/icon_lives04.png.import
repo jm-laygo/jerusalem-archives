@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://carbu324n34nj"
-path="res://.godot/imported/achievements_icon.png-ae79f8bad451f741c77d36026a2fccdb.ctex"
+uid="uid://bxr02e5lhyteb"
+path="res://.godot/imported/icon_lives04.png-28390427e0ad2d9f16aaed495828c8a2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/icons/achievements_icon.png"
-dest_files=["res://.godot/imported/achievements_icon.png-ae79f8bad451f741c77d36026a2fccdb.ctex"]
+source_file="res://assets/interface/icons/icon_lives04.png"
+dest_files=["res://.godot/imported/icon_lives04.png-28390427e0ad2d9f16aaed495828c8a2.ctex"]
 
 [params]
 

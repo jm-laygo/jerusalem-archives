@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://onvh4dlhbtwv"
-path="res://.godot/imported/sort_button.png-182a3cd00bafc9b531883b82c6031df8.ctex"
+uid="uid://d4e76y7xb4bqt"
+path="res://.godot/imported/icon_achievement_disabled.png-da9140e4ba06f564f49221e745d568e5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/icons/sort_button.png"
-dest_files=["res://.godot/imported/sort_button.png-182a3cd00bafc9b531883b82c6031df8.ctex"]
+source_file="res://assets/interface/icons/icon_achievement_disabled.png"
+dest_files=["res://.godot/imported/icon_achievement_disabled.png-da9140e4ba06f564f49221e745d568e5.ctex"]
 
 [params]
 

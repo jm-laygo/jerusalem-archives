@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdd5ld35l8tpm"
-path="res://.godot/imported/hint_icon.png-24c22fdb5dee10ea12a2a79c5149acb0.ctex"
+uid="uid://carbu324n34nj"
+path="res://.godot/imported/icon_achievement.png-df1323369f681500bd44d7b674490234.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/icons/hint_icon.png"
-dest_files=["res://.godot/imported/hint_icon.png-24c22fdb5dee10ea12a2a79c5149acb0.ctex"]
+source_file="res://assets/interface/icons/icon_achievement.png"
+dest_files=["res://.godot/imported/icon_achievement.png-df1323369f681500bd44d7b674490234.ctex"]
 
 [params]
 
