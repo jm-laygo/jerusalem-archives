@@ -1,9 +1,10 @@
 extends TextureRect
 
-signal back_pressed
-signal settings_pressed
-signal achievements_pressed
+signal backPressed
+signal settingsPressed
+signal achievementsPressed
 
+const DESIGN_WIDTH := 1080.0
 const FOOTER_HEIGHT := 200.0
 const FOOTER_HIDDEN_OFFSET := 170.0
 
@@ -17,49 +18,54 @@ const BUTTON_RELEASE_TIME := 0.10
 const INTRO_TIME := 0.30
 const OUTRO_TIME := 0.30
 
-@onready var back_button: TextureButton = $FooterButtons/BackButton
-@onready var settings_button: TextureButton = $FooterButtons/SettingsButton
-@onready var achievements_button: TextureButton = $FooterButtons/AchievementsButton
+@onready var backButton: TextureButton = $FooterButtons/BackButton
+@onready var settingsButton: TextureButton = $FooterButtons/SettingsButton
+@onready var achievementsButton: TextureButton = $FooterButtons/AchievementsButton
 
-var footer_original_position := Vector2.ZERO
-var intro_tween: Tween
-var outro_tween: Tween
+var footerOriginalPosition := Vector2.ZERO
 
-var active_button: TextureButton = null
-var button_tweens := {}
-var child_original_positions := {}
+var introTween: Tween
+var outroTween: Tween
+
+var activeButton: TextureButton = null
+var buttonTweens := {}
+var childOriginalPositions := {}
 
 
+# Prepares footer layout, buttons, and animation values.
 func _ready() -> void:
 	await get_tree().process_frame
 
-	_force_bottom_layout()
-	_setup_buttons()
-	cache_original_values()
+	forceBottomLayout()
+	setupButtons()
+	cacheOriginalValues()
 
 
-func _force_bottom_layout() -> void:
+# Forces the footer to stay pinned to the bottom of the screen.
+func forceBottomLayout() -> void:
 	anchor_left = 0.5
 	anchor_top = 1.0
 	anchor_right = 0.5
 	anchor_bottom = 1.0
 
-	offset_left = -540.0
+	offset_left = -(DESIGN_WIDTH / 2.0)
 	offset_top = -FOOTER_HEIGHT
-	offset_right = 540.0
+	offset_right = DESIGN_WIDTH / 2.0
 	offset_bottom = 0.0
 
 	grow_horizontal = Control.GROW_DIRECTION_BOTH
 	grow_vertical = Control.GROW_DIRECTION_BEGIN
 
 
-func _setup_buttons() -> void:
-	_setup_footer_button(back_button)
-	_setup_footer_button(settings_button)
-	_setup_footer_button(achievements_button)
+# Applies shared setup to all footer buttons.
+func setupButtons() -> void:
+	setupFooterButton(backButton)
+	setupFooterButton(settingsButton)
+	setupFooterButton(achievementsButton)
 
 
-func _setup_footer_button(button: TextureButton) -> void:
+# Prepares one footer button for interaction feedback and signal handling.
+func setupFooterButton(button: TextureButton) -> void:
 	if button == null:
 		return
 
@@ -72,83 +78,96 @@ func _setup_footer_button(button: TextureButton) -> void:
 	button.texture_focused = button.texture_normal
 	button.texture_disabled = button.texture_normal
 
-	_cache_child_positions(button)
+	cacheChildPositions(button)
+	ignoreChildrenMouse(button)
+
+	var buttonDownCallable := onButtonDown.bind(button)
+	var buttonUpCallable := onButtonUp.bind(button)
+	var mouseExitedCallable := onButtonMouseExited.bind(button)
+
+	if not button.button_down.is_connected(buttonDownCallable):
+		button.button_down.connect(buttonDownCallable)
+
+	if not button.button_up.is_connected(buttonUpCallable):
+		button.button_up.connect(buttonUpCallable)
+
+	if not button.mouse_exited.is_connected(mouseExitedCallable):
+		button.mouse_exited.connect(mouseExitedCallable)
+
+
+# Stores the original child positions for press/release animation.
+func cacheChildPositions(button: TextureButton) -> void:
+	if button == null:
+		return
+
+	childOriginalPositions[button] = {}
+
+	for child in button.get_children():
+		if child is Control:
+			childOriginalPositions[button][child] = child.position
+
+
+# Prevents footer button children from blocking clicks.
+func ignoreChildrenMouse(button: TextureButton) -> void:
+	if button == null:
+		return
 
 	for child in button.get_children():
 		if child is Control:
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	if not button.button_down.is_connected(_on_button_down.bind(button)):
-		button.button_down.connect(_on_button_down.bind(button))
 
-	if not button.button_up.is_connected(_on_button_up.bind(button)):
-		button.button_up.connect(_on_button_up.bind(button))
-
-	if not button.mouse_exited.is_connected(_on_button_mouse_exited.bind(button)):
-		button.mouse_exited.connect(_on_button_mouse_exited.bind(button))
-
-
-func _cache_child_positions(button: TextureButton) -> void:
+# Handles footer button press start.
+func onButtonDown(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	child_original_positions[button] = {}
-
-	for child in button.get_children():
-		if child is Control:
-			child_original_positions[button][child] = child.position
+	activeButton = button
+	pushButtonDown(button)
 
 
-func _on_button_down(button: TextureButton) -> void:
+# Handles footer button release and emits the correct footer signal.
+func onButtonUp(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	active_button = button
-	_push_button_down(button)
+	var shouldClick := activeButton == button and isMouseInsideButton(button)
+
+	activeButton = null
+	releaseButton(button)
+
+	if not shouldClick:
+		return
+
+	if button == backButton:
+		backPressed.emit()
+	elif button == settingsButton:
+		settingsPressed.emit()
+	elif button == achievementsButton:
+		achievementsPressed.emit()
 
 
-func _on_button_up(button: TextureButton) -> void:
+# Cancels the active press state when the mouse leaves a button.
+func onButtonMouseExited(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	var should_click := active_button == button and _is_mouse_inside_button(button)
-
-	active_button = null
-	_release_button(button)
-
-	if not should_click:
+	if activeButton != button:
 		return
 
-	if button == back_button:
-		print("footer back pressed")
-		back_pressed.emit()
-	elif button == settings_button:
-		print("footer settings pressed")
-		settings_pressed.emit()
-	elif button == achievements_button:
-		print("footer achievements pressed")
-		achievements_pressed.emit()
+	activeButton = null
+	releaseButton(button)
 
 
-func _on_button_mouse_exited(button: TextureButton) -> void:
+# Animates a footer button into its pressed state.
+func pushButtonDown(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	if active_button != button:
-		return
-
-	active_button = null
-	_release_button(button)
-
-
-func _push_button_down(button: TextureButton) -> void:
-	if button == null:
-		return
-
-	_kill_button_tween(button)
+	killButtonTween(button)
 
 	var tween := create_tween()
-	button_tweens[button] = tween
+	buttonTweens[button] = tween
 	tween.set_parallel(true)
 
 	tween.tween_property(
@@ -160,24 +179,25 @@ func _push_button_down(button: TextureButton) -> void:
 
 	for child in button.get_children():
 		if child is Control:
-			var original_position: Vector2 = child_original_positions[button].get(child, child.position)
+			var originalPosition: Vector2 = childOriginalPositions[button].get(child, child.position)
 
 			tween.tween_property(
 				child,
 				"position",
-				original_position + CHILD_PUSH_OFFSET,
+				originalPosition + CHILD_PUSH_OFFSET,
 				BUTTON_PUSH_TIME
 			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
-func _release_button(button: TextureButton) -> void:
+# Animates a footer button back to its normal state.
+func releaseButton(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	_kill_button_tween(button)
+	killButtonTween(button)
 
 	var tween := create_tween()
-	button_tweens[button] = tween
+	buttonTweens[button] = tween
 	tween.set_parallel(true)
 
 	tween.tween_property(
@@ -189,82 +209,89 @@ func _release_button(button: TextureButton) -> void:
 
 	for child in button.get_children():
 		if child is Control:
-			var original_position: Vector2 = child_original_positions[button].get(child, child.position)
+			var originalPosition: Vector2 = childOriginalPositions[button].get(child, child.position)
 
 			tween.tween_property(
 				child,
 				"position",
-				original_position,
+				originalPosition,
 				BUTTON_RELEASE_TIME
 			).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
-func _kill_button_tween(button: TextureButton) -> void:
+# Stops the active tween for one footer button.
+func killButtonTween(button: TextureButton) -> void:
 	if button == null:
 		return
 
-	if not button_tweens.has(button):
+	if not buttonTweens.has(button):
 		return
 
-	var tween: Tween = button_tweens[button]
+	var tween: Tween = buttonTweens[button]
 
 	if tween != null and tween.is_valid():
 		tween.kill()
 
-	button_tweens.erase(button)
+	buttonTweens.erase(button)
 
 
-func _is_mouse_inside_button(button: TextureButton) -> bool:
+# Checks if the mouse is still inside a footer button.
+func isMouseInsideButton(button: TextureButton) -> bool:
 	if button == null:
 		return false
 
-	var mouse_position := get_global_mouse_position()
-	var button_rect := Rect2(button.global_position, button.size)
+	var mousePosition := get_global_mouse_position()
+	var buttonRect := Rect2(button.global_position, button.size)
 
-	return button_rect.has_point(mouse_position)
-
-
-func cache_original_values() -> void:
-	_force_bottom_layout()
-	footer_original_position = position
+	return buttonRect.has_point(mousePosition)
 
 
-func prepare_intro_state() -> void:
-	position = footer_original_position + Vector2(0, FOOTER_HIDDEN_OFFSET)
+# Saves the footer's normal visible position.
+func cacheOriginalValues() -> void:
+	forceBottomLayout()
+	footerOriginalPosition = position
 
 
-func play_intro_animation() -> void:
-	_kill_tween(intro_tween)
+# Places the footer below the screen before the intro animation.
+func prepareIntroState() -> void:
+	position = footerOriginalPosition + Vector2(0, FOOTER_HIDDEN_OFFSET)
 
-	intro_tween = create_tween()
 
-	intro_tween.tween_property(
+# Slides the footer into view.
+func playIntroAnimation() -> void:
+	killTween(introTween)
+
+	introTween = create_tween()
+
+	introTween.tween_property(
 		self,
 		"position",
-		footer_original_position,
+		footerOriginalPosition,
 		INTRO_TIME
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-	await intro_tween.finished
+	await introTween.finished
 
 
-func play_outro_animation() -> void:
-	_kill_tween(outro_tween)
+# Slides the footer out of view.
+func playOutroAnimation() -> void:
+	killTween(outroTween)
 
-	var footer_out_position := footer_original_position + Vector2(0, FOOTER_HIDDEN_OFFSET)
+	var footerOutPosition := footerOriginalPosition + Vector2(0, FOOTER_HIDDEN_OFFSET)
 
-	outro_tween = create_tween()
+	outroTween = create_tween()
 
-	outro_tween.tween_property(
+	outroTween.tween_property(
 		self,
 		"position",
-		footer_out_position,
+		footerOutPosition,
 		OUTRO_TIME
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
-	await outro_tween.finished
+	await outroTween.finished
 
 
-func _kill_tween(tween: Tween) -> void:
+# Stops a tween safely.
+func killTween(tween: Tween) -> void:
 	if tween != null and tween.is_valid():
 		tween.kill()
