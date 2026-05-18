@@ -14,12 +14,12 @@ const ILLUSTRATION_EXTRA_HEIGHT := 350.0
 const HEADER_HEIGHT := 171.0
 
 const TITLE_POSITION_X := 60.0
-const TITLE_POSITION_RATIO_Y := 0.60
+const TITLE_BOTTOM_OFFSET := 400.0
 const TITLE_SIZE := Vector2(960.0, 126.0)
 const TITLE_FONT_SIZE := 90
 
 const DESCRIPTION_POSITION_X := 90.0
-const DESCRIPTION_POSITION_RATIO_Y := 0.70
+const DESCRIPTION_BOTTOM_OFFSET := 185.0
 const DESCRIPTION_SIZE := Vector2(900.0, 190.0)
 const DESCRIPTION_FONT_SIZE := 40
 
@@ -223,7 +223,7 @@ func forceHeaderLayout() -> void:
 	chapterHeader.stretch_mode = TextureRect.STRETCH_SCALE
 
 
-# Positions and formats the chapter title.
+# Positions and formats the chapter title above the select button.
 func forceTitleLayout() -> void:
 	if chapterTitle == null:
 		return
@@ -232,14 +232,19 @@ func forceTitleLayout() -> void:
 	chapterTitle.anchor_top = 0.0
 	chapterTitle.anchor_right = 0.0
 	chapterTitle.anchor_bottom = 0.0
-	chapterTitle.position = Vector2(TITLE_POSITION_X, currentDesignHeight * TITLE_POSITION_RATIO_Y)
+
+	chapterTitle.position = Vector2(
+		TITLE_POSITION_X,
+		currentDesignHeight - TITLE_BOTTOM_OFFSET
+	)
+
 	chapterTitle.size = TITLE_SIZE
 	chapterTitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	chapterTitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	chapterTitle.add_theme_font_size_override("font_size", TITLE_FONT_SIZE)
 
 
-# Positions and formats the chapter description.
+# Positions and formats the chapter description above the select button.
 func forceDescriptionLayout() -> void:
 	if chapterDescription == null:
 		return
@@ -248,7 +253,12 @@ func forceDescriptionLayout() -> void:
 	chapterDescription.anchor_top = 0.0
 	chapterDescription.anchor_right = 0.0
 	chapterDescription.anchor_bottom = 0.0
-	chapterDescription.position = Vector2(DESCRIPTION_POSITION_X, currentDesignHeight * DESCRIPTION_POSITION_RATIO_Y)
+
+	chapterDescription.position = Vector2(
+		DESCRIPTION_POSITION_X,
+		currentDesignHeight - DESCRIPTION_BOTTOM_OFFSET
+	)
+
 	chapterDescription.size = DESCRIPTION_SIZE
 	chapterDescription.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	chapterDescription.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

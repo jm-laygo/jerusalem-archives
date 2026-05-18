@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://bhq78d7yvc5vg" path="res://scenes/start_game/chapter_slider/chapter_slider.gd" id="1_chapter_slider_script"]
+[ext_resource type="Script" uid="uid://chye48wbc8ae7" path="res://scenes/start_game/chapter_slider/chapter_slider.gd" id="1_chapter_slider_script"]
 [ext_resource type="Texture2D" uid="uid://slabi8hnrpw3" path="res://assets/interface/ui/start_game/tutorial_header.png" id="2_tutorial_header"]
 [ext_resource type="Texture2D" uid="uid://immlo6jvrg7e" path="res://assets/interface/illustrations/ill_chapter_0.png" id="3_tutorial_illustration"]
 [ext_resource type="FontFile" uid="uid://ce41tnfupvmgc" path="res://assets/fonts/Fondamento/Fondamento-Regular.ttf" id="4_title_font"]
