@@ -103,6 +103,7 @@ var maxHearts := 4
 var hintIndex := 0
 var hintsUsed := 0
 var timeRemaining := 0.0
+var levelTimeLimit := 0.0
 var levelFinished := false
 var currentStars := 3
 
@@ -161,8 +162,11 @@ func _notification(what: int) -> void:
 	call_deferred("refreshScrollLimits")
 
 
-# Sends table drag and wheel input to the scroll system.
+# Sends search and table input to the proper systems.
 func _input(event: InputEvent) -> void:
+	if searchSystem != null:
+		searchSystem.handleInput(event)
+
 	scrollSystem.handleInput(event)
 
 
