@@ -21,7 +21,7 @@
 [ext_resource type="AudioStream" uid="uid://dhjvjwcwil3k8" path="res://assets/sounds/ui/ui_check_correct.wav" id="20_check_correct_sound"]
 [ext_resource type="Texture2D" uid="uid://bcjebfnapnjoo" path="res://assets/interface/search/search_bar.png" id="21_search_bar"]
 [ext_resource type="Texture2D" uid="uid://doy1vhk0shniw" path="res://assets/interface/buttons/btn_filter.png" id="22_filter_button"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_filter_pressed.png" id="23_filter_button_pressed"]
+[ext_resource type="Texture2D" uid="uid://bwfijnv1tuvfm" path="res://assets/interface/buttons/btn_filter_pressed.png" id="23_filter_button_pressed"]
 [ext_resource type="Texture2D" uid="uid://dpnr1c2ohrkvl" path="res://assets/interface/buttons/btn_clear.png" id="24_clear_button"]
 [ext_resource type="Script" uid="uid://bc0cnq6ptanbx" path="res://scenes/gameplay/gameplay.gd" id="25_gameplay_script"]
 [ext_resource type="AudioStream" uid="uid://cwrdutr1dqbvy" path="res://assets/sounds/ui/ui_info.wav" id="26_info_click_sound"]
@@ -31,10 +31,10 @@
 [ext_resource type="AudioStream" uid="uid://boanjes6fi268" path="res://assets/sounds/ui/ui_row_click.wav" id="30_row_click_sound"]
 [ext_resource type="AudioStream" uid="uid://b8wjhpp64e1u1" path="res://assets/sounds/ui/title_header_click.wav" id="31_title_header_click_sound"]
 [ext_resource type="AudioStream" uid="uid://viqbrjmlkuoa" path="res://assets/sounds/sfx/sfx_start_gameplay.wav" id="32_start_gameplay_sound"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_clear_pressed.png" id="33_clear_button_pressed"]
+[ext_resource type="Texture2D" uid="uid://br4y8hn57j0ie" path="res://assets/interface/buttons/btn_clear_pressed.png" id="33_clear_button_pressed"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_search_input"]
 
-; Root gameplay screen.
 [node name="Gameplay" type="Control" unique_id=101010101]
 layout_mode = 3
 anchors_preset = 15
@@ -44,7 +44,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("25_gameplay_script")
 
-; Audio players used by gameplay actions.
 [node name="PauseClickSound" type="AudioStreamPlayer" parent="." unique_id=606060606]
 stream = ExtResource("17_pause_click_sound")
 
@@ -72,7 +71,6 @@ stream = ExtResource("31_title_header_click_sound")
 [node name="StartGameplaySound" type="AudioStreamPlayer" parent="." unique_id=853035143]
 stream = ExtResource("32_start_gameplay_sound")
 
-; Full-screen gameplay background.
 [node name="Background" type="TextureRect" parent="." unique_id=202020202]
 layout_mode = 1
 anchors_preset = 15
@@ -84,7 +82,6 @@ texture = ExtResource("1_gameplay_background")
 expand_mode = 1
 stretch_mode = 6
 
-; Top HUD header.
 [node name="Header" type="TextureRect" parent="." unique_id=303030303]
 layout_mode = 1
 anchors_preset = 5
@@ -99,7 +96,6 @@ texture = ExtResource("3_header")
 expand_mode = 1
 stretch_mode = 5
 
-; HUD layer for pause, lives, timer, and stars.
 [node name="HudLayer" type="Control" parent="Header" unique_id=404040404]
 layout_mode = 1
 anchors_preset = 15
@@ -137,21 +133,22 @@ stretch_mode = 5
 [node name="LivesText" type="Label" parent="Header/HudLayer" unique_id=404040408]
 layout_mode = 0
 offset_left = 287.0
-offset_top = 33.0
+offset_top = 26.0
 offset_right = 413.0
-offset_bottom = 130.0
+offset_bottom = 126.0
 theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
 theme_override_fonts/font = ExtResource("7_gameplay_font")
 theme_override_font_sizes/font_size = 80
 text = "4/4"
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="TimeIcon" type="TextureRect" parent="Header/HudLayer" unique_id=404040409]
 layout_mode = 0
 offset_left = 443.0
-offset_top = 30.0
+offset_top = 24.0
 offset_right = 543.0
-offset_bottom = 130.0
+offset_bottom = 124.0
 texture = ExtResource("8_time_icon")
 expand_mode = 1
 stretch_mode = 5
@@ -159,13 +156,14 @@ stretch_mode = 5
 [node name="TimeText" type="Label" parent="Header/HudLayer" unique_id=404040410]
 layout_mode = 0
 offset_left = 558.0
-offset_top = 31.0
+offset_top = 26.0
 offset_right = 772.0
-offset_bottom = 128.0
+offset_bottom = 126.0
 theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
 theme_override_fonts/font = ExtResource("7_gameplay_font")
 theme_override_font_sizes/font_size = 80
 text = "04:00"
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="EmptyStars3" type="TextureRect" parent="Header/HudLayer" unique_id=1659303845]
@@ -174,9 +172,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -278.0
-offset_top = 30.0
+offset_top = 24.0
 offset_right = -178.0
-offset_bottom = 130.0
+offset_bottom = 124.0
 grow_horizontal = 0
 texture = ExtResource("9_empty_star_icon")
 expand_mode = 1
@@ -188,9 +186,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -190.0
-offset_top = 30.0
+offset_top = 24.0
 offset_right = -90.0
-offset_bottom = 130.0
+offset_bottom = 124.0
 grow_horizontal = 0
 texture = ExtResource("9_empty_star_icon")
 expand_mode = 1
@@ -202,15 +200,14 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -103.0
-offset_top = 30.0
+offset_top = 24.0
 offset_right = -3.0
-offset_bottom = 130.0
+offset_bottom = 124.0
 grow_horizontal = 0
 texture = ExtResource("9_empty_star_icon")
 expand_mode = 1
 stretch_mode = 5
 
-; Level label header.
 [node name="HeaderLevel" type="TextureRect" parent="." unique_id=313131313]
 layout_mode = 1
 anchors_preset = 5
@@ -238,16 +235,15 @@ theme_override_font_sizes/font_size = 80
 text = "Level 1"
 vertical_alignment = 1
 
-; Data/table header panel.
 [node name="DataHeader" type="TextureRect" parent="." unique_id=328111558]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -540.0
-offset_top = 562.0
+offset_top = 543.0
 offset_right = 540.0
-offset_bottom = 903.0
+offset_bottom = 882.0
 grow_horizontal = 2
 mouse_filter = 2
 texture = ExtResource("15_data_header_body")
@@ -264,87 +260,86 @@ texture = ExtResource("16_data_title_header_background")
 expand_mode = 1
 stretch_mode = 5
 
-; Search bar background.
 [node name="SearchBar" type="TextureRect" parent="." unique_id=1313131313]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -524.0
-offset_top = 576.0
-offset_right = 202.0
-offset_bottom = 665.0
+offset_top = 560.0
+offset_right = 292.0
+offset_bottom = 680.0
 grow_horizontal = 2
+mouse_filter = 0
 texture = ExtResource("21_search_bar")
 expand_mode = 1
 stretch_mode = 5
 
-; Search input field placed over the search bar artwork.
-[node name="SearchInput" type="LineEdit" parent="SearchBar"]
+[node name="SearchInput" type="LineEdit" parent="SearchBar" unique_id=533951427]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 95.0
-offset_top = 8.0
+offset_top = 14.0
 offset_right = -20.0
-offset_bottom = -8.0
-mouse_filter = 0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
-theme_override_colors/caret_color = Color(0.972549, 0.909804, 0.74902, 1)
 theme_override_colors/font_placeholder_color = Color(0.6, 0.55, 0.45, 1)
+theme_override_colors/caret_color = Color(0.972549, 0.909804, 0.74902, 1)
 theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxEmpty_search_input")
+theme_override_styles/read_only = SubResource("StyleBoxEmpty_search_input")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_search_input")
 placeholder_text = "Search"
-caret_blink = true
 flat = true
+caret_blink = true
 
-; Filter and clear button holder.
 [node name="SearchButtons" type="Control" parent="." unique_id=1414141414]
 anchors_preset = 0
-offset_left = 756.0
-offset_top = 576.0
-offset_right = 934.0
-offset_bottom = 665.0
+offset_left = 840.0
+offset_top = 560.0
+offset_right = 1080.0
+offset_bottom = 680.0
 
-; Opens filter options.
 [node name="FilterButton" type="TextureButton" parent="SearchButtons" unique_id=1515151515]
 layout_mode = 0
-offset_right = 89.0
-offset_bottom = 89.0
+offset_right = 120.0
+offset_bottom = 120.0
 focus_mode = 0
 texture_normal = ExtResource("22_filter_button")
 texture_pressed = ExtResource("23_filter_button_pressed")
 texture_hover = ExtResource("22_filter_button")
-texture_focused = ExtResource("22_filter_button")
 texture_disabled = ExtResource("22_filter_button")
+texture_focused = ExtResource("22_filter_button")
 ignore_texture_size = true
 stretch_mode = 5
 
-; Clears the current search text.
 [node name="ClearButton" type="TextureButton" parent="SearchButtons" unique_id=1717171717]
 layout_mode = 0
-offset_left = 89.0
-offset_right = 178.0
-offset_bottom = 89.0
+offset_left = 120.0
+offset_right = 240.0
+offset_bottom = 120.0
 focus_mode = 0
 texture_normal = ExtResource("24_clear_button")
 texture_pressed = ExtResource("33_clear_button_pressed")
 texture_hover = ExtResource("24_clear_button")
-texture_focused = ExtResource("24_clear_button")
 texture_disabled = ExtResource("24_clear_button")
+texture_focused = ExtResource("24_clear_button")
 ignore_texture_size = true
 stretch_mode = 5
 
-; Objective panel.
 [node name="HeaderObjective" type="TextureRect" parent="." unique_id=616161616]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -583.0
-offset_top = 305.0
-offset_right = 644.0
-offset_bottom = 555.0
+offset_left = -536.0
+offset_top = 306.0
+offset_right = 543.0
+offset_bottom = 543.0
 grow_horizontal = 2
 mouse_filter = 2
 texture = ExtResource("14_objective_header")
@@ -356,8 +351,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 45.0
-offset_right = -101.0
+offset_left = -2.0
+offset_right = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.8039216, 0.9372549, 0.43137255, 1)
@@ -366,7 +361,6 @@ theme_override_font_sizes/font_size = 96
 text = "Objective"
 vertical_alignment = 1
 
-; Bottom gameplay action footer.
 [node name="Footer" type="TextureRect" parent="." unique_id=515151515]
 layout_mode = 1
 anchors_preset = 12
@@ -489,7 +483,7 @@ theme_override_constants/margin_bottom = 0
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("7_gameplay_font")
-theme_override_font_sizes/font_size = 72
+theme_override_font_sizes/font_size = 60
 text = "Check"
 horizontal_alignment = 1
 vertical_alignment = 1
