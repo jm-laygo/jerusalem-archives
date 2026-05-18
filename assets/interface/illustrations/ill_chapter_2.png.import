@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmop668m21hmu"
-path="res://.godot/imported/chapter_three_illustration.png-0c2d83b26f2725b01d955f99e7c1d04b.ctex"
+uid="uid://bdrf28lsjw5fo"
+path="res://.godot/imported/ill_chapter_2.png-152170d47151a4c46473bfd660eac67c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/illustrations/chapter_three_illustration.png"
-dest_files=["res://.godot/imported/chapter_three_illustration.png-0c2d83b26f2725b01d955f99e7c1d04b.ctex"]
+source_file="res://assets/interface/illustrations/ill_chapter_2.png"
+dest_files=["res://.godot/imported/ill_chapter_2.png-152170d47151a4c46473bfd660eac67c.ctex"]
 
 [params]
 
