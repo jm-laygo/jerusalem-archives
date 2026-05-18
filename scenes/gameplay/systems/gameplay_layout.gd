@@ -101,23 +101,41 @@ func setupObjectiveLabel() -> void:
 	gameplay.objectiveText.clip_text = false
 
 
-# Fixes the filter and clear button positions beside the search bar.
+# Fixes the search input, filter button, and clear button positions.
 func fixSearchButtonsLayout() -> void:
+	if gameplay.searchBar != null:
+		gameplay.searchBar.visible = true
+		gameplay.searchBar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	if gameplay.searchInput != null:
+		gameplay.searchInput.anchor_left = 0.0
+		gameplay.searchInput.anchor_top = 0.0
+		gameplay.searchInput.anchor_right = 1.0
+		gameplay.searchInput.anchor_bottom = 1.0
+		gameplay.searchInput.offset_left = 95.0
+		gameplay.searchInput.offset_top = 8.0
+		gameplay.searchInput.offset_right = -20.0
+		gameplay.searchInput.offset_bottom = -8.0
+		gameplay.searchInput.mouse_filter = Control.MOUSE_FILTER_STOP
+
 	if gameplay.searchButtons == null:
 		return
 
+	gameplay.searchButtons.visible = true
+	gameplay.searchButtons.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	gameplay.searchButtons.size = SEARCH_BUTTONS_SIZE
 
-	var filterIcon := gameplay.searchButtons.get_node_or_null("FilterIcon") as Control
-	var clearIcon := gameplay.searchButtons.get_node_or_null("ClearIcon") as Control
+	if gameplay.filterButton != null:
+		gameplay.filterButton.position = Vector2.ZERO
+		gameplay.filterButton.size = SEARCH_BUTTON_SIZE
+		gameplay.filterButton.ignore_texture_size = true
+		gameplay.filterButton.stretch_mode = TextureButton.STRETCH_SCALE
 
-	if filterIcon != null:
-		filterIcon.position = Vector2.ZERO
-		filterIcon.size = SEARCH_BUTTON_SIZE
-
-	if clearIcon != null:
-		clearIcon.position = Vector2(SEARCH_BUTTON_SIZE.x, 0.0)
-		clearIcon.size = SEARCH_BUTTON_SIZE
+	if gameplay.clearButton != null:
+		gameplay.clearButton.position = Vector2(SEARCH_BUTTON_SIZE.x, 0.0)
+		gameplay.clearButton.size = SEARCH_BUTTON_SIZE
+		gameplay.clearButton.ignore_texture_size = true
+		gameplay.clearButton.stretch_mode = TextureButton.STRETCH_SCALE
 
 
 # Fixes the gameplay footer and its three action buttons.

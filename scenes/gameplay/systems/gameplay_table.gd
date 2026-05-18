@@ -193,18 +193,22 @@ func onHeaderPressed(columnKey: String) -> void:
 
 	if gameplay.activeSortColumnKey == columnKey:
 		gameplay.activeSortColumnKey = ""
-		gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
 	else:
 		gameplay.activeSortColumnKey = columnKey
-		sortRecordsByColumn(columnKey)
+
+	if gameplay.searchSystem != null:
+		gameplay.searchSystem.applySearchFilter(false)
+	elif not gameplay.activeSortColumnKey.is_empty():
+		gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
+		sortCurrentRecordsByColumn(gameplay.activeSortColumnKey)
+	else:
+		gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
 
 	rebuildTableKeepScroll()
 
 
-# Sorts current records using the given column key.
-func sortRecordsByColumn(columnKey: String) -> void:
-	gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
-
+# Sorts the currently displayed records using the given column key.
+func sortCurrentRecordsByColumn(columnKey: String) -> void:
 	if columnKey == RECORD_ID_KEY:
 		gameplay.currentRecords.sort_custom(func(a, b) -> bool:
 			return getRecordIdNumber(a) > getRecordIdNumber(b)
