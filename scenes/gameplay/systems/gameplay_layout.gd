@@ -16,13 +16,20 @@ const OBJECTIVE_TEXT_OFFSET_BOTTOM := -45.0
 const SEARCH_BUTTONS_SIZE := Vector2(240.0, 120.0)
 const SEARCH_BUTTON_SIZE := Vector2(120.0, 120.0)
 
-const SELECTED_PANEL_SIZE := Vector2(1048.0, 72.0)
-const SELECTED_PANEL_TOP := 725.0
-const SELECTED_PANEL_BOTTOM := 797.0
+# Selected panel placement.
+# This sits below the search row and above the table title header.
+const SELECTED_PANEL_LEFT := -524.0
+const SELECTED_PANEL_TOP := 715.0
+const SELECTED_PANEL_RIGHT := 524.0
+const SELECTED_PANEL_BOTTOM := 870.0
 
-const SELECTED_LABEL_WIDTH := 220.0
-const SELECTED_ID_SCROLL_LEFT := 235.0
-const SELECTED_ID_SCROLL_RIGHT := 1048.0
+const SELECTED_LABEL_TOP := 0.0
+const SELECTED_LABEL_BOTTOM := 42.0
+
+const SELECTED_SCROLL_LEFT := 0.0
+const SELECTED_SCROLL_TOP := 44.0
+const SELECTED_SCROLL_RIGHT := 0.0
+const SELECTED_SCROLL_BOTTOM := 150.0
 
 var gameplay: Control
 
@@ -41,7 +48,15 @@ func applyFixedPhoneLayout() -> void:
 	positionCenteredNode(gameplay.dataHeader, -540.0, 562.0, 540.0, 903.0)
 	positionCenteredNode(gameplay.searchBar, -524.0, 590.0, 292.0, 710.0)
 	positionCenteredNode(gameplay.searchButtons, 300.0, 590.0, 540.0, 710.0)
-	positionCenteredNode(gameplay.selectedPanel, -524.0, SELECTED_PANEL_TOP, 524.0, SELECTED_PANEL_BOTTOM)
+
+	# Selected ID display must be under search, above table header.
+	positionCenteredNode(
+		gameplay.selectedPanel,
+		SELECTED_PANEL_LEFT,
+		SELECTED_PANEL_TOP,
+		SELECTED_PANEL_RIGHT,
+		SELECTED_PANEL_BOTTOM
+	)
 
 	positionCenteredBottomNode(gameplay.footer, -540.0, 540.0, FOOTER_HEIGHT)
 
@@ -89,23 +104,41 @@ func positionCenteredBottomNode(
 	node.offset_bottom = 0.0
 
 
-# Fixes the objective text layout inside the objective header.
+# Fixes the objective scroll and objective label layout.
 func setupObjectiveLabel() -> void:
+	if gameplay.objectiveScroll != null:
+		gameplay.objectiveScroll.anchor_left = 0.0
+		gameplay.objectiveScroll.anchor_top = 0.0
+		gameplay.objectiveScroll.anchor_right = 1.0
+		gameplay.objectiveScroll.anchor_bottom = 1.0
+
+		gameplay.objectiveScroll.offset_left = OBJECTIVE_TEXT_OFFSET_LEFT
+		gameplay.objectiveScroll.offset_top = OBJECTIVE_TEXT_OFFSET_TOP
+		gameplay.objectiveScroll.offset_right = OBJECTIVE_TEXT_OFFSET_RIGHT
+		gameplay.objectiveScroll.offset_bottom = OBJECTIVE_TEXT_OFFSET_BOTTOM
+
+		gameplay.objectiveScroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		gameplay.objectiveScroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		gameplay.objectiveScroll.mouse_filter = Control.MOUSE_FILTER_PASS
+
 	if gameplay.objectiveText == null:
 		return
 
 	gameplay.objectiveText.anchor_left = 0.0
 	gameplay.objectiveText.anchor_top = 0.0
 	gameplay.objectiveText.anchor_right = 1.0
-	gameplay.objectiveText.anchor_bottom = 1.0
+	gameplay.objectiveText.anchor_bottom = 0.0
 
-	gameplay.objectiveText.offset_left = OBJECTIVE_TEXT_OFFSET_LEFT
-	gameplay.objectiveText.offset_top = OBJECTIVE_TEXT_OFFSET_TOP
-	gameplay.objectiveText.offset_right = OBJECTIVE_TEXT_OFFSET_RIGHT
-	gameplay.objectiveText.offset_bottom = OBJECTIVE_TEXT_OFFSET_BOTTOM
+	gameplay.objectiveText.offset_left = 0.0
+	gameplay.objectiveText.offset_top = 0.0
+	gameplay.objectiveText.offset_right = 0.0
+	gameplay.objectiveText.offset_bottom = 0.0
+
+	gameplay.objectiveText.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gameplay.objectiveText.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 
 	gameplay.objectiveText.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gameplay.objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	gameplay.objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	gameplay.objectiveText.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	gameplay.objectiveText.clip_text = false
 
@@ -147,6 +180,7 @@ func fixSearchButtonsLayout() -> void:
 		gameplay.clearButton.ignore_texture_size = true
 		gameplay.clearButton.stretch_mode = TextureButton.STRETCH_SCALE
 
+
 # Fixes the selected record display below the search tools.
 func setupSelectedPanelLayout() -> void:
 	if gameplay.selectedPanel == null:
@@ -154,37 +188,51 @@ func setupSelectedPanelLayout() -> void:
 
 	gameplay.selectedPanel.visible = true
 	gameplay.selectedPanel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	gameplay.selectedPanel.size = SELECTED_PANEL_SIZE
+
+	# Keep the panel in the same centered gameplay column.
+	gameplay.selectedPanel.anchor_left = 0.5
+	gameplay.selectedPanel.anchor_top = 0.0
+	gameplay.selectedPanel.anchor_right = 0.5
+	gameplay.selectedPanel.anchor_bottom = 0.0
+	gameplay.selectedPanel.offset_left = SELECTED_PANEL_LEFT
+	gameplay.selectedPanel.offset_top = SELECTED_PANEL_TOP
+	gameplay.selectedPanel.offset_right = SELECTED_PANEL_RIGHT
+	gameplay.selectedPanel.offset_bottom = SELECTED_PANEL_BOTTOM
 
 	if gameplay.selectedCountLabel != null:
 		gameplay.selectedCountLabel.anchor_left = 0.0
 		gameplay.selectedCountLabel.anchor_top = 0.0
-		gameplay.selectedCountLabel.anchor_right = 0.0
-		gameplay.selectedCountLabel.anchor_bottom = 1.0
+		gameplay.selectedCountLabel.anchor_right = 1.0
+		gameplay.selectedCountLabel.anchor_bottom = 0.0
 
 		gameplay.selectedCountLabel.offset_left = 0.0
-		gameplay.selectedCountLabel.offset_top = 0.0
-		gameplay.selectedCountLabel.offset_right = SELECTED_LABEL_WIDTH
-		gameplay.selectedCountLabel.offset_bottom = 0.0
+		gameplay.selectedCountLabel.offset_top = SELECTED_LABEL_TOP
+		gameplay.selectedCountLabel.offset_right = 0.0
+		gameplay.selectedCountLabel.offset_bottom = SELECTED_LABEL_BOTTOM
 
-		gameplay.selectedCountLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		gameplay.selectedCountLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		gameplay.selectedCountLabel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		gameplay.selectedCountLabel.add_theme_font_size_override("font_size", 34)
 
 	if gameplay.selectedIdScroll != null:
 		gameplay.selectedIdScroll.anchor_left = 0.0
 		gameplay.selectedIdScroll.anchor_top = 0.0
-		gameplay.selectedIdScroll.anchor_right = 0.0
-		gameplay.selectedIdScroll.anchor_bottom = 1.0
+		gameplay.selectedIdScroll.anchor_right = 1.0
+		gameplay.selectedIdScroll.anchor_bottom = 0.0
 
-		gameplay.selectedIdScroll.offset_left = SELECTED_ID_SCROLL_LEFT
-		gameplay.selectedIdScroll.offset_top = 0.0
-		gameplay.selectedIdScroll.offset_right = SELECTED_ID_SCROLL_RIGHT
-		gameplay.selectedIdScroll.offset_bottom = 0.0
+		gameplay.selectedIdScroll.offset_left = SELECTED_SCROLL_LEFT
+		gameplay.selectedIdScroll.offset_top = SELECTED_SCROLL_TOP
+		gameplay.selectedIdScroll.offset_right = SELECTED_SCROLL_RIGHT
+		gameplay.selectedIdScroll.offset_bottom = SELECTED_SCROLL_BOTTOM
+
+		gameplay.selectedIdScroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		gameplay.selectedIdScroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		gameplay.selectedIdScroll.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	if gameplay.selectedIdHBox != null:
 		gameplay.selectedIdHBox.anchor_left = 0.0
 		gameplay.selectedIdHBox.anchor_top = 0.0
-		gameplay.selectedIdHBox.anchor_right = 0.0
+		gameplay.selectedIdHBox.anchor_right = 1.0
 		gameplay.selectedIdHBox.anchor_bottom = 1.0
 
 		gameplay.selectedIdHBox.offset_left = 0.0
@@ -192,7 +240,9 @@ func setupSelectedPanelLayout() -> void:
 		gameplay.selectedIdHBox.offset_right = 0.0
 		gameplay.selectedIdHBox.offset_bottom = 0.0
 
-		gameplay.selectedIdHBox.add_theme_constant_override("separation", 12)
+		gameplay.selectedIdHBox.alignment = BoxContainer.ALIGNMENT_CENTER
+		gameplay.selectedIdHBox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		gameplay.selectedIdHBox.add_theme_constant_override("separation", 16)
 
 
 # Fixes the gameplay footer and its three action buttons.
