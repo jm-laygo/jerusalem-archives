@@ -1,7 +1,6 @@
 extends RefCounted
 
 const OBJECTIVE_FONT_SIZE := 40
-const OBJECTIVE_SELECTED_FONT_SIZE := 46
 const OBJECTIVE_MESSAGE_FONT_SIZE := 48
 const OBJECTIVE_WARNING_FONT_SIZE := 50
 
@@ -39,7 +38,10 @@ func loadLevel(levelNumber: int) -> void:
 	gameplay.hintIndex = 0
 	gameplay.hintsUsed = 0
 	gameplay.currentStars = 3
-	gameplay.timeRemaining = float(gameplay.currentLevel.get("time_limit", DEFAULT_TIME_LIMIT))
+
+	gameplay.levelTimeLimit = float(gameplay.currentLevel.get("time_limit", DEFAULT_TIME_LIMIT))
+	gameplay.timeRemaining = gameplay.levelTimeLimit
+
 	gameplay.levelFinished = false
 
 	gameplay.selectedRecord = {}
@@ -54,7 +56,10 @@ func loadLevel(levelNumber: int) -> void:
 
 	gameplay.setObjectiveText(str(gameplay.currentLevel.get("objective", DEFAULT_OBJECTIVE)), OBJECTIVE_FONT_SIZE)
 
+	gameplay.hudSystem.previousHearts = -1
+	gameplay.hudSystem.previousStars = -1
 	gameplay.hudSystem.updateHud()
+
 	gameplay.tableSystem.buildTable()
 
 
@@ -98,14 +103,8 @@ func onRowSelected(record: Dictionary, row: Button) -> void:
 	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("setSelected"):
 		gameplay.selectedRow.setSelected(true)
 
-	var recordId := str(gameplay.selectedRecord.get("record_id", ""))
-	var recordName := str(gameplay.selectedRecord.get("name", ""))
-	var surname := str(gameplay.selectedRecord.get("surname", ""))
-
-	gameplay.setObjectiveText(
-		"Selected: %s — %s %s" % [recordId, recordName, surname],
-		OBJECTIVE_SELECTED_FONT_SIZE
-	)
+	# Do not change the objective header here.
+	# The objective must stay as the actual level objective.
 
 
 # Checks whether the selected record is correct.
@@ -129,7 +128,12 @@ func onCheckPressed() -> void:
 func handleCorrectRecord(selectedId: String) -> void:
 	gameplay.levelFinished = true
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
+
 	gameplay.hudSystem.updateHud()
+	gameplay.hudSystem.updateStarDisplay(true)
+
+	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("playCorrectAnimation"):
+		gameplay.selectedRow.playCorrectAnimation()
 
 	gameplay.setObjectiveText(
 		"Case Solved! Correct record: %s" % selectedId,
@@ -141,10 +145,14 @@ func handleCorrectRecord(selectedId: String) -> void:
 func handleWrongRecord() -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 
+	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("playWrongAnimation"):
+		gameplay.selectedRow.playWrongAnimation()
+
 	gameplay.hearts -= 1
 	gameplay.hearts = max(gameplay.hearts, 0)
 
 	gameplay.hudSystem.updateHud()
+	gameplay.hudSystem.updateStarDisplay(true)
 
 	if gameplay.hearts <= 0:
 		gameplay.levelFinished = true
@@ -161,19 +169,19 @@ func onHintPressed() -> void:
 	var hints: Array = gameplay.currentLevel.get("hints", [])
 
 	if hints.is_empty():
-		gameplay.setObjectiveText("No hints available.", OBJECTIVE_SELECTED_FONT_SIZE)
+		gameplay.setObjectiveText("No hints available.", OBJECTIVE_MESSAGE_FONT_SIZE)
 		return
 
 	if gameplay.hintIndex >= hints.size():
-		gameplay.setObjectiveText("No more hints available.", OBJECTIVE_SELECTED_FONT_SIZE)
+		gameplay.setObjectiveText("No more hints available.", OBJECTIVE_MESSAGE_FONT_SIZE)
 		return
 
-	gameplay.setObjectiveText(str(hints[gameplay.hintIndex]), OBJECTIVE_SELECTED_FONT_SIZE)
+	gameplay.setObjectiveText(str(hints[gameplay.hintIndex]), OBJECTIVE_FONT_SIZE)
 
 	gameplay.hintIndex += 1
 	gameplay.hintsUsed += 1
 
-	gameplay.hudSystem.updateStarDisplay()
+	gameplay.hudSystem.updateStarDisplay(true)
 
 
 # Shows the level story/objective info.
