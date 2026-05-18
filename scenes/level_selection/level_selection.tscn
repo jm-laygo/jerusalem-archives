@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://sedrdh74c04v"]
+
+[ext_resource type="Texture2D" uid="uid://dm3r8u2k7nrkb" path="res://assets/interface/illustrations/level_selection_illustration.png" id="1_level_selection"]
+[ext_resource type="Texture2D" uid="uid://cemqvp608m7kv" path="res://assets/interface/ui/level_selection/level_selection_header.png" id="2_level_selection_header"]
+[ext_resource type="Texture2D" uid="uid://cbb7ida1l4hff" path="res://assets/interface/buttons/play_button.png" id="3_play_button"]
+[ext_resource type="PackedScene" uid="uid://btbe6ygcwjmdp" path="res://scenes/ui/components/game_footer/game_footer.tscn" id="4_game_footer"]
+[ext_resource type="Texture2D" uid="uid://c1xe77fswju3i" path="res://assets/interface/buttons/play_button_clicked.png" id="4_play_button_clicked"]
+[ext_resource type="Script" uid="uid://bkugreh2gp7ha" path="res://scenes/level_selection/level_selection.gd" id="5_level_selection_script"]
+
+[node name="LevelSelection" type="Control" unique_id=1885473021]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_level_selection_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1219074408]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_level_selection")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Header" type="TextureRect" parent="." unique_id=176434412]
+layout_mode = 1
+offset_left = -182.0
+offset_top = -31.0
+offset_right = 1342.0
+offset_bottom = 1263.0
+texture = ExtResource("2_level_selection_header")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContentLayer" type="Control" parent="." unique_id=1889265174]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -3.0
+offset_right = -3.0
+offset_bottom = -1061.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayButton" type="TextureButton" parent="ContentLayer" unique_id=1324918707]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -533.0
+offset_top = 146.0
+offset_right = 5.0
+offset_bottom = 354.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+mouse_filter = 1
+texture_normal = ExtResource("3_play_button")
+texture_pressed = ExtResource("4_play_button_clicked")
+texture_hover = ExtResource("3_play_button")
+texture_disabled = ExtResource("3_play_button")
+texture_focused = ExtResource("3_play_button")
+stretch_mode = 0
+
+[node name="GameFooter" parent="." unique_id=1303820499 instance=ExtResource("4_game_footer")]
+layout_mode = 1
