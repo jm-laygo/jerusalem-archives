@@ -21,8 +21,9 @@
 [ext_resource type="AudioStream" uid="uid://dhjvjwcwil3k8" path="res://assets/sounds/ui/ui_check_correct.wav" id="20_check_correct_sound"]
 [ext_resource type="Texture2D" uid="uid://bcjebfnapnjoo" path="res://assets/interface/search/search_bar.png" id="21_search_bar"]
 [ext_resource type="Texture2D" uid="uid://doy1vhk0shniw" path="res://assets/interface/buttons/btn_filter.png" id="22_filter_button"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_filter_pressed.png" id="23_filter_button_pressed"]
 [ext_resource type="Texture2D" uid="uid://dpnr1c2ohrkvl" path="res://assets/interface/buttons/btn_clear.png" id="24_clear_button"]
-[ext_resource type="Script" uid="uid://vv0su3frxb8f" path="res://scenes/gameplay/gameplay.gd" id="25_gameplay_script"]
+[ext_resource type="Script" uid="uid://bc0cnq6ptanbx" path="res://scenes/gameplay/gameplay.gd" id="25_gameplay_script"]
 [ext_resource type="AudioStream" uid="uid://cwrdutr1dqbvy" path="res://assets/sounds/ui/ui_info.wav" id="26_info_click_sound"]
 [ext_resource type="AudioStream" uid="uid://b6iei1mh07cdy" path="res://assets/sounds/ui/ui_check_incorrect.wav" id="27_check_incorrect_sound"]
 [ext_resource type="Texture2D" uid="uid://b040b44j30613" path="res://assets/interface/ui/level_gameplay/ui_footer_background.png" id="28_footer_button"]
@@ -30,6 +31,8 @@
 [ext_resource type="AudioStream" uid="uid://boanjes6fi268" path="res://assets/sounds/ui/ui_row_click.wav" id="30_row_click_sound"]
 [ext_resource type="AudioStream" uid="uid://b8wjhpp64e1u1" path="res://assets/sounds/ui/title_header_click.wav" id="31_title_header_click_sound"]
 [ext_resource type="AudioStream" uid="uid://viqbrjmlkuoa" path="res://assets/sounds/sfx/sfx_start_gameplay.wav" id="32_start_gameplay_sound"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_clear_pressed.png" id="33_clear_button_pressed"]
+
 
 ; Root gameplay screen.
 [node name="Gameplay" type="Control" unique_id=101010101]
@@ -261,26 +264,6 @@ texture = ExtResource("16_data_title_header_background")
 expand_mode = 1
 stretch_mode = 5
 
-; Legacy table viewport. Runtime script replaces/creates manual table nodes.
-[node name="TableViewport" type="ScrollContainer" parent="DataHeader" unique_id=1818181818]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 196.0
-offset_right = 1081.0
-offset_bottom = 1136.0
-
-[node name="TableContent" type="VBoxContainer" parent="DataHeader/TableViewport" unique_id=1919191919]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="HeaderHBox" type="HBoxContainer" parent="DataHeader/TableViewport/TableContent" unique_id=2020202020]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="RowsVBox" type="VBoxContainer" parent="DataHeader/TableViewport/TableContent" unique_id=2121212121]
-layout_mode = 2
-theme_override_constants/separation = 0
-
 ; Search bar background.
 [node name="SearchBar" type="TextureRect" parent="." unique_id=1313131313]
 layout_mode = 1
@@ -296,7 +279,26 @@ texture = ExtResource("21_search_bar")
 expand_mode = 1
 stretch_mode = 5
 
-; Filter and clear buttons.
+; Search input field placed over the search bar artwork.
+[node name="SearchInput" type="LineEdit" parent="SearchBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 95.0
+offset_top = 8.0
+offset_right = -20.0
+offset_bottom = -8.0
+mouse_filter = 0
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/caret_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/font_placeholder_color = Color(0.6, 0.55, 0.45, 1)
+theme_override_font_sizes/font_size = 42
+placeholder_text = "Search"
+caret_blink = true
+flat = true
+
+; Filter and clear button holder.
 [node name="SearchButtons" type="Control" parent="." unique_id=1414141414]
 anchors_preset = 0
 offset_left = 756.0
@@ -304,21 +306,33 @@ offset_top = 576.0
 offset_right = 934.0
 offset_bottom = 665.0
 
-[node name="FilterIcon" type="TextureRect" parent="SearchButtons" unique_id=1515151515]
+; Opens filter options.
+[node name="FilterButton" type="TextureButton" parent="SearchButtons" unique_id=1515151515]
 layout_mode = 0
 offset_right = 89.0
 offset_bottom = 89.0
-texture = ExtResource("22_filter_button")
-expand_mode = 1
+focus_mode = 0
+texture_normal = ExtResource("22_filter_button")
+texture_pressed = ExtResource("23_filter_button_pressed")
+texture_hover = ExtResource("22_filter_button")
+texture_focused = ExtResource("22_filter_button")
+texture_disabled = ExtResource("22_filter_button")
+ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ClearIcon" type="TextureRect" parent="SearchButtons" unique_id=1717171717]
+; Clears the current search text.
+[node name="ClearButton" type="TextureButton" parent="SearchButtons" unique_id=1717171717]
 layout_mode = 0
 offset_left = 89.0
 offset_right = 178.0
 offset_bottom = 89.0
-texture = ExtResource("24_clear_button")
-expand_mode = 1
+focus_mode = 0
+texture_normal = ExtResource("24_clear_button")
+texture_pressed = ExtResource("33_clear_button_pressed")
+texture_hover = ExtResource("24_clear_button")
+texture_focused = ExtResource("24_clear_button")
+texture_disabled = ExtResource("24_clear_button")
+ignore_texture_size = true
 stretch_mode = 5
 
 ; Objective panel.
