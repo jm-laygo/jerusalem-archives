@@ -233,15 +233,17 @@ func onFilterPressed() -> void:
 		gameplay.setObjectiveText("Filter options will be added later.", 44)
 
 
-# Clears the search text and restores all records.
+# Clears the search text, selected records, and restores all records.
 func onClearPressed() -> void:
 	playSelectSound()
 	releaseSearchFocus()
 
-	if gameplay.searchInput == null:
-		return
+	if gameplay.searchInput != null:
+		gameplay.searchInput.text = ""
 
-	gameplay.searchInput.text = ""
+	if gameplay.selectionSystem != null:
+		gameplay.selectionSystem.resetSelection()
+
 	applySearchFilter()
 
 
