@@ -1,0 +1,155 @@
+[gd_scene format=3 uid="uid://cep3e7bbbx05i"]
+
+[ext_resource type="Script" uid="uid://h70trxdn8460" path="res://scenes/level_gameplay/pause_overlay.gd" id="1_pause_script"]
+[ext_resource type="Texture2D" uid="uid://b7ph0n31uytee" path="res://assets/interface/ui/pause/pause_ui.png" id="2_pause_ui"]
+[ext_resource type="Texture2D" uid="uid://dhtmvshbw0dee" path="res://assets/interface/ui/pause/pause_button.png" id="3_pause_button"]
+[ext_resource type="Texture2D" uid="uid://dec52t8nbbcla" path="res://assets/interface/ui/pause/pause_button_clicked.png" id="4_pause_button_clicked"]
+[ext_resource type="FontFile" uid="uid://dhhkye8uh0ohh" path="res://assets/fonts/Noto_Sans_SC/NotoSansSC-Medium.otf" id="5_noto_sans"]
+
+[node name="PauseOverlay" type="Control" unique_id=22817972]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pause_script")
+
+[node name="Dim" type="ColorRect" parent="." unique_id=2101086281]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="PausePanel" type="TextureRect" parent="." unique_id=1442268831]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_pause_ui")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Buttons" type="VBoxContainer" parent="PausePanel" unique_id=1113484680]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = 4.0
+offset_right = 350.0
+offset_bottom = 759.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 44
+alignment = 1
+
+[node name="ResumeButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=53572666]
+custom_minimum_size = Vector2(700, 118)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+texture_normal = ExtResource("3_pause_button")
+texture_pressed = ExtResource("4_pause_button_clicked")
+texture_hover = ExtResource("4_pause_button_clicked")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="ResumeLabel" type="Label" parent="PausePanel/Buttons/ResumeButton" unique_id=1640676833]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.819608, 0.572549, 0.376471, 1)
+theme_override_fonts/font = ExtResource("5_noto_sans")
+theme_override_font_sizes/font_size = 42
+text = "Resume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AchievementsButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=919840278]
+custom_minimum_size = Vector2(700, 118)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+texture_normal = ExtResource("3_pause_button")
+texture_pressed = ExtResource("4_pause_button_clicked")
+texture_hover = ExtResource("4_pause_button_clicked")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="AchievementsLabel" type="Label" parent="PausePanel/Buttons/AchievementsButton" unique_id=1424140443]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.819608, 0.572549, 0.376471, 1)
+theme_override_fonts/font = ExtResource("5_noto_sans")
+theme_override_font_sizes/font_size = 42
+text = "Achievements"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SettingsButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=1970613171]
+custom_minimum_size = Vector2(700, 118)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+texture_normal = ExtResource("3_pause_button")
+texture_pressed = ExtResource("4_pause_button_clicked")
+texture_hover = ExtResource("4_pause_button_clicked")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="SettingsLabel" type="Label" parent="PausePanel/Buttons/SettingsButton" unique_id=247974387]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.819608, 0.572549, 0.376471, 1)
+theme_override_fonts/font = ExtResource("5_noto_sans")
+theme_override_font_sizes/font_size = 42
+text = "Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackToMenuButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=1253876405]
+custom_minimum_size = Vector2(700, 118)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+texture_normal = ExtResource("3_pause_button")
+texture_pressed = ExtResource("4_pause_button_clicked")
+texture_hover = ExtResource("4_pause_button_clicked")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="BackToMenuLabel" type="Label" parent="PausePanel/Buttons/BackToMenuButton" unique_id=191727863]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.819608, 0.572549, 0.376471, 1)
+theme_override_fonts/font = ExtResource("5_noto_sans")
+theme_override_font_sizes/font_size = 42
+text = "Back to Menu"
+horizontal_alignment = 1
+vertical_alignment = 1

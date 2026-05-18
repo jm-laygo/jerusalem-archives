@@ -1,0 +1,536 @@
+[gd_scene format=3 uid="uid://clq8gbyqr44d2"]
+
+[ext_resource type="Texture2D" uid="uid://c2oia2pmobk76" path="res://assets/interface/illustrations/level_gameplay_illustration.png" id="1_level_gameplay"]
+[ext_resource type="Texture2D" uid="uid://dl473mi2bv1vn" path="res://assets/interface/ui/level_gameplay/level_gameplay_header_level.png" id="2_level_gameplay_header_level"]
+[ext_resource type="Texture2D" uid="uid://dgu2ugd4yr501" path="res://assets/interface/ui/level_gameplay/level_gameplay_header.png" id="3_level_gameplay_header"]
+[ext_resource type="Texture2D" uid="uid://cbuvbsuhlr5fw" path="res://assets/interface/icons/pause_icon.png" id="4_pause_icon"]
+[ext_resource type="Texture2D" uid="uid://dcl86ep3dkhx6" path="res://assets/interface/icons/lives_icon.png" id="6_lives_icon"]
+[ext_resource type="FontFile" uid="uid://ca2eduxjra50j" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="7_level_gameplay_font"]
+[ext_resource type="Texture2D" uid="uid://dx02geoxvs8iq" path="res://assets/interface/icons/time_icon.png" id="8_time_icon"]
+[ext_resource type="Texture2D" uid="uid://eiyp52b2moan" path="res://assets/interface/icons/empty_stars_icon.png" id="9_empty_stars_icon"]
+[ext_resource type="Texture2D" uid="uid://1y8aqf6xtghe" path="res://assets/interface/ui/level_gameplay/level_gameplay_footer.png" id="10_level_gameplay_footer"]
+[ext_resource type="Texture2D" uid="uid://cdd5ld35l8tpm" path="res://assets/interface/icons/hint_icon.png" id="11_hint_icon"]
+[ext_resource type="Texture2D" uid="uid://5hyfhfx3r6jo" path="res://assets/interface/icons/check_icon.png" id="12_check_icon"]
+[ext_resource type="Texture2D" uid="uid://drn6np2gcgpq0" path="res://assets/interface/icons/info_icon.png" id="13_info_icon"]
+[ext_resource type="Texture2D" uid="uid://cidw1sfw6vgbc" path="res://assets/interface/ui/level_gameplay/level_gameplay_objective_header.png" id="14_level_gameplay_objective_header"]
+[ext_resource type="Texture2D" uid="uid://brm0m74tq5b75" path="res://assets/interface/ui/level_gameplay/level_gameplay_data_header_body.png" id="15_level_gameplay_data_header_body"]
+[ext_resource type="Texture2D" uid="uid://njso6r0at0bu" path="res://assets/interface/ui/level_gameplay/level_gameplay_data_title_header_background.png" id="16_level_gameplay_data_title_header_background"]
+[ext_resource type="AudioStream" uid="uid://bf5bphnuu3ncj" path="res://assets/sounds/ui/generic_pause.wav" id="17_pause_click_sound"]
+[ext_resource type="AudioStream" uid="uid://rbttedrfioa5" path="res://assets/sounds/ui/generic_select.wav" id="18_pause_menu_click_sound"]
+[ext_resource type="AudioStream" uid="uid://b7kfsixjw3rqa" path="res://assets/sounds/ui/hint_click.wav" id="19_hint_click_sound"]
+[ext_resource type="AudioStream" uid="uid://dhjvjwcwil3k8" path="res://assets/sounds/ui/check_correct.wav" id="20_check_correct_sound"]
+[ext_resource type="Texture2D" uid="uid://bcjebfnapnjoo" path="res://assets/interface/search/search_bar.png" id="21_search_bar"]
+[ext_resource type="Texture2D" uid="uid://doy1vhk0shniw" path="res://assets/interface/icons/filter_button.png" id="22_filter_button"]
+[ext_resource type="Texture2D" uid="uid://onvh4dlhbtwv" path="res://assets/interface/icons/sort_button.png" id="23_sort_button"]
+[ext_resource type="Texture2D" uid="uid://dpnr1c2ohrkvl" path="res://assets/interface/icons/clear_button.png" id="24_clear_button"]
+[ext_resource type="Script" uid="uid://vv0su3frxb8f" path="res://scenes/level_gameplay/level_gameplay.gd" id="25_level_gameplay_script"]
+[ext_resource type="AudioStream" uid="uid://cwrdutr1dqbvy" path="res://assets/sounds/ui/info_click.wav" id="26_info_click_sound"]
+[ext_resource type="AudioStream" uid="uid://b6iei1mh07cdy" path="res://assets/sounds/ui/check_incorrect.wav" id="27_check_incorrect_sound"]
+[ext_resource type="Texture2D" uid="uid://b040b44j30613" path="res://assets/interface/ui/level_gameplay/level_gameplay_footer_button.png" id="28_footer_button"]
+[ext_resource type="Texture2D" path="res://assets/interface/ui/level_gameplay/level_gameplay_footer_button_clicked.png" id="29_footer_button_clicked"]
+[ext_resource type="AudioStream" path="res://assets/sounds/ui/row_click.wav" id="30_row_click_sound"]
+[ext_resource type="AudioStream" path="res://assets/sounds/ui/title_header_click.wav" id="31_title_header_click_sound"]
+
+
+[node name="LevelGameplay" type="Control" unique_id=101010101]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("25_level_gameplay_script")
+
+[node name="PauseClickSound" type="AudioStreamPlayer" parent="." unique_id=606060606]
+stream = ExtResource("17_pause_click_sound")
+
+[node name="PauseMenuClickSound" type="AudioStreamPlayer" parent="." unique_id=616060606]
+stream = ExtResource("18_pause_menu_click_sound")
+
+[node name="HintClickSound" type="AudioStreamPlayer" parent="." unique_id=626060606]
+stream = ExtResource("19_hint_click_sound")
+
+[node name="CheckCorrectSound" type="AudioStreamPlayer" parent="." unique_id=636060606]
+stream = ExtResource("20_check_correct_sound")
+
+[node name="CheckIncorrectSound" type="AudioStreamPlayer" parent="." unique_id=646060607]
+stream = ExtResource("27_check_incorrect_sound")
+
+[node name="InfoClickSound" type="AudioStreamPlayer" parent="." unique_id=646060606]
+stream = ExtResource("26_info_click_sound")
+
+[node name="RowClickSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("30_row_click_sound")
+
+[node name="TitleHeaderClickSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("31_title_header_click_sound")
+
+[node name="Background" type="TextureRect" parent="." unique_id=202020202]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_level_gameplay")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Header" type="TextureRect" parent="." unique_id=303030303]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -540.0
+offset_right = 540.0
+offset_bottom = 167.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("3_level_gameplay_header")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HudLayer" type="Control" parent="Header" unique_id=404040404]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PauseButton" type="TextureButton" parent="Header/HudLayer" unique_id=404040405]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 21.0
+offset_right = 118.0
+offset_bottom = 121.0
+focus_mode = 0
+texture_normal = ExtResource("4_pause_icon")
+texture_pressed = ExtResource("4_pause_icon")
+texture_hover = ExtResource("4_pause_icon")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LivesIcon" type="TextureRect" parent="Header/HudLayer" unique_id=404040407]
+layout_mode = 0
+offset_left = 161.0
+offset_top = 24.0
+offset_right = 261.0
+offset_bottom = 124.0
+texture = ExtResource("6_lives_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LivesText" type="Label" parent="Header/HudLayer" unique_id=404040408]
+layout_mode = 0
+offset_left = 287.0
+offset_top = 33.0
+offset_right = 413.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 80
+text = "4/4"
+vertical_alignment = 1
+
+[node name="TimeIcon" type="TextureRect" parent="Header/HudLayer" unique_id=404040409]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 30.0
+offset_right = 543.0
+offset_bottom = 130.0
+texture = ExtResource("8_time_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TimeText" type="Label" parent="Header/HudLayer" unique_id=404040410]
+layout_mode = 0
+offset_left = 558.0
+offset_top = 31.0
+offset_right = 772.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 80
+text = "04:00"
+vertical_alignment = 1
+
+[node name="EmptyStars3" type="TextureRect" parent="Header/HudLayer" unique_id=1659303845]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -278.0
+offset_top = 30.0
+offset_right = -178.0
+offset_bottom = 130.0
+grow_horizontal = 0
+texture = ExtResource("9_empty_stars_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EmptyStars2" type="TextureRect" parent="Header/HudLayer" unique_id=1757399762]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -190.0
+offset_top = 30.0
+offset_right = -90.0
+offset_bottom = 130.0
+grow_horizontal = 0
+texture = ExtResource("9_empty_stars_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EmptyStars" type="TextureRect" parent="Header/HudLayer" unique_id=404040411]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -103.0
+offset_top = 30.0
+offset_right = -3.0
+offset_bottom = 130.0
+grow_horizontal = 0
+texture = ExtResource("9_empty_stars_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeaderLevel" type="TextureRect" parent="." unique_id=313131313]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -540.0
+offset_top = 68.0
+offset_right = 541.0
+offset_bottom = 404.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("2_level_gameplay_header_level")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LevelText" type="Label" parent="HeaderLevel" unique_id=551938404]
+layout_mode = 0
+offset_left = 414.0
+offset_top = 132.0
+offset_right = 667.0
+offset_bottom = 213.0
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 80
+text = "Level 1"
+vertical_alignment = 1
+
+[node name="DataHeader" type="TextureRect" parent="." unique_id=328111558]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -540.0
+offset_top = 562.0
+offset_right = 540.0
+offset_bottom = 903.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("15_level_gameplay_data_header_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DataTitleHeaderBackground" type="TextureRect" parent="DataHeader" unique_id=166166166]
+layout_mode = 0
+offset_top = 234.0
+offset_right = 1081.0
+offset_bottom = 373.0
+mouse_filter = 2
+texture = ExtResource("16_level_gameplay_data_title_header_background")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TableViewport" type="ScrollContainer" parent="DataHeader" unique_id=1818181818]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 196.0
+offset_right = 1081.0
+offset_bottom = 1136.0
+
+[node name="TableContent" type="VBoxContainer" parent="DataHeader/TableViewport" unique_id=1919191919]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HeaderHBox" type="HBoxContainer" parent="DataHeader/TableViewport/TableContent" unique_id=2020202020]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="RowsVBox" type="VBoxContainer" parent="DataHeader/TableViewport/TableContent" unique_id=2121212121]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="SearchBar" type="TextureRect" parent="." unique_id=1313131313]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -524.0
+offset_top = 576.0
+offset_right = 202.0
+offset_bottom = 665.0
+grow_horizontal = 2
+texture = ExtResource("21_search_bar")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SearchButtons" type="Control" parent="." unique_id=1414141414]
+anchors_preset = 0
+offset_left = 756.0
+offset_top = 576.0
+offset_right = 1062.0
+offset_bottom = 665.0
+
+[node name="FilterIcon" type="TextureRect" parent="SearchButtons" unique_id=1515151515]
+layout_mode = 0
+offset_right = 89.0
+offset_bottom = 89.0
+texture = ExtResource("22_filter_button")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SortIcon" type="TextureRect" parent="SearchButtons" unique_id=1616161616]
+layout_mode = 0
+offset_left = 98.0
+offset_right = 187.0
+offset_bottom = 89.0
+texture = ExtResource("23_sort_button")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ClearIcon" type="TextureRect" parent="SearchButtons" unique_id=1717171717]
+layout_mode = 0
+offset_left = 196.0
+offset_right = 285.0
+offset_bottom = 89.0
+texture = ExtResource("24_clear_button")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeaderObjective" type="TextureRect" parent="." unique_id=616161616]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -540.0
+offset_top = 302.0
+offset_right = 540.0
+offset_bottom = 564.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("14_level_gameplay_objective_header")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ObjectiveText" type="Label" parent="HeaderObjective" unique_id=1630019393]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 92.0
+offset_right = 722.0
+offset_bottom = 173.0
+theme_override_colors/font_color = Color(0.8039216, 0.9372549, 0.43137255, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 80
+text = "Objective"
+vertical_alignment = 1
+
+[node name="Footer" type="TextureRect" parent="." unique_id=515151515]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -212.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("10_level_gameplay_footer")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="FooterButtons" type="HBoxContainer" parent="Footer" unique_id=525252525]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="HintButton" type="TextureButton" parent="Footer/FooterButtons" unique_id=535353535]
+custom_minimum_size = Vector2(360, 217)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+texture_normal = ExtResource("28_footer_button")
+texture_pressed = ExtResource("29_footer_button_clicked")
+texture_hover = ExtResource("28_footer_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HintContent" type="HBoxContainer" parent="Footer/FooterButtons/HintButton" unique_id=1129765472]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="HintIcon" type="TextureRect" parent="Footer/FooterButtons/HintButton/HintContent" unique_id=1540391296]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("11_hint_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HintLabelMargin" type="MarginContainer" parent="Footer/FooterButtons/HintButton/HintContent" unique_id=1385971992]
+custom_minimum_size = Vector2(150, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="HintLabel" type="Label" parent="Footer/FooterButtons/HintButton/HintContent/HintLabelMargin" unique_id=545454545]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 72
+text = "Hint"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CheckButton" type="TextureButton" parent="Footer/FooterButtons" unique_id=555555555]
+custom_minimum_size = Vector2(360, 217)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+texture_normal = ExtResource("28_footer_button")
+texture_pressed = ExtResource("29_footer_button_clicked")
+texture_hover = ExtResource("28_footer_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="CheckContent" type="HBoxContainer" parent="Footer/FooterButtons/CheckButton" unique_id=47511626]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="CheckIcon" type="TextureRect" parent="Footer/FooterButtons/CheckButton/CheckContent" unique_id=103984745]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("12_check_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CheckLabelMargin" type="MarginContainer" parent="Footer/FooterButtons/CheckButton/CheckContent" unique_id=757078983]
+custom_minimum_size = Vector2(190, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="CheckLabel" type="Label" parent="Footer/FooterButtons/CheckButton/CheckContent/CheckLabelMargin" unique_id=565656565]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 72
+text = "Check"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoButton" type="TextureButton" parent="Footer/FooterButtons" unique_id=575757575]
+custom_minimum_size = Vector2(360, 217)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+texture_normal = ExtResource("28_footer_button")
+texture_pressed = ExtResource("29_footer_button_clicked")
+texture_hover = ExtResource("28_footer_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InfoContent" type="HBoxContainer" parent="Footer/FooterButtons/InfoButton" unique_id=1890082788]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="InfoIcon" type="TextureRect" parent="Footer/FooterButtons/InfoButton/InfoContent" unique_id=1001218800]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("13_info_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoLabelMargin" type="MarginContainer" parent="Footer/FooterButtons/InfoButton/InfoContent" unique_id=2140824810]
+custom_minimum_size = Vector2(150, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="InfoLabel" type="Label" parent="Footer/FooterButtons/InfoButton/InfoContent/InfoLabelMargin" unique_id=585858585]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_level_gameplay_font")
+theme_override_font_sizes/font_size = 72
+text = "Info"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FooterFrameOverlay" type="TextureRect" parent="Footer" unique_id=595959596]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("10_level_gameplay_footer")
+expand_mode = 1
+stretch_mode = 6
