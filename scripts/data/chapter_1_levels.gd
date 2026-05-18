@@ -41,17 +41,17 @@ static func get_level_1_missing_merchant() -> Dictionary:
 			{
 				"title": "Surname",
 				"key": "surname",
-				"type": "normal"
+				"type": "long"
 			},
 			{
-				"title": "Culture",
+				"title": "Culture",	
 				"key": "culture",
 				"type": "normal"
 			},
 			{
 				"title": "Religion",
 				"key": "religion",
-				"type": "long"
+				"type": "superlong"
 			}
 		],
 

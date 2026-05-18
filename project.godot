@@ -11,12 +11,12 @@ config_version=5
 [application]
 
 config/name="Jerusalem-Archives"
-run/main_scene="res://scenes/start_screen/start_screen.tscn"
+run/main_scene="uid://b7y4u8w6m1q2n"
 config/features=PackedStringArray("4.6", "Mobile")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/stretch_mode=4
 boot_splash/image="uid://b6qriy0m6sgc4"
-config/icon="res://assets/interface/logos/app_logo.png"
+config/icon="res://assets/interface/logos/logo_app.png"
 
 [autoload]
 
