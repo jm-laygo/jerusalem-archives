@@ -13,8 +13,8 @@ const OBJECTIVE_TEXT_OFFSET_TOP := 20.0
 const OBJECTIVE_TEXT_OFFSET_RIGHT := -120.0
 const OBJECTIVE_TEXT_OFFSET_BOTTOM := -45.0
 
-const SEARCH_BUTTONS_SIZE := Vector2(178.0, 89.0)
-const SEARCH_BUTTON_SIZE := Vector2(89.0, 89.0)
+const SEARCH_BUTTONS_SIZE := Vector2(240.0, 120.0)
+const SEARCH_BUTTON_SIZE := Vector2(120.0, 120.0)
 
 var gameplay: Control
 
@@ -31,8 +31,8 @@ func applyFixedPhoneLayout() -> void:
 	positionCenteredNode(gameplay.headerObjective, -583.0, 300.0, 644.0, 570.0)
 
 	positionCenteredNode(gameplay.dataHeader, -540.0, 562.0, 540.0, 903.0)
-	positionCenteredNode(gameplay.searchBar, -524.0, 576.0, 202.0, 665.0)
-	positionCenteredNode(gameplay.searchButtons, 222.0, 576.0, 507.0, 665.0)
+	positionCenteredNode(gameplay.searchBar, -524.0, 590.0, 292.0, 710.0)
+	positionCenteredNode(gameplay.searchButtons, 300.0, 590.0, 540.0, 710.0)
 
 	positionCenteredBottomNode(gameplay.footer, -540.0, 540.0, FOOTER_HEIGHT)
 
@@ -105,17 +105,18 @@ func setupObjectiveLabel() -> void:
 func fixSearchButtonsLayout() -> void:
 	if gameplay.searchBar != null:
 		gameplay.searchBar.visible = true
-		gameplay.searchBar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		gameplay.searchBar.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	if gameplay.searchInput != null:
 		gameplay.searchInput.anchor_left = 0.0
 		gameplay.searchInput.anchor_top = 0.0
 		gameplay.searchInput.anchor_right = 1.0
 		gameplay.searchInput.anchor_bottom = 1.0
+
 		gameplay.searchInput.offset_left = 95.0
-		gameplay.searchInput.offset_top = 8.0
+		gameplay.searchInput.offset_top = 14.0
 		gameplay.searchInput.offset_right = -20.0
-		gameplay.searchInput.offset_bottom = -8.0
+		gameplay.searchInput.offset_bottom = -14.0
 		gameplay.searchInput.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	if gameplay.searchButtons == null:
