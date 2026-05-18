@@ -5,8 +5,13 @@ signal profilePressed
 signal settingsPressed
 signal exitGamePressed
 
-const MAIN_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/buttons/generic_button.png")
-const MAIN_CLICKED_TEXTURE: Texture2D = preload("res://assets/interface/buttons/generic_button_clicked.png")
+const MAIN_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/buttons/btn_main_menu.png")
+const MAIN_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/buttons/btn_main_menu_pressed.png")
+
+const BUTTON_TEXTURE_MARGIN_LEFT := 48.0
+const BUTTON_TEXTURE_MARGIN_TOP := 18.0
+const BUTTON_TEXTURE_MARGIN_RIGHT := 48.0
+const BUTTON_TEXTURE_MARGIN_BOTTOM := 18.0
 
 const CLICK_FEEDBACK_TIME := 0.045
 
@@ -15,58 +20,74 @@ const BUTTON_PUSH_OFFSET := Vector2(0, 3)
 const BUTTON_PUSH_TIME := 0.045
 const BUTTON_RELEASE_TIME := 0.10
 
-const TEXT_NORMAL := Color(1,1,1, 1)
-const TEXT_CLICKED := Color(0.90, 0.62, 0.39, 1)
+const TEXT_NORMAL_COLOR := Color(1, 1, 1, 1)
+const TEXT_PRESSED_COLOR := Color(0.90, 0.62, 0.39, 1)
 
 @onready var startGameButton: Button = $StartGameButton
 @onready var profileButton: Button = $ProfileButton
 @onready var settingsButton: Button = $SettingsButton
 @onready var exitGameButton: Button = $ExitGameButton
 
-var mainStyleNormal: StyleBoxTexture
-var mainStyleClicked: StyleBoxTexture
+var mainNormalStyle: StyleBoxTexture
+var mainPressedStyle: StyleBoxTexture
 
-var mainButtonTokens := {}
+var buttonStateTokens := {}
 var buttonOriginalPositions := {}
 var buttonTweens := {}
 
 
+# Creates button styles, waits for layout sizing, then prepares all menu buttons.
 func _ready() -> void:
-	_createMainButtonStyles()
+	createButtonStyles()
 
 	await get_tree().process_frame
 
-	_setupButtons()
+	setupButtons()
+	connectButtonSignals()
 
 
-func _createMainButtonStyles() -> void:
-	mainStyleNormal = _makeMainStyle(MAIN_NORMAL_TEXTURE)
-	mainStyleClicked = _makeMainStyle(MAIN_CLICKED_TEXTURE)
+# Creates reusable styleboxes for normal and pressed button states.
+func createButtonStyles() -> void:
+	mainNormalStyle = createButtonStyle(MAIN_NORMAL_TEXTURE)
+	mainPressedStyle = createButtonStyle(MAIN_PRESSED_TEXTURE)
 
 
-func _makeMainStyle(texture: Texture2D) -> StyleBoxTexture:
+# Creates a scalable texture stylebox for the main menu buttons.
+func createButtonStyle(texture: Texture2D) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
 	style.texture = texture
-	style.texture_margin_left = 48.0
-	style.texture_margin_top = 18.0
-	style.texture_margin_right = 48.0
-	style.texture_margin_bottom = 18.0
+	style.texture_margin_left = BUTTON_TEXTURE_MARGIN_LEFT
+	style.texture_margin_top = BUTTON_TEXTURE_MARGIN_TOP
+	style.texture_margin_right = BUTTON_TEXTURE_MARGIN_RIGHT
+	style.texture_margin_bottom = BUTTON_TEXTURE_MARGIN_BOTTOM
 	return style
 
 
-func _setupButtons() -> void:
-	_setupMainButton(startGameButton)
-	_setupMainButton(profileButton)
-	_setupMainButton(settingsButton)
-	_setupMainButton(exitGameButton)
-
-	startGameButton.pressed.connect(startGamePressed.emit)
-	profileButton.pressed.connect(profilePressed.emit)
-	settingsButton.pressed.connect(settingsPressed.emit)
-	exitGameButton.pressed.connect(exitGamePressed.emit)
+# Applies shared setup to all main menu buttons.
+func setupButtons() -> void:
+	setupMainButton(startGameButton)
+	setupMainButton(profileButton)
+	setupMainButton(settingsButton)
+	setupMainButton(exitGameButton)
 
 
-func _setupMainButton(button: Button) -> void:
+# Connects button press events to this component's public signals.
+func connectButtonSignals() -> void:
+	if not startGameButton.pressed.is_connected(startGamePressed.emit):
+		startGameButton.pressed.connect(startGamePressed.emit)
+
+	if not profileButton.pressed.is_connected(profilePressed.emit):
+		profileButton.pressed.connect(profilePressed.emit)
+
+	if not settingsButton.pressed.is_connected(settingsPressed.emit):
+		settingsButton.pressed.connect(settingsPressed.emit)
+
+	if not exitGameButton.pressed.is_connected(exitGamePressed.emit):
+		exitGameButton.pressed.connect(exitGamePressed.emit)
+
+
+# Prepares one button's focus, pivot, style, position memory, and press animations.
+func setupMainButton(button: Button) -> void:
 	if button == null:
 		return
 
@@ -74,30 +95,44 @@ func _setupMainButton(button: Button) -> void:
 	button.scale = Vector2.ONE
 	button.pivot_offset = button.size * 0.5
 
-	mainButtonTokens[button] = 0
+	buttonStateTokens[button] = 0
 	buttonOriginalPositions[button] = button.position
 
-	_applyMainButtonNormal(button)
-
-	if not button.button_down.is_connected(_onMainButtonDown.bind(button)):
-		button.button_down.connect(_onMainButtonDown.bind(button))
-
-	if not button.button_up.is_connected(_onMainButtonUp.bind(button)):
-		button.button_up.connect(_onMainButtonUp.bind(button))
-
-	if not button.mouse_exited.is_connected(_onMainButtonMouseExited.bind(button)):
-		button.mouse_exited.connect(_onMainButtonMouseExited.bind(button))
+	applyMainButtonNormal(button)
+	connectButtonFeedbackSignals(button)
 
 
-func _applyMainButtonNormal(button: Button) -> void:
-	_applyMainButtonStyle(button, mainStyleNormal, TEXT_NORMAL)
+# Connects visual feedback signals for a single button.
+func connectButtonFeedbackSignals(button: Button) -> void:
+	if button == null:
+		return
+
+	var buttonDownCallable := onMainButtonDown.bind(button)
+	var buttonUpCallable := onMainButtonUp.bind(button)
+	var mouseExitedCallable := onMainButtonMouseExited.bind(button)
+
+	if not button.button_down.is_connected(buttonDownCallable):
+		button.button_down.connect(buttonDownCallable)
+
+	if not button.button_up.is_connected(buttonUpCallable):
+		button.button_up.connect(buttonUpCallable)
+
+	if not button.mouse_exited.is_connected(mouseExitedCallable):
+		button.mouse_exited.connect(mouseExitedCallable)
 
 
-func _applyMainButtonClicked(button: Button) -> void:
-	_applyMainButtonStyle(button, mainStyleClicked, TEXT_CLICKED)
+# Applies the normal visual state to a main menu button.
+func applyMainButtonNormal(button: Button) -> void:
+	applyMainButtonStyle(button, mainNormalStyle, TEXT_NORMAL_COLOR)
 
 
-func _applyMainButtonStyle(button: Button, style: StyleBoxTexture, textColor: Color) -> void:
+# Applies the pressed visual state to a main menu button.
+func applyMainButtonPressed(button: Button) -> void:
+	applyMainButtonStyle(button, mainPressedStyle, TEXT_PRESSED_COLOR)
+
+
+# Applies the texture style and text color to all button interaction states.
+func applyMainButtonStyle(button: Button, style: StyleBoxTexture, textColor: Color) -> void:
 	if button == null:
 		return
 
@@ -113,49 +148,53 @@ func _applyMainButtonStyle(button: Button, style: StyleBoxTexture, textColor: Co
 	button.add_theme_color_override("font_pressed_color", textColor)
 
 
-func _onMainButtonDown(button: Button) -> void:
+# Handles the button-down visual feedback.
+func onMainButtonDown(button: Button) -> void:
 	if button == null:
 		return
 
-	mainButtonTokens[button] = int(mainButtonTokens.get(button, 0)) + 1
+	buttonStateTokens[button] = int(buttonStateTokens.get(button, 0)) + 1
 
-	_applyMainButtonClicked(button)
-	_pushButtonDown(button)
+	applyMainButtonPressed(button)
+	pushButtonDown(button)
 
 
-func _onMainButtonUp(button: Button) -> void:
+# Handles the button release visual feedback.
+func onMainButtonUp(button: Button) -> void:
 	if button == null:
 		return
 
-	var token := int(mainButtonTokens.get(button, 0)) + 1
-	mainButtonTokens[button] = token
+	var stateToken := int(buttonStateTokens.get(button, 0)) + 1
+	buttonStateTokens[button] = stateToken
 
-	_releaseButton(button)
+	releaseButton(button)
 
 	await get_tree().create_timer(CLICK_FEEDBACK_TIME).timeout
 
-	if int(mainButtonTokens.get(button, 0)) == token and not button.button_pressed:
-		_applyMainButtonNormal(button)
+	if int(buttonStateTokens.get(button, 0)) == stateToken and not button.button_pressed:
+		applyMainButtonNormal(button)
 
 
-func _onMainButtonMouseExited(button: Button) -> void:
+# Resets the button if the mouse exits while it is not being pressed.
+func onMainButtonMouseExited(button: Button) -> void:
 	if button == null:
 		return
 
 	if button.button_pressed:
 		return
 
-	mainButtonTokens[button] = int(mainButtonTokens.get(button, 0)) + 1
+	buttonStateTokens[button] = int(buttonStateTokens.get(button, 0)) + 1
 
-	_applyMainButtonNormal(button)
-	_releaseButton(button)
+	applyMainButtonNormal(button)
+	releaseButton(button)
 
 
-func _pushButtonDown(button: Button) -> void:
+# Animates a button into its pressed position.
+func pushButtonDown(button: Button) -> void:
 	if button == null:
 		return
 
-	_killButtonTween(button)
+	killButtonTween(button)
 
 	var originalPosition: Vector2 = buttonOriginalPositions.get(button, button.position)
 	var targetPosition := originalPosition + BUTTON_PUSH_OFFSET
@@ -179,11 +218,12 @@ func _pushButtonDown(button: Button) -> void:
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
-func _releaseButton(button: Button) -> void:
+# Animates a button back to its original position.
+func releaseButton(button: Button) -> void:
 	if button == null:
 		return
 
-	_killButtonTween(button)
+	killButtonTween(button)
 
 	var originalPosition: Vector2 = buttonOriginalPositions.get(button, button.position)
 
@@ -206,7 +246,8 @@ func _releaseButton(button: Button) -> void:
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
-func _killButtonTween(button: Button) -> void:
+# Stops the current animation of a button before starting a new one.
+func killButtonTween(button: Button) -> void:
 	if button == null:
 		return
 
@@ -217,3 +258,5 @@ func _killButtonTween(button: Button) -> void:
 
 	if tween != null and tween.is_valid():
 		tween.kill()
+
+	buttonTweens.erase(button)

@@ -1,11 +1,12 @@
 [gd_scene format=3]
 
-[ext_resource type="FontFile" path="res://assets/fonts/Noto_Sans_SC/NotoSans-VariableFont_wdth,wght.ttf" id="1_font"]
-[ext_resource type="Texture2D" path="res://assets/interface/icons/credits_icon.png" id="2_credits_icon"]
-[ext_resource type="Texture2D" path="res://assets/interface/icons/ranking_icon.png" id="3_ranking_icon"]
-[ext_resource type="Texture2D" path="res://assets/interface/icons/achievements_icon.png" id="4_achievements_icon"]
-[ext_resource type="Script" path="res://scenes/main_menu/components/footer/main_menu_footer.gd" id="5_footer_script"]
+[ext_resource type="FontFile" uid="uid://c33qbnkw6khwp" path="res://assets/fonts/Noto_Sans_SC/NotoSans-VariableFont_wdth,wght.ttf" id="1_footer_font"]
+[ext_resource type="Texture2D" uid="uid://2c6kgvc37kqn" path="res://assets/interface/icons/icon_credits.png" id="2_credits_icon"]
+[ext_resource type="Texture2D" uid="uid://63poib5l0a7d" path="res://assets/interface/icons/icon_ranking.png" id="3_ranking_icon"]
+[ext_resource type="Texture2D" uid="uid://carbu324n34nj" path="res://assets/interface/icons/icon_achievement.png" id="4_achievements_icon"]
+[ext_resource type="Script" uid="uid://n7p4ixr73xku" path="res://scenes/main_menu/components/footer/main_menu_footer.gd" id="5_footer_script"]
 
+; Root component that holds the main menu footer actions.
 [node name="MainMenuFooter" type="Control"]
 layout_mode = 1
 anchors_preset = 5
@@ -16,7 +17,9 @@ offset_top = 1602.0
 offset_right = 387.0
 offset_bottom = 1782.0
 grow_horizontal = 2
+script = ExtResource("5_footer_script")
 
+; Opens the credits page.
 [node name="CreditsIcon" type="TextureButton" parent="."]
 layout_mode = 1
 offset_left = 66.0
@@ -25,9 +28,6 @@ offset_right = 196.0
 offset_bottom = 70.0
 focus_mode = 0
 texture_normal = ExtResource("2_credits_icon")
-texture_pressed = ExtResource("2_credits_icon")
-texture_hover = ExtResource("2_credits_icon")
-texture_focused = ExtResource("2_credits_icon")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -41,12 +41,13 @@ theme_override_colors/font_color = Color(0.39607844, 0.39607844, 0.39607844, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("1_font")
+theme_override_fonts/font = ExtResource("1_footer_font")
 theme_override_font_sizes/font_size = 28
 text = "Credits"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+; Opens the ranking page.
 [node name="RankingIcon" type="TextureButton" parent="."]
 layout_mode = 1
 offset_left = 605.0
@@ -55,9 +56,6 @@ offset_right = 735.0
 offset_bottom = 70.0
 focus_mode = 0
 texture_normal = ExtResource("3_ranking_icon")
-texture_pressed = ExtResource("3_ranking_icon")
-texture_hover = ExtResource("3_ranking_icon")
-texture_focused = ExtResource("3_ranking_icon")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -71,12 +69,13 @@ theme_override_colors/font_color = Color(0.39607844, 0.39607844, 0.39607844, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("1_font")
+theme_override_fonts/font = ExtResource("1_footer_font")
 theme_override_font_sizes/font_size = 28
 text = "Ranking"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+; Opens the achievements page.
 [node name="AchievementsIcon" type="TextureButton" parent="."]
 layout_mode = 1
 offset_left = 345.0
@@ -85,9 +84,6 @@ offset_right = 475.0
 offset_bottom = 70.0
 focus_mode = 0
 texture_normal = ExtResource("4_achievements_icon")
-texture_pressed = ExtResource("4_achievements_icon")
-texture_hover = ExtResource("4_achievements_icon")
-texture_focused = ExtResource("4_achievements_icon")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -101,7 +97,7 @@ theme_override_colors/font_color = Color(0.39607844, 0.39607844, 0.39607844, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("1_font")
+theme_override_fonts/font = ExtResource("1_footer_font")
 theme_override_font_sizes/font_size = 28
 text = "Achievements"
 horizontal_alignment = 1

@@ -1,7 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Texture2D" path="res://assets/interface/illustrations/main_menu_illustration.png" id="1_background"]
+[ext_resource type="Texture2D" uid="uid://cxonvnjeq7lo" path="res://assets/interface/illustrations/ill_main_menu.png" id="1_background_illustration"]
 
+; Root component for the main menu background layers.
 [node name="MainMenuBackground" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -10,7 +11,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="ColorRect" parent="."]
+; Solid fallback background shown behind the illustration.
+[node name="BaseBackground" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,17 +21,19 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Illustration" type="TextureRect" parent="."]
+; Full-screen main menu illustration.
+[node name="BackgroundIllustration" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_background")
+texture = ExtResource("1_background_illustration")
 expand_mode = 1
 stretch_mode = 6
 
+; Dark overlay used to improve foreground readability.
 [node name="DarkOverlay" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15

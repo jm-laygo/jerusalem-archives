@@ -5,24 +5,40 @@ signal rankingPressed
 signal achievementsPressed
 
 const FOOTER_NORMAL_MODULATE := Color(1, 1, 1, 1)
-const FOOTER_CLICK_MODULATE := Color(0.55, 0.55, 0.55, 1)
+const FOOTER_PRESSED_MODULATE := Color(0.55, 0.55, 0.55, 1)
 
 @onready var creditsIcon: TextureButton = $CreditsIcon
 @onready var rankingIcon: TextureButton = $RankingIcon
 @onready var achievementsIcon: TextureButton = $AchievementsIcon
 
 
+# Prepares footer icons and connects their pressed signals.
 func _ready() -> void:
-	_setupFooterButton(creditsIcon)
-	_setupFooterButton(rankingIcon)
-	_setupFooterButton(achievementsIcon)
-
-	creditsIcon.pressed.connect(creditsPressed.emit)
-	rankingIcon.pressed.connect(rankingPressed.emit)
-	achievementsIcon.pressed.connect(achievementsPressed.emit)
+	setupFooterButtons()
+	connectFooterSignals()
 
 
-func _setupFooterButton(button: TextureButton) -> void:
+# Applies shared setup to all footer icon buttons.
+func setupFooterButtons() -> void:
+	setupFooterButton(creditsIcon)
+	setupFooterButton(rankingIcon)
+	setupFooterButton(achievementsIcon)
+
+
+# Connects footer icon buttons to public footer signals.
+func connectFooterSignals() -> void:
+	if not creditsIcon.pressed.is_connected(creditsPressed.emit):
+		creditsIcon.pressed.connect(creditsPressed.emit)
+
+	if not rankingIcon.pressed.is_connected(rankingPressed.emit):
+		rankingIcon.pressed.connect(rankingPressed.emit)
+
+	if not achievementsIcon.pressed.is_connected(achievementsPressed.emit):
+		achievementsIcon.pressed.connect(achievementsPressed.emit)
+
+
+# Prepares one footer icon button for consistent interaction feedback.
+func setupFooterButton(button: TextureButton) -> void:
 	if button == null:
 		return
 
@@ -32,25 +48,41 @@ func _setupFooterButton(button: TextureButton) -> void:
 	button.texture_pressed = button.texture_normal
 	button.modulate = FOOTER_NORMAL_MODULATE
 
-	if not button.button_down.is_connected(_onFooterButtonDown.bind(button)):
-		button.button_down.connect(_onFooterButtonDown.bind(button))
+	var buttonDownCallable := onFooterButtonDown.bind(button)
+	var buttonUpCallable := onFooterButtonUp.bind(button)
+	var mouseExitedCallable := onFooterButtonMouseExited.bind(button)
 
-	if not button.button_up.is_connected(_onFooterButtonUp.bind(button)):
-		button.button_up.connect(_onFooterButtonUp.bind(button))
+	if not button.button_down.is_connected(buttonDownCallable):
+		button.button_down.connect(buttonDownCallable)
 
-	if not button.mouse_exited.is_connected(_onFooterButtonMouseExited.bind(button)):
-		button.mouse_exited.connect(_onFooterButtonMouseExited.bind(button))
+	if not button.button_up.is_connected(buttonUpCallable):
+		button.button_up.connect(buttonUpCallable)
+
+	if not button.mouse_exited.is_connected(mouseExitedCallable):
+		button.mouse_exited.connect(mouseExitedCallable)
 
 
-func _onFooterButtonDown(button: TextureButton) -> void:
-	button.modulate = FOOTER_CLICK_MODULATE
+# Darkens the footer icon while pressed.
+func onFooterButtonDown(button: TextureButton) -> void:
+	if button == null:
+		return
+
+	button.modulate = FOOTER_PRESSED_MODULATE
 
 
-func _onFooterButtonUp(button: TextureButton) -> void:
+# Restores the footer icon after release.
+func onFooterButtonUp(button: TextureButton) -> void:
+	if button == null:
+		return
+
 	button.modulate = FOOTER_NORMAL_MODULATE
 
 
-func _onFooterButtonMouseExited(button: TextureButton) -> void:
+# Restores the footer icon when the cursor leaves it.
+func onFooterButtonMouseExited(button: TextureButton) -> void:
+	if button == null:
+		return
+
 	if button.button_pressed:
 		return
 
