@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://cpqh7t0ea7mu4"]
+
+[ext_resource type="Texture2D" uid="uid://biq1byrvqtao5" path="res://assets/interface/ui/start_game/difficulty/difficulty_container.png" id="1_container_image"]
+[ext_resource type="Texture2D" uid="uid://l47460ctfida" path="res://assets/interface/icons/icon_exit.png" id="2_close_icon"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/popups/difficulty_popup/buttons/difficulty_popup_buttons.tscn" id="3_difficulty_buttons"]
+[ext_resource type="Script" path="res://scenes/start_game/popups/difficulty_popup/container/difficulty_popup_container.gd" id="4_container_script"]
+
+; Root visual container for the difficulty popup.
+[node name="DifficultyContainer" type="Control" unique_id=1319027113]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -700.0
+offset_right = 450.0
+offset_bottom = 700.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_container_script")
+
+; Background image of the difficulty popup container.
+[node name="ContainerImage" type="TextureRect" parent="." unique_id=1700320142]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 13.0
+offset_top = 42.0
+offset_right = 13.0
+offset_bottom = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_container_image")
+expand_mode = 1
+stretch_mode = 5
+
+; Button used to close the difficulty popup.
+[node name="CloseButton" type="TextureButton" parent="." unique_id=1778448168]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -190.0
+offset_top = 262.865
+offset_right = -95.0
+offset_bottom = 350.865
+grow_horizontal = 0
+texture_normal = ExtResource("2_close_icon")
+ignore_texture_size = true
+stretch_mode = 0
+
+; Difficulty option buttons component.
+[node name="DifficultyButtons" parent="." unique_id=1213033458 instance=ExtResource("3_difficulty_buttons")]
+offset_left = -287.0
+offset_top = -123.0
+offset_right = 313.0
+offset_bottom = 407.0
+rotation = -0.0027150472

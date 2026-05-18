@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://o3otp2tgrq6r"]
+
+[ext_resource type="Script" path="res://scenes/start_game/popups/difficulty_popup/difficulty_popup.gd" id="1_popup_script"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/popups/difficulty_popup/container/difficulty_popup_container.tscn" id="2_popup_container"]
+
+; Root popup used to select a difficulty for the selected chapter.
+[node name="DifficultyPopup" type="Popup" unique_id=1112261022]
+transparent_bg = true
+oversampling_override = 1.0
+size = Vector2i(900, 1400)
+visible = true
+transparent = true
+script = ExtResource("1_popup_script")
+
+; Main visual container for the difficulty popup.
+[node name="DifficultyContainer" parent="." unique_id=1778365877 instance=ExtResource("2_popup_container")]
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = -63.0
