@@ -11,6 +11,8 @@ const X_CLICKED := Color(1.35, 1.15, 0.85, 1)
 
 
 func _ready() -> void:
+	await get_tree().process_frame
+
 	_setup_close_button()
 	_connect_buttons()
 
@@ -48,22 +50,6 @@ func _connect_buttons() -> void:
 	if difficulty_buttons.has_signal("difficulty_selected"):
 		if not difficulty_buttons.is_connected("difficulty_selected", _on_difficulty_selected):
 			difficulty_buttons.connect("difficulty_selected", _on_difficulty_selected)
-
-
-func prepare_intro_state() -> void:
-	if difficulty_buttons == null:
-		return
-
-	if difficulty_buttons.has_method("prepare_intro_state"):
-		difficulty_buttons.call("prepare_intro_state")
-
-
-func play_intro_animation() -> void:
-	if difficulty_buttons == null:
-		return
-
-	if difficulty_buttons.has_method("play_intro_animation"):
-		difficulty_buttons.call("play_intro_animation")
 
 
 func _on_close_button_down() -> void:

@@ -25,11 +25,12 @@ const BUTTON_RELEASE_TIME := 0.10
 const INTRO_TIME := 0.30
 const OUTRO_TIME := 0.30
 
-const SELECT_INTRO_DELAY := 0.10
 const SELECT_INTRO_TIME := 0.30
-
 const SELECT_BELOW_SCREEN_EXTRA := 160.0
-const SELECT_TARGET_BOTTOM_GAP := 120.0
+
+const DESIGN_WIDTH := 1080.0
+const DEFAULT_DESIGN_HEIGHT := 1720.0
+const SELECT_BOTTOM_OFFSET := 180.0
 
 @onready var chapter_back_button: TextureButton = $SelectChapterBackButton
 @onready var chapter_next_button: TextureButton = $SelectChapterNextButton
@@ -37,6 +38,8 @@ const SELECT_TARGET_BOTTOM_GAP := 120.0
 
 var is_locked := false
 var active_button: TextureButton = null
+
+var current_design_height := DEFAULT_DESIGN_HEIGHT
 
 var left_arrow_original_position := Vector2.ZERO
 var right_arrow_original_position := Vector2.ZERO
@@ -57,10 +60,12 @@ var select_tween: Tween
 
 func _ready() -> void:
 	_setup_buttons()
+	force_design_layout(current_design_height)
 
 	await get_tree().process_frame
 
 	cache_original_values()
+	force_select_visible()
 
 
 func set_locked(value: bool) -> void:
@@ -140,9 +145,57 @@ func _ignore_children_mouse(button: TextureButton) -> void:
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-func cache_original_values() -> void:
-	var screen_size := get_viewport_rect().size
+func force_design_layout(design_height: float = DEFAULT_DESIGN_HEIGHT) -> void:
+	current_design_height = max(900.0, design_height)
 
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 0.0
+	anchor_bottom = 0.0
+	position = Vector2.ZERO
+	size = Vector2(DESIGN_WIDTH, current_design_height)
+	scale = Vector2.ONE
+
+	if chapter_back_button != null:
+		chapter_back_button.anchor_left = 0.0
+		chapter_back_button.anchor_top = 0.0
+		chapter_back_button.anchor_right = 0.0
+		chapter_back_button.anchor_bottom = 0.0
+		chapter_back_button.position = Vector2(-10.0, current_design_height * 0.43)
+		chapter_back_button.size = Vector2(201.0, 211.0)
+		chapter_back_button.scale = Vector2.ONE
+		chapter_back_button.ignore_texture_size = true
+		chapter_back_button.stretch_mode = TextureButton.STRETCH_SCALE
+
+	if chapter_next_button != null:
+		chapter_next_button.anchor_left = 0.0
+		chapter_next_button.anchor_top = 0.0
+		chapter_next_button.anchor_right = 0.0
+		chapter_next_button.anchor_bottom = 0.0
+		chapter_next_button.position = Vector2(889.0, current_design_height * 0.43)
+		chapter_next_button.size = Vector2(201.0, 211.0)
+		chapter_next_button.scale = Vector2.ONE
+		chapter_next_button.ignore_texture_size = true
+		chapter_next_button.stretch_mode = TextureButton.STRETCH_SCALE
+
+	if select_button != null:
+		select_button.anchor_left = 0.0
+		select_button.anchor_top = 0.0
+		select_button.anchor_right = 0.0
+		select_button.anchor_bottom = 0.0
+		select_button.position = Vector2(240.0, current_design_height - 180.0)
+		select_button.size = Vector2(600.0, 265.0)
+		select_button.scale = Vector2.ONE
+		select_button.ignore_texture_size = true
+		select_button.stretch_mode = TextureButton.STRETCH_SCALE
+		select_button.visible = true
+		select_button.modulate = BUTTON_NORMAL_MODULATE
+		select_button.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	cache_original_values()
+
+
+func cache_original_values() -> void:
 	if chapter_back_button != null:
 		left_arrow_original_position = chapter_back_button.position
 		left_arrow_original_scale = chapter_back_button.scale
@@ -157,21 +210,30 @@ func cache_original_values() -> void:
 		select_original_scale = select_button.scale
 		select_button.pivot_offset = select_button.size / 2.0
 
-		# this is the visible final position, even if you placed it outside in the editor
 		select_target_position = Vector2(
-			(screen_size.x - select_button.size.x) / 2.0,
-			screen_size.y - select_button.size.y - SELECT_TARGET_BOTTOM_GAP
+			(DESIGN_WIDTH - select_button.size.x) / 2.0,
+			current_design_height - SELECT_BOTTOM_OFFSET
 		)
 
-		# this is the hidden start position below the phone
 		select_start_position = Vector2(
 			select_target_position.x,
-			screen_size.y + select_button.size.y + SELECT_BELOW_SCREEN_EXTRA
+			current_design_height + select_button.size.y + SELECT_BELOW_SCREEN_EXTRA
 		)
+
+
+func force_select_visible() -> void:
+	if select_button == null:
+		return
+
+	select_button.visible = true
+	select_button.modulate = BUTTON_NORMAL_MODULATE
+	select_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	select_button.position = select_target_position
+	select_button.scale = Vector2.ONE
 
 
 func prepare_intro_state() -> void:
-	var screen_size := get_viewport_rect().size
+	var screen_size := size
 
 	if chapter_back_button != null:
 		chapter_back_button.position = Vector2(
@@ -190,6 +252,7 @@ func prepare_intro_state() -> void:
 	if select_button != null:
 		select_button.position = select_start_position
 		select_button.modulate = Color(1, 1, 1, 0)
+		select_button.visible = true
 
 
 func play_intro_animation() -> void:
@@ -227,6 +290,22 @@ func play_intro_animation() -> void:
 			BUTTON_NORMAL_MODULATE,
 			0.20
 		)
+
+	if select_button != null:
+		intro_tween.tween_property(
+			select_button,
+			"position",
+			select_target_position,
+			SELECT_INTRO_TIME
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+		intro_tween.tween_property(
+			select_button,
+			"modulate",
+			BUTTON_NORMAL_MODULATE,
+			0.20
+		)
+
 
 func play_select_intro_animation() -> void:
 	if select_button == null:
@@ -268,7 +347,7 @@ func _create_outro_tween() -> Tween:
 	outro_tween = get_tree().create_tween()
 	outro_tween.set_parallel(true)
 
-	var screen_size := get_viewport_rect().size
+	var screen_size := size
 
 	var left_arrow_out_position := Vector2.ZERO
 	if chapter_back_button != null:
@@ -288,7 +367,7 @@ func _create_outro_tween() -> Tween:
 	if select_button != null:
 		select_out_position = Vector2(
 			select_target_position.x,
-			screen_size.y + select_button.size.y + SELECT_BELOW_SCREEN_EXTRA
+			current_design_height + select_button.size.y + SELECT_BELOW_SCREEN_EXTRA
 		)
 
 	if chapter_back_button != null:

@@ -1,10 +1,12 @@
 extends Popup
 
+signal closed
+
 const CONTAINER_SHOW_SOUND: AudioStream = preload("res://assets/sounds/ui/main_menu_container_show.wav")
 const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/generic_select.wav")
+const LEVEL_SELECTION_SCENE := "res://scenes/level_selection/level_selection.tscn"
 
 const POPUP_SIZE := Vector2i(900, 1400)
-
 const OVERLAY_COLOR := Color(0, 0, 0, 0.62)
 
 const SHOW_TIME := 0.28
@@ -34,8 +36,6 @@ func _ready() -> void:
 
 	_setup_audio()
 	_connect_component_signals()
-
-	await get_tree().process_frame
 
 	if container != null:
 		container_original_position = container.position
@@ -85,35 +85,29 @@ func show_with_animation() -> void:
 	_create_overlay()
 
 	popup_centered(POPUP_SIZE)
-
 	await get_tree().process_frame
 
 	if container != null:
 		container_original_position = container.position
 		container.position = container_original_position + SHOW_OFFSET
 		container.modulate = Color(1, 1, 1, 0)
-		if container.has_method("prepare_intro_state"):
-			container.call("prepare_intro_state")
 
 	if container_show_player != null:
 		container_show_player.stop()
 		container_show_player.play()
 
-	overlay_tween = create_tween()
+	popup_tween = create_tween()
+	popup_tween.set_parallel(true)
 
 	if overlay != null:
 		overlay.color = Color(0, 0, 0, 0)
 		overlay.visible = true
-
-		overlay_tween.tween_property(
+		popup_tween.tween_property(
 			overlay,
 			"color",
 			OVERLAY_COLOR,
 			SHOW_TIME
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-	popup_tween = create_tween()
-	popup_tween.set_parallel(true)
 
 	if container != null:
 		popup_tween.tween_property(
@@ -130,11 +124,7 @@ func show_with_animation() -> void:
 			SHOW_TIME
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-		if container.has_method("play_intro_animation"):
-			container.call("play_intro_animation")
-
 	await popup_tween.finished
-
 	is_showing = false
 
 
@@ -153,9 +143,6 @@ func close_with_animation() -> void:
 	popup_tween.set_parallel(true)
 
 	if container != null:
-		container.position = container_original_position
-		container.modulate = Color(1, 1, 1, 1)
-
 		popup_tween.tween_property(
 			container,
 			"position",
@@ -185,6 +172,9 @@ func close_with_animation() -> void:
 
 	is_closing = false
 	allow_hide = false
+
+	closed.emit()
+	queue_free()
 
 
 func _create_overlay() -> void:
@@ -260,8 +250,16 @@ func _on_close_pressed() -> void:
 
 
 func _on_difficulty_selected(difficulty_name: String) -> void:
-	_play_click_sound()
 	print("Selected difficulty: ", difficulty_name)
+	await close_with_animation()
+
+	var transition_manager: Node = get_node_or_null("/root/SceneTransitionManager")
+
+	if transition_manager != null and transition_manager.has_method("change_scene_with_fade"):
+		transition_manager.call("change_scene_with_fade", LEVEL_SELECTION_SCENE, 0.5, 0.3)
+		return
+
+	get_tree().change_scene_to_file(LEVEL_SELECTION_SCENE)
 
 
 func _play_click_sound() -> void:

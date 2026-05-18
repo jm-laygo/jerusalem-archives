@@ -8,13 +8,17 @@ const START_GAME_SHOW_SOUND: AudioStream = preload("res://assets/sounds/ui/start
 const DIFFICULTY_POPUP_SCENE: PackedScene = preload("res://scenes/start_game/popups/difficulty/difficulty_popup.tscn")
 const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 
+const DESIGN_WIDTH := 1080.0
+const FOOTER_HEIGHT := 200.0
+
 const SHARED_INTRO_TIME := 0.30
 const SHARED_OUTRO_TIME := 0.30
 const SELECT_INTRO_DELAY := 0.04
 
-@onready var chapter_carousel: Control = get_node_or_null("ChapterCarousel") as Control
-@onready var footer: Control = get_node_or_null("Footer") as Control
-@onready var popup_layer: Control = get_node_or_null("PopupLayer") as Control
+@onready var background: Control = $Background
+@onready var chapter_carousel: Control = $ChapterCarousel
+@onready var footer: Control = $Footer
+@onready var popup_layer: Control = $PopupLayer
 
 var click_player: AudioStreamPlayer
 var back_next_player: AudioStreamPlayer
@@ -31,9 +35,105 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
+	_force_start_game_layout()
+
 	_prepare_intro_state()
 	_play_start_game_show_sound()
 	await _play_intro_animation()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_force_start_game_layout()
+		call_deferred("_force_start_game_layout")
+
+
+func _force_start_game_layout() -> void:
+	_force_background_layout()
+	_force_carousel_layout()
+	_force_footer_layout()
+	_force_popup_layer_layout()
+
+
+func _force_background_layout() -> void:
+	if background == null:
+		return
+
+	background.anchor_left = 0.0
+	background.anchor_top = 0.0
+	background.anchor_right = 1.0
+	background.anchor_bottom = 1.0
+	background.offset_left = 0.0
+	background.offset_top = 0.0
+	background.offset_right = 0.0
+	background.offset_bottom = 0.0
+	background.scale = Vector2.ONE
+
+
+func _force_carousel_layout() -> void:
+	if chapter_carousel == null:
+		return
+
+	var viewport_height: float = get_viewport_rect().size.y
+	var carousel_height: float = max(900.0, viewport_height - FOOTER_HEIGHT)
+
+	chapter_carousel.anchor_left = 0.5
+	chapter_carousel.anchor_right = 0.5
+	chapter_carousel.anchor_top = 0.0
+	chapter_carousel.anchor_bottom = 0.0
+
+	chapter_carousel.offset_left = -DESIGN_WIDTH * 0.5
+	chapter_carousel.offset_right = DESIGN_WIDTH * 0.5
+	chapter_carousel.offset_top = 0.0
+	chapter_carousel.offset_bottom = carousel_height
+	chapter_carousel.scale = Vector2.ONE
+
+	if chapter_carousel.has_method("force_design_layout"):
+		chapter_carousel.call("force_design_layout", carousel_height)
+
+	if chapter_carousel.has_method("force_navigation_visible"):
+		chapter_carousel.call("force_navigation_visible")
+
+
+func _force_footer_layout() -> void:
+	if footer == null:
+		return
+
+	footer.anchor_left = 0.5
+	footer.anchor_right = 0.5
+	footer.anchor_top = 1.0
+	footer.anchor_bottom = 1.0
+
+	footer.offset_left = -DESIGN_WIDTH * 0.5
+	footer.offset_right = DESIGN_WIDTH * 0.5
+	footer.offset_top = -FOOTER_HEIGHT
+	footer.offset_bottom = 0.0
+
+	footer.scale = Vector2.ONE
+	footer.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	footer.grow_vertical = Control.GROW_DIRECTION_BEGIN
+
+	if footer.has_method("_force_bottom_layout"):
+		footer.call("_force_bottom_layout")
+
+
+func _force_popup_layer_layout() -> void:
+	if popup_layer == null:
+		return
+
+	popup_layer.anchor_left = 0.0
+	popup_layer.anchor_top = 0.0
+	popup_layer.anchor_right = 1.0
+	popup_layer.anchor_bottom = 1.0
+
+	popup_layer.offset_left = 0.0
+	popup_layer.offset_top = 0.0
+	popup_layer.offset_right = 0.0
+	popup_layer.offset_bottom = 0.0
+
+	if popup_layer.get_child_count() == 0:
+		popup_layer.visible = false
+		popup_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _setup_audio() -> void:
@@ -46,7 +146,6 @@ func _setup_audio() -> void:
 func _create_audio_player(stream: AudioStream) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
-	player.bus = "Master"
 	add_child(player)
 	return player
 
@@ -54,24 +153,30 @@ func _create_audio_player(stream: AudioStream) -> AudioStreamPlayer:
 func _connect_component_signals() -> void:
 	if chapter_carousel != null:
 		if chapter_carousel.has_signal("back_next_pressed"):
-			chapter_carousel.connect("back_next_pressed", _on_carousel_back_next_pressed)
+			var back_next_callable := Callable(self, "_on_carousel_back_next_pressed")
+			if not chapter_carousel.is_connected("back_next_pressed", back_next_callable):
+				chapter_carousel.connect("back_next_pressed", back_next_callable)
 
 		if chapter_carousel.has_signal("select_pressed"):
-			chapter_carousel.connect("select_pressed", _on_carousel_select_pressed)
-	else:
-		push_error("ChapterCarousel not found in start_game.gd")
+			var select_callable := Callable(self, "_on_carousel_select_pressed")
+			if not chapter_carousel.is_connected("select_pressed", select_callable):
+				chapter_carousel.connect("select_pressed", select_callable)
 
 	if footer != null:
 		if footer.has_signal("back_pressed"):
-			footer.connect("back_pressed", _on_back_pressed)
+			var back_callable := Callable(self, "_on_footer_back_pressed")
+			if not footer.is_connected("back_pressed", back_callable):
+				footer.connect("back_pressed", back_callable)
 
 		if footer.has_signal("settings_pressed"):
-			footer.connect("settings_pressed", _on_settings_pressed)
+			var settings_callable := Callable(self, "_on_footer_settings_pressed")
+			if not footer.is_connected("settings_pressed", settings_callable):
+				footer.connect("settings_pressed", settings_callable)
 
 		if footer.has_signal("achievements_pressed"):
-			footer.connect("achievements_pressed", _on_achievements_pressed)
-	else:
-		push_error("Footer not found in start_game.gd")
+			var achievements_callable := Callable(self, "_on_footer_achievements_pressed")
+			if not footer.is_connected("achievements_pressed", achievements_callable):
+				footer.connect("achievements_pressed", achievements_callable)
 
 
 func _prepare_intro_state() -> void:
@@ -82,7 +187,12 @@ func _prepare_intro_state() -> void:
 		footer.call("prepare_intro_state")
 
 
+func _play_start_game_show_sound() -> void:
+	if start_game_show_player == null:
+		return
 
+	start_game_show_player.stop()
+	start_game_show_player.play()
 
 
 func _play_intro_animation() -> void:
@@ -92,12 +202,10 @@ func _play_intro_animation() -> void:
 	if footer != null and footer.has_method("play_intro_animation"):
 		footer.call("play_intro_animation")
 
-	await get_tree().create_timer(SELECT_INTRO_DELAY).timeout
-
-	if chapter_carousel != null and chapter_carousel.has_method("play_select_intro_animation"):
-		chapter_carousel.call("play_select_intro_animation")
-
 	await get_tree().create_timer(SHARED_INTRO_TIME).timeout
+
+	if chapter_carousel != null and chapter_carousel.has_method("force_navigation_visible"):
+		chapter_carousel.call("force_navigation_visible")
 
 
 func _play_outro_animation() -> void:
@@ -110,110 +218,107 @@ func _play_outro_animation() -> void:
 	await get_tree().create_timer(SHARED_OUTRO_TIME).timeout
 
 
-func _set_components_locked(value: bool) -> void:
-	if chapter_carousel != null and chapter_carousel.has_method("set_locked"):
-		chapter_carousel.call("set_locked", value)
-
-
 func _on_carousel_back_next_pressed() -> void:
-	if is_leaving_page:
-		return
-
-	_play_back_next_sound()
+	_play_sound(back_next_player)
 
 
 func _on_carousel_select_pressed(page_id: String) -> void:
 	if is_leaving_page:
 		return
 
-	_play_select_sound()
-	print("Selected carousel page: ", page_id)
+	_play_sound(select_player)
 
-	var popup_instance := DIFFICULTY_POPUP_SCENE.instantiate()
+	if chapter_carousel != null and chapter_carousel.has_method("play_select_intro_animation"):
+		chapter_carousel.call("play_select_intro_animation")
 
+	await get_tree().create_timer(SELECT_INTRO_DELAY).timeout
+	_show_difficulty_popup(page_id)
+
+
+func _show_difficulty_popup(page_id: String) -> void:
+	if popup_layer == null:
+		return
+
+	_clear_popup_layer()
+
+	var popup = DIFFICULTY_POPUP_SCENE.instantiate()
+	popup_layer.add_child(popup)
+
+	popup_layer.visible = true
+	popup_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	popup_layer.move_to_front()
+
+	if popup.has_method("setup"):
+		popup.call("setup", page_id)
+
+	if popup.has_signal("closed"):
+		var closed_callable := Callable(self, "_on_difficulty_popup_closed")
+		if not popup.is_connected("closed", closed_callable):
+			popup.connect("closed", closed_callable)
+
+	if popup.has_signal("difficulty_selected"):
+		var difficulty_callable := Callable(self, "_on_difficulty_selected")
+		if not popup.is_connected("difficulty_selected", difficulty_callable):
+			popup.connect("difficulty_selected", difficulty_callable)
+
+	if popup.has_method("show_with_animation"):
+		popup.call("show_with_animation")
+	elif popup is Popup:
+		popup.popup_centered(Vector2i(900, 1400))
+	elif popup is Control:
+		popup.show()
+
+
+func _clear_popup_layer() -> void:
+	if popup_layer == null:
+		return
+
+	for child in popup_layer.get_children():
+		child.queue_free()
+
+
+func _on_difficulty_popup_closed() -> void:
 	if popup_layer != null:
-		popup_layer.visible = true
-		popup_layer.add_child(popup_instance)
-	else:
-		add_child(popup_instance)
-
-	if popup_instance.has_method("show_with_animation"):
-		popup_instance.call("show_with_animation")
-	else:
-		popup_instance.popup_centered()
+		popup_layer.visible = false
+		popup_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_clear_popup_layer()
 
 
-func _on_back_pressed() -> void:
-	print("start game back pressed")
+func _on_difficulty_selected(page_id: String, difficulty: String) -> void:
+	print("Selected chapter: ", page_id, " difficulty: ", difficulty)
 
+
+func _on_footer_back_pressed() -> void:
 	if is_leaving_page:
 		return
 
 	is_leaving_page = true
-	_set_components_locked(true)
+	_play_sound(click_player)
 
-	_play_click_sound()
-
-	await get_tree().create_timer(0.04).timeout
 	await _play_outro_animation()
 
 	var transition_manager: Node = get_node_or_null("/root/SceneTransitionManager")
 
 	if transition_manager != null and transition_manager.has_method("change_scene_with_fade"):
-		transition_manager.call(
-			"change_scene_with_fade",
-			MAIN_MENU_SCENE,
-			0.65,
-			0.35
-		)
+		transition_manager.call("change_scene_with_fade", MAIN_MENU_SCENE, 0.5, 0.3)
 		return
 
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
-func _on_settings_pressed() -> void:
-	if is_leaving_page:
-		return
-
-	_play_click_sound()
+func _on_footer_settings_pressed() -> void:
+	_play_sound(click_player)
 	print("Settings pressed")
 
 
-func _on_achievements_pressed() -> void:
-	if is_leaving_page:
-		return
-
-	_play_click_sound()
+func _on_footer_achievements_pressed() -> void:
+	_play_sound(click_player)
 	print("Achievements pressed")
 
 
-func _play_click_sound() -> void:
-	if click_player == null:
+func _play_sound(player: AudioStreamPlayer) -> void:
+	if player == null:
 		return
 
-	click_player.stop()
-	click_player.play()
-
-
-func _play_back_next_sound() -> void:
-	if back_next_player == null:
-		return
-
-	back_next_player.stop()
-	back_next_player.play()
-
-
-func _play_select_sound() -> void:
-	if select_player == null:
-		return
-
-	select_player.stop()
-	select_player.play()
-
-
-func _play_start_game_show_sound() -> void:
-	if start_game_show_player == null:
-		return
-
-	start_game_show_player.stop()
-	start_game_show_player.play()
+	player.stop()
+	player.play()

@@ -2,9 +2,6 @@ extends Control
 
 signal difficulty_selected(difficulty_name: String)
 
-const INTRO_OFFSET := Vector2(0, -60)
-const INTRO_TIME := 0.28
-
 const BUTTON_PRESSED_SCALE := Vector2(0.97, 0.94)
 const BUTTON_PUSH_TIME := 0.045
 const BUTTON_RELEASE_TIME := 0.10
@@ -13,9 +10,6 @@ const BUTTON_RELEASE_TIME := 0.10
 @onready var easy_button: TextureButton = $DifficultyButtons/EasyButton
 @onready var normal_button: TextureButton = $DifficultyButtons/NormalButton
 @onready var hard_button: TextureButton = $DifficultyButtons/HardButton
-
-var intro_tween: Tween
-var intro_target_position := Vector2.ZERO
 
 var button_original_scales := {}
 var button_tweens := {}
@@ -26,25 +20,6 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	_setup_buttons()
-	prepare_intro_state()
-
-
-func prepare_intro_state() -> void:
-	intro_target_position = position
-	position = intro_target_position + INTRO_OFFSET
-
-
-func play_intro_animation() -> void:
-	if intro_tween != null and intro_tween.is_valid():
-		intro_tween.kill()
-
-	intro_tween = create_tween()
-	intro_tween.tween_property(
-		self,
-		"position",
-		intro_target_position,
-		INTRO_TIME
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
 func _setup_buttons() -> void:
