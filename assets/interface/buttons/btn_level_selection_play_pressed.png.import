@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5u6ydp3e28q5"
-path="res://.godot/imported/start_game_select_button.png-02102e5c50392b55d14385d1b6b13487.ctex"
+uid="uid://c1xe77fswju3i"
+path="res://.godot/imported/btn_level_selection_play_pressed.png-6812369c61c1f8014777d2f0834be1f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/buttons/start_game_select_button.png"
-dest_files=["res://.godot/imported/start_game_select_button.png-02102e5c50392b55d14385d1b6b13487.ctex"]
+source_file="res://assets/interface/buttons/btn_level_selection_play_pressed.png"
+dest_files=["res://.godot/imported/btn_level_selection_play_pressed.png-6812369c61c1f8014777d2f0834be1f8.ctex"]
 
 [params]
 

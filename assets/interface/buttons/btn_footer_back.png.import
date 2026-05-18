@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkmh16jgo7qp0"
-path="res://.godot/imported/start_game_back_button_clicked.png-71d32ae73e30f1f5f5d1ff8939ed5156.ctex"
+uid="uid://dj317f7drulk8"
+path="res://.godot/imported/btn_footer_back.png-5cfa54f3746f3f6171b0c0cc46d03c19.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/buttons/start_game_back_button_clicked.png"
-dest_files=["res://.godot/imported/start_game_back_button_clicked.png-71d32ae73e30f1f5f5d1ff8939ed5156.ctex"]
+source_file="res://assets/interface/buttons/btn_footer_back.png"
+dest_files=["res://.godot/imported/btn_footer_back.png-5cfa54f3746f3f6171b0c0cc46d03c19.ctex"]
 
 [params]
 

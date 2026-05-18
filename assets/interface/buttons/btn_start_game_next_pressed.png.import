@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cml5clfr37so0"
-path="res://.godot/imported/hard_button.png-94c7012142cd71b7b513e0295c28e5ec.ctex"
+uid="uid://b8wmc1xd44onk"
+path="res://.godot/imported/btn_start_game_next_pressed.png-26dee9a90db61488cb96a4c8cc201c55.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/buttons/hard_button.png"
-dest_files=["res://.godot/imported/hard_button.png-94c7012142cd71b7b513e0295c28e5ec.ctex"]
+source_file="res://assets/interface/buttons/btn_start_game_next_pressed.png"
+dest_files=["res://.godot/imported/btn_start_game_next_pressed.png-26dee9a90db61488cb96a4c8cc201c55.ctex"]
 
 [params]
 
