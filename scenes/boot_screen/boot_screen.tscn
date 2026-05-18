@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://b7y4u8w6m1q2n"]
+
+[ext_resource type="Texture2D" uid="uid://b6qriy0m6sgc4" path="res://assets/interface/illustrations/ill_start_screen.png" id="1_boot_screen_background"]
+[ext_resource type="Script" path="res://scenes/boot_screen/boot_screen.gd" id="2_boot_screen_script"]
+
+; Root boot screen shown before the main menu.
+[node name="BootScreen" type="Control" unique_id=837935381]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_boot_screen_script")
+
+; Full-screen boot image.
+[node name="Background" type="TextureRect" parent="." unique_id=71437202]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_boot_screen_background")
+expand_mode = 1
+stretch_mode = 6
+
+; Timer that controls how long the boot screen stays visible.
+[node name="BootTimer" type="Timer" parent="." unique_id=1418347882]
+wait_time = 4.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="BootTimer" to="." method="onBootTimerTimeout"]
