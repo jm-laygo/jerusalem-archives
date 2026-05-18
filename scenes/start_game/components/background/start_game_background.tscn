@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Texture2D" path="res://assets/interface/illustrations/start_game_illustration.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://nuvd231uvv7g" path="res://assets/interface/illustrations/ill_start_game.png" id="1_bg"]
 
 [node name="Background" type="TextureRect"]
 layout_mode = 1
