@@ -1,4 +1,4 @@
-extends Popup
+extends Control
 
 signal closed
 signal difficultySelected(pageId: String, difficultyName: String)
@@ -6,9 +6,11 @@ signal difficultySelected(pageId: String, difficultyName: String)
 const CONTAINER_SHOW_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_main_menu_container_show.wav")
 const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_generic_select.wav")
 
-const POPUP_SIZE := Vector2i(900, 1400)
 const OVERLAY_COLOR := Color(0, 0, 0, 0.62)
 const TRANSPARENT_COLOR := Color(0, 0, 0, 0)
+
+const DESIGN_WIDTH := 900.0
+const DESIGN_HEIGHT := 1400.0
 
 const SHOW_TIME := 0.28
 const HIDE_TIME := 0.24
@@ -16,35 +18,35 @@ const HIDE_TIME := 0.24
 const SHOW_OFFSET := Vector2(0, 80)
 const HIDE_OFFSET := Vector2(0, 80)
 
+@onready var overlay: ColorRect = $DifficultyDarkOverlay
 @onready var container: Control = $DifficultyContainer
 
 var containerShowPlayer: AudioStreamPlayer
 var clickPlayer: AudioStreamPlayer
 
-var overlay: ColorRect
 var popupTween: Tween
 
 var selectedPageId := ""
-var containerOriginalPosition := Vector2.ZERO
+var containerTargetPosition := Vector2.ZERO
 
 var isShowing := false
 var isClosing := false
-var allowHide := false
 
 
-# Prepares popup behavior, audio, and container signals.
+# Prepares popup behavior, audio, layout, and container signals.
 func _ready() -> void:
-	exclusive = true
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	visible = false
 
 	setupAudioPlayers()
 	connectComponentSignals()
+	forcePopupLayout()
+
+	if overlay != null:
+		overlay.color = TRANSPARENT_COLOR
 
 	if container != null:
-		containerOriginalPosition = container.position
 		container.modulate = Color(1, 1, 1, 0)
-
-	if not popup_hide.is_connected(onPopupHide):
-		popup_hide.connect(onPopupHide)
 
 
 # Stores the selected chapter/page id used when a difficulty is chosen.
@@ -90,6 +92,52 @@ func connectSignalIfAvailable(target: Object, signalName: String, callback: Call
 		target.connect(signalName, callback)
 
 
+# Forces the popup to cover the full screen and keeps the container centered.
+func forcePopupLayout() -> void:
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	offset_left = 0.0
+	offset_top = 0.0
+	offset_right = 0.0
+	offset_bottom = 0.0
+
+	if overlay != null:
+		overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+		overlay.offset_left = 0.0
+		overlay.offset_top = 0.0
+		overlay.offset_right = 0.0
+		overlay.offset_bottom = 0.0
+		overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	forceContainerLayout()
+
+
+# Centers and scales the container so it fits the visible screen.
+func forceContainerLayout() -> void:
+	if container == null:
+		return
+
+	var viewportSize := get_viewport_rect().size
+	var scaleFactor: float = min(
+		viewportSize.x / DESIGN_WIDTH,
+		viewportSize.y / DESIGN_HEIGHT
+	)
+
+	scaleFactor = min(scaleFactor, 1.0)
+
+	container.anchor_left = 0.5
+	container.anchor_top = 0.5
+	container.anchor_right = 0.5
+	container.anchor_bottom = 0.5
+
+	container.offset_left = -(DESIGN_WIDTH / 2.0)
+	container.offset_top = -(DESIGN_HEIGHT / 2.0)
+	container.offset_right = DESIGN_WIDTH / 2.0
+	container.offset_bottom = DESIGN_HEIGHT / 2.0
+	container.scale = Vector2(scaleFactor, scaleFactor)
+
+	containerTargetPosition = container.position
+
+
 # Shows the popup with overlay and container animation.
 func showWithAnimation() -> void:
 	if isShowing or isClosing:
@@ -97,17 +145,20 @@ func showWithAnimation() -> void:
 
 	isShowing = true
 	isClosing = false
-	allowHide = false
 
-	killTweens()
-	createOverlay()
+	killTween()
 
-	popup_centered(POPUP_SIZE)
-	await get_tree().process_frame
+	visible = true
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	move_to_front()
+
+	forcePopupLayout()
+
+	if overlay != null:
+		overlay.color = TRANSPARENT_COLOR
 
 	if container != null:
-		containerOriginalPosition = container.position
-		container.position = containerOriginalPosition + SHOW_OFFSET
+		container.position = containerTargetPosition + SHOW_OFFSET
 		container.modulate = Color(1, 1, 1, 0)
 
 	playSound(containerShowPlayer)
@@ -116,8 +167,6 @@ func showWithAnimation() -> void:
 	popupTween.set_parallel(true)
 
 	if overlay != null:
-		overlay.color = TRANSPARENT_COLOR
-		overlay.visible = true
 		popupTween.tween_property(
 			overlay,
 			"color",
@@ -129,7 +178,7 @@ func showWithAnimation() -> void:
 		popupTween.tween_property(
 			container,
 			"position",
-			containerOriginalPosition,
+			containerTargetPosition,
 			SHOW_TIME
 		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
@@ -151,9 +200,8 @@ func closeWithAnimation() -> void:
 
 	isClosing = true
 	isShowing = false
-	allowHide = true
 
-	killTweens()
+	killTween()
 	playSound(clickPlayer)
 
 	popupTween = create_tween()
@@ -163,7 +211,7 @@ func closeWithAnimation() -> void:
 		popupTween.tween_property(
 			container,
 			"position",
-			containerOriginalPosition + HIDE_OFFSET,
+			containerTargetPosition + HIDE_OFFSET,
 			HIDE_TIME
 		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 
@@ -184,82 +232,14 @@ func closeWithAnimation() -> void:
 
 	await popupTween.finished
 
-	hide()
-	removeOverlay()
-
-	isClosing = false
-	allowHide = false
-
 	closed.emit()
 	queue_free()
 
 
-# Creates the dark overlay behind the popup.
-func createOverlay() -> void:
-	if overlay != null and is_instance_valid(overlay):
-		return
-
-	var parentNode := get_parent()
-
-	if parentNode == null:
-		return
-
-	overlay = ColorRect.new()
-	overlay.name = "DifficultyDarkOverlay"
-	overlay.color = TRANSPARENT_COLOR
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	overlay.visible = true
-
-	parentNode.add_child(overlay)
-	parentNode.move_child(overlay, get_index())
-
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.offset_left = 0
-	overlay.offset_top = 0
-	overlay.offset_right = 0
-	overlay.offset_bottom = 0
-
-
-# Removes the dark overlay.
-func removeOverlay() -> void:
-	if overlay != null and is_instance_valid(overlay):
-		overlay.queue_free()
-
-	overlay = null
-
-
-# Stops active popup tweens before creating new ones.
-func killTweens() -> void:
+# Stops active popup tween before creating a new one.
+func killTween() -> void:
 	if popupTween != null and popupTween.is_valid():
 		popupTween.kill()
-
-
-# Prevents accidental direct hiding without the close animation.
-func onPopupHide() -> void:
-	if allowHide or isClosing:
-		return
-
-	call_deferred("forceRestorePopup")
-
-
-# Restores the popup if Godot hides it without using the animation.
-func forceRestorePopup() -> void:
-	if isClosing:
-		return
-
-	createOverlay()
-
-	if overlay != null:
-		overlay.color = OVERLAY_COLOR
-		overlay.visible = true
-
-	popup_centered(POPUP_SIZE)
-
-	await get_tree().process_frame
-
-	if container != null:
-		container.position = containerOriginalPosition
-		container.modulate = Color(1, 1, 1, 1)
 
 
 # Handles close button press.
