@@ -10,13 +10,14 @@ const GameplayPause = preload("res://scenes/gameplay/systems/gameplay_pause.gd")
 const GameplayRules = preload("res://scenes/gameplay/systems/gameplay_rules.gd")
 const GameplaySearch = preload("res://scenes/gameplay/systems/gameplay_search.gd")
 const GameplaySelection = preload("res://scenes/gameplay/systems/gameplay_selection.gd")
+const LevelRepository = preload("res://scripts/database/level_repository.gd")
+
 
 const MAIN_MENU_SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
 const START_GAMEPLAY_SOUND: AudioStream = preload("res://assets/sounds/sfx/sfx_start_gameplay.wav")
 
 const HEADER_CELL_SCENE := preload("res://scenes/gameplay/components/header_cell/header_cell.tscn")
 const TABLE_ROW_SCENE := preload("res://scenes/gameplay/components/table_row/table_row.tscn")
-const CHAPTER_1_LEVELS := preload("res://scripts/data/chapter_1_levels.gd")
 const PAUSE_OVERLAY_SCENE := preload("res://scenes/gameplay/components/pause/pause_overlay.tscn")
 
 const STAR_FILLED_TEXTURE: Texture2D = preload("res://assets/interface/icons/icon_star.png")
@@ -37,7 +38,8 @@ const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_
 @onready var footer: TextureRect = get_node_or_null("Footer") as TextureRect
 
 @onready var levelText: Label = get_node_or_null("HeaderLevel/LevelText") as Label
-@onready var objectiveText: Label = get_node_or_null("HeaderObjective/ObjectiveText") as Label
+@onready var objectiveScroll: ScrollContainer = get_node_or_null("HeaderObjective/ObjectiveScroll") as ScrollContainer
+@onready var objectiveText: Label = get_node_or_null("HeaderObjective/ObjectiveScroll/ObjectiveText") as Label
 @onready var livesIcon: TextureRect = get_node_or_null("Header/HudLayer/LivesIcon") as TextureRect
 @onready var livesText: Label = get_node_or_null("Header/HudLayer/LivesText") as Label
 @onready var timeText: Label = get_node_or_null("Header/HudLayer/TimeText") as Label
@@ -143,6 +145,8 @@ var rulesSystem
 var searchSystem
 var selectionSystem
 
+var levelRepository
+
 
 # Creates gameplay systems and starts the first level.
 func _ready() -> void:
@@ -193,6 +197,7 @@ func createSystems() -> void:
 	rulesSystem = GameplayRules.new(self)
 	searchSystem = GameplaySearch.new(self)
 	selectionSystem = GameplaySelection.new(self)
+	levelRepository = LevelRepository.new()
 
 
 # Runs startup setup for all gameplay systems.
@@ -203,6 +208,7 @@ func setupSystems() -> void:
 	layoutSystem.applyFixedPhoneLayout()
 	layoutSystem.setupFooterButtonsLayout()
 	layoutSystem.fixSearchButtonsLayout()
+	layoutSystem.setupSelectedPanelLayout()
 	layoutSystem.setupObjectiveLabel()
 
 	tableSystem.setupManualTableNodes()
@@ -212,6 +218,7 @@ func setupSystems() -> void:
 	pauseSystem.connectPauseButton()
 
 	searchSystem.setupSearchTools()
+	selectionSystem.setupSelectionDisplay()
 
 
 # Loads a level by number.
@@ -227,9 +234,12 @@ func setObjectiveText(message: String, fontSize: int = 40) -> void:
 	objectiveText.text = message
 	objectiveText.add_theme_font_size_override("font_size", fontSize)
 	objectiveText.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	objectiveText.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objectiveText.clip_text = false
+
+	if objectiveScroll != null:
+		objectiveScroll.scroll_vertical = 0
 
 
 # Gets the current pause button node.

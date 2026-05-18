@@ -4,7 +4,7 @@ const CLICK_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_generic_sele
 const PLAY_SOUND: AudioStream = preload("res://assets/sounds/ui/ui_play.wav")
 
 const START_GAME_SCENE_PATH := "res://scenes/start_game/start_game.tscn"
-const LEVEL_GAMEPLAY_SCENE_PATH := "res://scenes/level_gameplay/level_gameplay.tscn"
+const LEVEL_GAMEPLAY_SCENE_PATH := "res://scenes/gameplay/gameplay.tscn"
 
 const DESIGN_WIDTH := 1080.0
 const DESIGN_HEIGHT := 1920.0
