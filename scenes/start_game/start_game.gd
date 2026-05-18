@@ -59,6 +59,9 @@ func _notification(what: int) -> void:
 	if what != NOTIFICATION_RESIZED:
 		return
 
+	if not is_node_ready():
+		return
+
 	forceStartGameLayout()
 	call_deferred("forceStartGameLayout")
 
@@ -90,7 +93,8 @@ func forceBackgroundLayout() -> void:
 # Centers and sizes the chapter slider above the footer.
 func forceChapterSliderLayout() -> void:
 	if chapterSlider == null:
-		push_error("ChapterSlider node not found in StartGame.")
+		if is_node_ready():
+			push_error("ChapterSlider node not found in StartGame.")
 		return
 
 	var chapterSliderHeight: float = max(900.0, size.y - FOOTER_HEIGHT)
@@ -280,9 +284,7 @@ func showDifficultyPopup(pageId: String) -> void:
 
 	if popup.has_method("showWithAnimation"):
 		popup.call("showWithAnimation")
-	elif popup is Popup:
-		popup.popup_centered(Vector2i(900, 1400))
-	elif popup is Control:
+	else:
 		popup.show()
 
 
