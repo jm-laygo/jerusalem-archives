@@ -24,6 +24,14 @@ const ROW_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_
 const CHECK_CONTAINER_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_check_container.png")
 const CHECK_ICON_TEXTURE: Texture2D = preload("res://assets/interface/icons/icon_check01.png")
 
+const ROW_NORMAL_SCALE := Vector2.ONE
+const ROW_PRESSED_SCALE := Vector2(1.01, 1.01)
+const ROW_ANIMATION_TIME := 0.08
+const ROW_RETURN_TIME := 0.12
+const ROW_WRONG_COLOR := Color(1.0, 0.45, 0.45, 1.0)
+const ROW_CORRECT_COLOR := Color(0.55, 1.0, 0.55, 1.0)
+const ROW_NORMAL_COLOR := Color(1, 1, 1, 1)
+
 @onready var rowBackground: TextureRect = $RowBackground
 @onready var cellsHBox: HBoxContainer = $CellsHBox
 
@@ -36,6 +44,8 @@ var rowColumns: Array = []
 
 var isSelected := false
 var rowTotalWidth := 0
+
+var rowTween: Tween
 
 
 # Prepares row input and default visuals.
@@ -183,6 +193,51 @@ func applyVisualState() -> void:
 		checkIcon.visible = isSelected
 
 
-# Emits the selected row record.
+# Emits the selected row record and plays a small selection animation.
 func onPressed() -> void:
+	playSelectAnimation()
 	rowSelected.emit(rowRecord)
+
+# Plays a subtle row selection animation.
+func playSelectAnimation() -> void:
+	if rowTween != null and rowTween.is_valid():
+		rowTween.kill()
+
+	pivot_offset = size * 0.5
+	scale = ROW_NORMAL_SCALE
+
+	rowTween = create_tween()
+	rowTween.tween_property(self, "scale", ROW_PRESSED_SCALE, ROW_ANIMATION_TIME)
+	rowTween.tween_property(self, "scale", ROW_NORMAL_SCALE, ROW_RETURN_TIME)
+
+
+# Plays feedback when the selected row is correct.
+func playCorrectAnimation() -> void:
+	if rowBackground == null:
+		return
+
+	if rowTween != null and rowTween.is_valid():
+		rowTween.kill()
+
+	rowBackground.modulate = ROW_CORRECT_COLOR
+
+	rowTween = create_tween()
+	rowTween.tween_property(rowBackground, "modulate", ROW_NORMAL_COLOR, 0.35)
+
+
+# Plays feedback when the selected row is wrong.
+func playWrongAnimation() -> void:
+	if rowBackground == null:
+		return
+
+	if rowTween != null and rowTween.is_valid():
+		rowTween.kill()
+
+	var originalPosition := position
+	rowBackground.modulate = ROW_WRONG_COLOR
+
+	rowTween = create_tween()
+	rowTween.tween_property(self, "position", originalPosition + Vector2(-8, 0), 0.04)
+	rowTween.tween_property(self, "position", originalPosition + Vector2(8, 0), 0.04)
+	rowTween.tween_property(self, "position", originalPosition, 0.04)
+	rowTween.tween_property(rowBackground, "modulate", ROW_NORMAL_COLOR, 0.25)
