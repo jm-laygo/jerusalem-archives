@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://db2x8vl2uih7n"
-path="res://.godot/imported/minushealth.wav-8ccb9c3e04ead58973a183de905fdf9b.sample"
+path="res://.godot/imported/ui_minus_health.wav-5505e3b7097a6758065f72f526f5d7f7.sample"
 
 [deps]
 
-source_file="res://assets/sounds/ui/minushealth.wav"
-dest_files=["res://.godot/imported/minushealth.wav-8ccb9c3e04ead58973a183de905fdf9b.sample"]
+source_file="res://assets/sounds/ui/ui_minus_health.wav"
+dest_files=["res://.godot/imported/ui_minus_health.wav-5505e3b7097a6758065f72f526f5d7f7.sample"]
 
 [params]
 

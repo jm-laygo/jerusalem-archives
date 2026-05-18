@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://borbpbhg3l7c8"
-path="res://.godot/imported/start_game_show.wav-593eb6c00937076272d47a466236396f.sample"
+path="res://.godot/imported/ui_start_game_show.wav-c48b3b899e97118ca8d618f57d6b0457.sample"
 
 [deps]
 
-source_file="res://assets/sounds/ui/start_game_show.wav"
-dest_files=["res://.godot/imported/start_game_show.wav-593eb6c00937076272d47a466236396f.sample"]
+source_file="res://assets/sounds/ui/ui_start_game_show.wav"
+dest_files=["res://.godot/imported/ui_start_game_show.wav-c48b3b899e97118ca8d618f57d6b0457.sample"]
 
 [params]
 
