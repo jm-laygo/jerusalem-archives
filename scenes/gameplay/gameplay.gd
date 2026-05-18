@@ -8,6 +8,7 @@ const GameplayTable = preload("res://scenes/gameplay/systems/gameplay_table.gd")
 const GameplayScroll = preload("res://scenes/gameplay/systems/gameplay_scroll.gd")
 const GameplayPause = preload("res://scenes/gameplay/systems/gameplay_pause.gd")
 const GameplayRules = preload("res://scenes/gameplay/systems/gameplay_rules.gd")
+const GameplaySearch = preload("res://scenes/gameplay/systems/gameplay_search.gd")
 
 const MAIN_MENU_SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
 const START_GAMEPLAY_SOUND: AudioStream = preload("res://assets/sounds/sfx/sfx_start_gameplay.wav")
@@ -78,6 +79,10 @@ const FOOTER_HEIGHT := 217.0
 @onready var verticalScrollBackground: TextureRect = get_node_or_null("DataHeader/ScrollBarBackground") as TextureRect
 @onready var verticalScrollSlider: TextureRect = get_node_or_null("DataHeader/ScrollBarSlider") as TextureRect
 
+@onready var searchInput: LineEdit = get_node_or_null("SearchBar/SearchInput") as LineEdit
+@onready var filterButton: TextureButton = get_node_or_null("SearchButtons/FilterButton") as TextureButton
+@onready var clearButton: TextureButton = get_node_or_null("SearchButtons/ClearButton") as TextureButton
+
 var tableHeaderViewport: Control
 var tableRowsViewport: Control
 var headerHBox: HBoxContainer
@@ -125,6 +130,7 @@ var tableSystem
 var scrollSystem
 var pauseSystem
 var rulesSystem
+var searchSystem
 
 
 # Creates gameplay systems and starts the first level.
@@ -170,6 +176,7 @@ func createSystems() -> void:
 	scrollSystem = GameplayScroll.new(self)
 	pauseSystem = GameplayPause.new(self)
 	rulesSystem = GameplayRules.new(self)
+	searchSystem = GameplaySearch.new(self)
 
 
 # Runs startup setup for all gameplay systems.
@@ -187,6 +194,8 @@ func setupSystems() -> void:
 
 	footerSystem.connectButtons()
 	pauseSystem.connectPauseButton()
+
+	searchSystem.setupSearchTools()
 
 
 # Loads a level by number.
