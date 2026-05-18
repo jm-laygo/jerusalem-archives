@@ -38,7 +38,9 @@ func setupManualTableNodes() -> void:
 
 	gameplay.tableHeaderViewport.move_to_front()
 	gameplay.tableRowsViewport.move_to_front()
-	gameplay.scrollSystem.moveCustomScrollbarsToFront()
+
+	if gameplay.scrollSystem != null and gameplay.scrollSystem.has_method("moveCustomScrollbarsToFront"):
+		gameplay.scrollSystem.moveCustomScrollbarsToFront()
 
 
 # Removes the old ScrollContainer table if it still exists in the scene.
@@ -184,12 +186,15 @@ func calculateTableWidth() -> float:
 	return total
 
 
-# Handles a header click and toggles sorting.
+# Handles a header click and toggles sorting without resetting scroll.
 func onHeaderPressed(columnKey: String) -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.titleHeaderClickSound)
 
 	if columnKey.is_empty():
 		return
+
+	var savedScrollX: float = gameplay.scrollX
+	var savedScrollY: float = gameplay.scrollY
 
 	if gameplay.activeSortColumnKey == columnKey:
 		gameplay.activeSortColumnKey = ""
@@ -204,7 +209,7 @@ func onHeaderPressed(columnKey: String) -> void:
 	else:
 		gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
 
-	rebuildTableKeepScroll()
+	rebuildTableKeepScrollAt(savedScrollX, savedScrollY)
 
 
 # Sorts the currently displayed records using the given column key.
@@ -243,16 +248,47 @@ func getRecordIdNumber(record: Dictionary) -> int:
 
 # Rebuilds the table without resetting the scroll position.
 func rebuildTableKeepScroll() -> void:
-	var oldScrollX: float = gameplay.scrollX
-	var oldScrollY: float = gameplay.scrollY
+	rebuildTableKeepScrollAt(gameplay.scrollX, gameplay.scrollY)
 
+
+# Rebuilds the table and restores a specific saved scroll position.
+func rebuildTableKeepScrollAt(savedScrollX: float, savedScrollY: float) -> void:
 	clearContainer(gameplay.headerHBox)
 	clearContainer(gameplay.rowsVBox)
 
 	buildHeaders()
 	buildRows()
 
-	gameplay.scrollX = oldScrollX
-	gameplay.scrollY = oldScrollY
+	restoreTableScrollPosition(savedScrollX, savedScrollY)
 
-	gameplay.call_deferred("refreshScrollLimits")
+	call_deferred("restoreTableScrollPosition", savedScrollX, savedScrollY)
+
+
+# Restores scroll and reapplies the table/header positions.
+func restoreTableScrollPosition(savedScrollX: float, savedScrollY: float) -> void:
+	gameplay.scrollX = savedScrollX
+	gameplay.scrollY = savedScrollY
+
+	if gameplay.scrollSystem != null and gameplay.scrollSystem.has_method("refreshScrollLimits"):
+		gameplay.scrollSystem.refreshScrollLimits()
+
+	gameplay.scrollX = clamp(gameplay.scrollX, 0.0, gameplay.maxScrollX)
+	gameplay.scrollY = clamp(gameplay.scrollY, 0.0, gameplay.maxScrollY)
+
+	applyCurrentScrollPosition()
+
+	if gameplay.scrollSystem != null:
+		if gameplay.scrollSystem.has_method("setupCustomScrollbarPositions"):
+			gameplay.scrollSystem.setupCustomScrollbarPositions()
+
+		if gameplay.scrollSystem.has_method("updateCustomScrollbars"):
+			gameplay.scrollSystem.updateCustomScrollbars()
+
+
+# Directly applies the current scroll values to the header and rows.
+func applyCurrentScrollPosition() -> void:
+	if gameplay.headerHBox != null:
+		gameplay.headerHBox.position = Vector2(-gameplay.scrollX, 0.0)
+
+	if gameplay.rowsVBox != null:
+		gameplay.rowsVBox.position = Vector2(-gameplay.scrollX, -gameplay.scrollY)
