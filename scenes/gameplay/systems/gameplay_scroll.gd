@@ -4,7 +4,7 @@ const TABLE_WIDTH := 1080.0
 const FOOTER_HEIGHT := 217.0
 
 const HEADER_HEIGHT := 120.0
-const ROWS_Y := 374.0
+const ROWS_Y := 428.0
 
 const H_SCROLL_Y := 1090.0
 const H_SCROLL_HEIGHT := 20.0

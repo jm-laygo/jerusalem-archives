@@ -9,8 +9,8 @@ const SUPER_LONG_WIDTH := 720.0
 const TABLE_RIGHT_PADDING := 160.0
 const TABLE_WIDTH := 1080.0
 
-const HEADER_Y := 246.0
-const ROWS_Y := 374.0
+const HEADER_Y := 300.0
+const ROWS_Y := 428.0
 const DEFAULT_ROWS_VIEWPORT_HEIGHT := 100.0
 
 const COLUMN_TYPE_NORMAL := "normal"
