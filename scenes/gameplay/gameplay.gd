@@ -29,6 +29,7 @@ const FOOTER_HEIGHT := 217.0
 const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_selected_id.png")
 
 const INFO_POPUP_SCENE := preload("res://scenes/gameplay/components/info_popup/info_popup.tscn")
+const HINT_POPUP_SCENE := preload("res://scenes/gameplay/components/hint_popup/hint_popup.tscn")
 
 
 @onready var header: TextureRect = get_node_or_null("Header") as TextureRect
@@ -149,6 +150,7 @@ var selectionSystem
 var levelRepository
 
 var infoPopup: Control = null
+var hintPopup: Control = null
 
 
 # Creates gameplay systems and starts the first level.
@@ -224,6 +226,7 @@ func setupSystems() -> void:
 	selectionSystem.setupSelectionDisplay()
 
 	setupInfoPopup()
+	setupHintPopup()
 
 
 # Loads a level by number.
@@ -335,6 +338,20 @@ func setupInfoPopup() -> void:
 	if infoPopup.has_signal("popup_closed"):
 		infoPopup.popup_closed.connect(_on_info_popup_closed)
 
+	if infoPopup.has_signal("popup_button_pressed"):
+		infoPopup.popup_button_pressed.connect(_on_info_popup_button_pressed)
+
+func _on_info_popup_button_pressed() -> void:
+	if audioSystem == null:
+		return
+
+	var selectedSound = get("genericSelectSound")
+
+	if selectedSound == null:
+		selectedSound = infoClickSound
+
+	audioSystem.playFooterClickSound(selectedSound)
+
 
 # Opens the case report popup.
 func openInfoPopup() -> void:
@@ -356,3 +373,40 @@ func openInfoPopup() -> void:
 # Called when the info popup closes.
 func _on_info_popup_closed() -> void:
 	pass
+
+
+# Creates the hint popup.
+func setupHintPopup() -> void:
+	if hintPopup != null:
+		return
+
+	hintPopup = HINT_POPUP_SCENE.instantiate() as Control
+	add_child(hintPopup)
+	hintPopup.visible = false
+
+
+# Opens the hint popup and reveals the next hint.
+func openHintPopup() -> void:
+	if hintPopup == null:
+		setupHintPopup()
+
+	if hintPopup == null:
+		return
+
+	var hints: Array = currentLevel.get("hints", [])
+
+	if hints.is_empty():
+		hintPopup.openPopup("No hint available.")
+		return
+
+	if hintIndex >= hints.size():
+		hintPopup.openPopup("No more hints available.")
+		return
+
+	var hintText: String = str(hints[hintIndex])
+
+	hintIndex += 1
+	hintsUsed += 1
+	updateHud()
+
+	hintPopup.openPopup(hintText)
