@@ -521,13 +521,24 @@ func _on_result_popup_back_to_menu_pressed() -> void:
 # Reloads current level.
 func retryCurrentLevel() -> void:
 	hideResultPopupImmediately()
+	playStartGameplayAgain()
 	loadLevel(currentLevelNumber)
 
 
 # Loads next level.
 func loadNextLevel() -> void:
 	hideResultPopupImmediately()
+	playStartGameplayAgain()
 	loadLevel(currentLevelNumber + 1)
+
+
+# Plays the gameplay start sound again after retry or next level.
+func playStartGameplayAgain() -> void:
+	if startGameplaySound == null:
+		return
+
+	startGameplaySound.stop()
+	startGameplaySound.play()
 
 
 # Goes back to main menu.
