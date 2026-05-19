@@ -6,7 +6,6 @@ const LevelRecordGenerator = preload("res://scripts/database/level_record_genera
 var db: Object = null
 
 
-# Opens the SQLite database.
 func openDatabase() -> bool:
 	if not ClassDB.class_exists("SQLite"):
 		push_error("SQLite class is not registered.")
@@ -30,7 +29,6 @@ func openDatabase() -> bool:
 	return true
 
 
-# Closes the SQLite database.
 func closeDatabase() -> void:
 	if db == null:
 		return
@@ -39,7 +37,6 @@ func closeDatabase() -> void:
 	db = null
 
 
-# Returns one complete level as a gameplay-ready Dictionary.
 func getLevel(chapterId: int, levelNumber: int) -> Dictionary:
 	if db == null:
 		push_error("Database is not open.")
@@ -51,25 +48,53 @@ func getLevel(chapterId: int, levelNumber: int) -> Dictionary:
 		return {}
 
 	var levelId: int = int(levelData.get("level_id", 0))
+
 	levelData["columns"] = getLevelColumns(levelId)
+	levelData["hints"] = getLevelHints(levelId)
 
 	if str(levelData.get("generation_mode", "fixed")) == "generated":
 		levelData = generateLevel(levelData)
 	else:
-		levelData["records"] = getFixedLevelRecords(levelId)
-		levelData["correct_record_ids"] = getFixedLevelAnswers(levelId)
-		levelData["hints"] = getFixedLevelHints(levelId)
+		levelData["records"] = getLevelRecords(levelId)
+		levelData["correct_record_ids"] = getLevelAnswers(levelId)
 
 	var correctIds: Array = levelData.get("correct_record_ids", [])
-	levelData["correct_record_id"] = str(correctIds[0]) if not correctIds.is_empty() else ""
+
+	if not correctIds.is_empty():
+		levelData["correct_record_id"] = str(correctIds[0])
+	else:
+		levelData["correct_record_id"] = ""
 
 	return levelData
 
 
-# Loads the main level row.
 func getLevelBaseData(chapterId: int, levelNumber: int) -> Dictionary:
 	var success: bool = db.query_with_bindings(
-		"SELECT levels.level_id, levels.chapter_id, chapters.chapter_title, levels.level_number, levels.level_title, levels.objective, levels.story, levels.selection_mode, levels.selection_limit, levels.hearts, levels.time_limit, levels.generation_mode, levels.case_type, levels.record_count, levels.target_role FROM levels INNER JOIN chapters ON chapters.chapter_id = levels.chapter_id WHERE levels.chapter_id = ? AND levels.level_number = ? LIMIT 1;",
+		"
+		SELECT
+			levels.level_id,
+			levels.chapter_id,
+			chapters.chapter_title,
+			levels.level_number,
+			levels.level_title,
+			levels.objective,
+			levels.story,
+			levels.selection_mode,
+			levels.selection_limit,
+			levels.hearts,
+			levels.time_limit,
+			levels.generation_mode,
+			levels.case_type,
+			levels.record_count,
+			levels.target_role,
+			levels.success_text,
+			levels.failure_text,
+			levels.difficulty_tier
+		FROM levels
+		INNER JOIN chapters ON chapters.chapter_id = levels.chapter_id
+		WHERE levels.chapter_id = ? AND levels.level_number = ?
+		LIMIT 1;
+		",
 		[chapterId, levelNumber]
 	)
 
@@ -98,23 +123,18 @@ func getLevelBaseData(chapterId: int, levelNumber: int) -> Dictionary:
 		"generation_mode": str(row.get("generation_mode", "fixed")),
 		"case_type": str(row.get("case_type", "fixed")),
 		"record_count": int(row.get("record_count", 50)),
-		"target_role": str(row.get("target_role", ""))
+		"target_role": str(row.get("target_role", "")),
+		"success_text": str(row.get("success_text", "")),
+		"failure_text": str(row.get("failure_text", "")),
+		"difficulty_tier": int(row.get("difficulty_tier", 1))
 	}
 
 
-# Generates a level from database pools.
 func generateLevel(levelData: Dictionary) -> Dictionary:
 	var generator = LevelRecordGenerator.new(db)
-	var caseType: String = str(levelData.get("case_type", ""))
-
-	if caseType == "missing_merchant":
-		return generator.generateMissingMerchantLevel(levelData)
-
-	push_error("Unsupported generated case type: %s" % caseType)
-	return levelData
+	return generator.generateLevel(levelData)
 
 
-# Loads dynamic table columns for the level.
 func getLevelColumns(levelId: int) -> Array:
 	var success: bool = db.query_with_bindings(
 		"SELECT title, key, width_type FROM level_columns WHERE level_id = ? ORDER BY column_order ASC;",
@@ -137,8 +157,7 @@ func getLevelColumns(levelId: int) -> Array:
 	return columns
 
 
-# Loads fixed table records for fixed/manual levels.
-func getFixedLevelRecords(levelId: int) -> Array:
+func getLevelRecords(levelId: int) -> Array:
 	var success: bool = db.query_with_bindings(
 		"SELECT data_json FROM level_records WHERE level_id = ? ORDER BY record_id ASC;",
 		[levelId]
@@ -154,18 +173,13 @@ func getFixedLevelRecords(levelId: int) -> Array:
 		var dataJson: String = str(row.get("data_json", ""))
 		var parsedData = JSON.parse_string(dataJson)
 
-		if parsedData == null:
-			push_error("Invalid record JSON: %s" % dataJson)
-			continue
-
 		if parsedData is Dictionary:
 			records.append(parsedData)
 
 	return records
 
 
-# Loads correct answer IDs for fixed/manual levels.
-func getFixedLevelAnswers(levelId: int) -> Array[String]:
+func getLevelAnswers(levelId: int) -> Array[String]:
 	var success: bool = db.query_with_bindings(
 		"SELECT record_id FROM level_answers WHERE level_id = ? ORDER BY answer_id ASC;",
 		[levelId]
@@ -183,8 +197,7 @@ func getFixedLevelAnswers(levelId: int) -> Array[String]:
 	return answers
 
 
-# Loads ordered hints for fixed/manual levels.
-func getFixedLevelHints(levelId: int) -> Array:
+func getLevelHints(levelId: int) -> Array:
 	var success: bool = db.query_with_bindings(
 		"SELECT hint_text FROM level_hints WHERE level_id = ? ORDER BY hint_order ASC;",
 		[levelId]

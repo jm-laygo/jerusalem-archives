@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS levels (
 	case_type TEXT NOT NULL DEFAULT 'fixed',
 	record_count INTEGER NOT NULL DEFAULT 50,
 	target_role TEXT NOT NULL DEFAULT '',
+	success_text TEXT NOT NULL DEFAULT '',
+	failure_text TEXT NOT NULL DEFAULT '',
+	difficulty_tier INTEGER NOT NULL DEFAULT 1,
 	UNIQUE(chapter_id, level_number),
 	FOREIGN KEY (chapter_id) REFERENCES chapters(chapter_id)
 );
