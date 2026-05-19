@@ -38,8 +38,7 @@ const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_
 @onready var footer: TextureRect = get_node_or_null("Footer") as TextureRect
 
 @onready var levelText: Label = get_node_or_null("HeaderLevel/LevelText") as Label
-@onready var objectiveScroll: ScrollContainer = get_node_or_null("HeaderObjective/ObjectiveScroll") as ScrollContainer
-@onready var objectiveText: Label = get_node_or_null("HeaderObjective/ObjectiveScroll/ObjectiveText") as Label
+@onready var objectiveText: Label = get_node_or_null("HeaderObjective/ObjectiveText") as Label
 @onready var livesIcon: TextureRect = get_node_or_null("Header/HudLayer/LivesIcon") as TextureRect
 @onready var livesText: Label = get_node_or_null("Header/HudLayer/LivesText") as Label
 @onready var timeText: Label = get_node_or_null("Header/HudLayer/TimeText") as Label
@@ -226,7 +225,7 @@ func loadLevel(levelNumber: int) -> void:
 	rulesSystem.loadLevel(levelNumber)
 
 
-# Sets the objective text safely.
+# Sets the objective header text.
 func setObjectiveText(message: String, fontSize: int = 40) -> void:
 	if objectiveText == null:
 		return
@@ -234,12 +233,9 @@ func setObjectiveText(message: String, fontSize: int = 40) -> void:
 	objectiveText.text = message
 	objectiveText.add_theme_font_size_override("font_size", fontSize)
 	objectiveText.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	objectiveText.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objectiveText.clip_text = false
-
-	if objectiveScroll != null:
-		objectiveScroll.scroll_vertical = 0
 
 
 # Gets the current pause button node.

@@ -1,13 +1,8 @@
 extends RefCounted
 
-const OBJECTIVE_FONT_SIZE := 40
-const OBJECTIVE_MESSAGE_FONT_SIZE := 48
-const OBJECTIVE_WARNING_FONT_SIZE := 50
+const OBJECTIVE_NORMAL_FONT_SIZE := 40
 
-const DEFAULT_TIME_LIMIT := 240.0
-const DEFAULT_HEARTS := 4
-const DEFAULT_OBJECTIVE := "Objective"
-const DEFAULT_STORY := "No story available."
+const MAIN_MENU_SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
 
 var gameplay: Control
 
@@ -17,57 +12,77 @@ func _init(gameplayOwner: Control) -> void:
 	gameplay = gameplayOwner
 
 
-# Loads level data and resets gameplay state.
+# Loads the chosen level.
 func loadLevel(levelNumber: int) -> void:
+	gameplay.levelFinished = false
+	gameplay.activeSortColumnKey = ""
+	gameplay.selectedRecord = {}
+	gameplay.selectedRow = null
+
 	gameplay.currentLevel = loadLevelFromDatabase(levelNumber)
 
 	if gameplay.currentLevel.is_empty():
-		push_error("Level data not found: %s" % levelNumber)
+		push_error("No level data found: %s" % levelNumber)
 		return
 
 	gameplay.currentColumns = gameplay.currentLevel.get("columns", [])
 	gameplay.currentRecords = gameplay.currentLevel.get("records", [])
 	gameplay.originalRecords = gameplay.currentRecords.duplicate(true)
 
-	gameplay.activeSortColumnKey = ""
 	gameplay.correctRecordId = str(gameplay.currentLevel.get("correct_record_id", ""))
 
-	gameplay.hearts = int(gameplay.currentLevel.get("hearts", DEFAULT_HEARTS))
-	gameplay.maxHearts = gameplay.hearts
+	gameplay.maxHearts = int(gameplay.currentLevel.get("hearts", 4))
+	gameplay.hearts = gameplay.maxHearts
 
 	gameplay.hintIndex = 0
 	gameplay.hintsUsed = 0
-	gameplay.currentStars = 3
 
-	gameplay.levelTimeLimit = float(gameplay.currentLevel.get("time_limit", DEFAULT_TIME_LIMIT))
+	gameplay.levelTimeLimit = float(gameplay.currentLevel.get("time_limit", 240))
 	gameplay.timeRemaining = gameplay.levelTimeLimit
 
-	gameplay.levelFinished = false
+	gameplay.currentStars = 3
 
-	gameplay.selectedRecord = {}
-	gameplay.selectedRow = null
+	if gameplay.levelText != null:
+		gameplay.levelText.text = "Level %s" % levelNumber
+
+	setLevelObjectiveHeader()
 
 	if gameplay.selectionSystem != null:
 		gameplay.selectionSystem.configureFromLevel(gameplay.currentLevel)
 		gameplay.selectionSystem.resetSelection()
 
-	gameplay.scrollX = 0.0
-	gameplay.scrollY = 0.0
-	gameplay.dragAxis = ""
-
-	if gameplay.levelText != null:
-		gameplay.levelText.text = "Level %s" % str(gameplay.currentLevel.get("level_number", levelNumber))
-
-	gameplay.setObjectiveText(str(gameplay.currentLevel.get("objective", DEFAULT_OBJECTIVE)), OBJECTIVE_FONT_SIZE)
-
-	gameplay.hudSystem.previousHearts = -1
-	gameplay.hudSystem.previousStars = -1
-	gameplay.hudSystem.updateHud()
-
-	gameplay.tableSystem.buildTable()
+	gameplay.updateHud()
+	gameplay.buildTable()
+	gameplay.call_deferred("refreshScrollLimits")
 
 
-# Updates the level timer while the level is active.
+# Shows only the short objective in the objective header.
+func setLevelObjectiveHeader() -> void:
+	var objectiveText: String = str(gameplay.currentLevel.get("objective", "Identify the correct archive record."))
+
+	gameplay.setObjectiveText(
+		objectiveText,
+		OBJECTIVE_NORMAL_FONT_SIZE
+	)
+
+
+# Loads one level from SQLite through the level repository.
+func loadLevelFromDatabase(levelNumber: int) -> Dictionary:
+	if gameplay.levelRepository == null:
+		push_error("LevelRepository is not available.")
+		return {}
+
+	if not gameplay.levelRepository.openDatabase():
+		return {}
+
+	var levelData: Dictionary = gameplay.levelRepository.getLevel(1, levelNumber)
+
+	gameplay.levelRepository.closeDatabase()
+
+	return levelData
+
+
+# Updates the level timer.
 func updateTimer(delta: float) -> void:
 	if gameplay.levelFinished:
 		return
@@ -78,25 +93,18 @@ func updateTimer(delta: float) -> void:
 	gameplay.timeRemaining -= delta
 
 	if gameplay.timeRemaining <= 0.0:
-		handleTimerExpired()
-		return
+		gameplay.timeRemaining = 0.0
+		handleTimeExpired()
 
-	gameplay.hudSystem.updateTimerDisplay()
-
-
-# Handles the fail state when the timer reaches zero.
-func handleTimerExpired() -> void:
-	gameplay.timeRemaining = 0.0
-	gameplay.levelFinished = true
-	gameplay.hearts = 0
-
-	gameplay.hudSystem.updateHud()
-	gameplay.setObjectiveText("Time is up. Case failed.", OBJECTIVE_MESSAGE_FONT_SIZE)
+	gameplay.updateHud()
 
 
 # Handles row selection from the table.
 func onRowSelected(record: Dictionary, row: Button) -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.rowClickSound)
+
+	if gameplay.levelFinished:
+		return
 
 	if gameplay.selectionSystem != null:
 		gameplay.selectionSystem.toggleRowSelection(record, row)
@@ -112,14 +120,14 @@ func onRowSelected(record: Dictionary, row: Button) -> void:
 		gameplay.selectedRow.setSelected(true)
 
 
-# Checks whether the selected record is correct.
+# Handles check button press.
 func onCheckPressed() -> void:
 	if gameplay.levelFinished:
 		return
 
 	if gameplay.selectionSystem != null:
 		if not gameplay.selectionSystem.hasSelection():
-			gameplay.setObjectiveText("Select a record first.", OBJECTIVE_WARNING_FONT_SIZE)
+			gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 			return
 
 		if isSelectionCorrect():
@@ -130,17 +138,18 @@ func onCheckPressed() -> void:
 		return
 
 	if gameplay.selectedRecord.is_empty():
-		gameplay.setObjectiveText("Select a record first.", OBJECTIVE_WARNING_FONT_SIZE)
+		gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 		return
 
 	var selectedId := str(gameplay.selectedRecord.get("record_id", ""))
 
 	if selectedId == gameplay.correctRecordId:
-		handleCorrectRecord(selectedId)
+		handleCorrectSelection()
 	else:
 		handleWrongRecord()
 
-# Checks if the selected record IDs match the correct answer IDs.
+
+# Checks if the selected record IDs match the correct answer IDs exactly.
 func isSelectionCorrect() -> bool:
 	var selectedIds: Array[String] = gameplay.selectionSystem.getSelectedRecordIds()
 	var correctIds: Array[String] = getCorrectRecordIds()
@@ -172,101 +181,84 @@ func getCorrectRecordIds() -> Array[String]:
 	return correctIds
 
 
-# Handles correct answer state for single or multiple selected records.
+# Handles correct answer state.
+# Do not write success text into the objective header.
 func handleCorrectSelection() -> void:
 	gameplay.levelFinished = true
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
 
-	gameplay.hudSystem.updateHud()
-	gameplay.hudSystem.updateStarDisplay(true)
+	gameplay.updateHud()
 
-	for row in gameplay.selectionSystem.selectedRows:
-		if row != null and is_instance_valid(row) and row.has_method("playCorrectAnimation"):
-			row.playCorrectAnimation()
+	if gameplay.hudSystem != null and gameplay.hudSystem.has_method("updateStarDisplay"):
+		gameplay.hudSystem.updateStarDisplay(true)
 
-	var selectedIds: Array[String] = gameplay.selectionSystem.getSelectedRecordIds()
+	if gameplay.selectionSystem != null:
+		for row in gameplay.selectionSystem.selectedRows:
+			if row != null and is_instance_valid(row) and row.has_method("playCorrectAnimation"):
+				row.playCorrectAnimation()
 
-	gameplay.setObjectiveText(
-		"Case Solved! Correct record: %s" % ", ".join(selectedIds),
-		OBJECTIVE_WARNING_FONT_SIZE
-	)
+	# Later: open Level Completed UI here.
 
 
-# Handles correct answer state.
-func handleCorrectRecord(selectedId: String) -> void:
-	gameplay.levelFinished = true
-	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
-
-	gameplay.hudSystem.updateHud()
-	gameplay.hudSystem.updateStarDisplay(true)
-
-	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("playCorrectAnimation"):
-		gameplay.selectedRow.playCorrectAnimation()
-
-	gameplay.setObjectiveText(
-		"Case Solved! Correct record: %s" % selectedId,
-		OBJECTIVE_WARNING_FONT_SIZE
-	)
-
-
-# Handles wrong answer state.
+# Handles wrong selected record.
+# Do not write warning text into the objective header.
 func handleWrongRecord() -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 
-	if gameplay.selectedRow != null and gameplay.selectedRow.has_method("playWrongAnimation"):
-		gameplay.selectedRow.playWrongAnimation()
-
 	gameplay.hearts -= 1
-	gameplay.hearts = max(gameplay.hearts, 0)
-
-	gameplay.hudSystem.updateHud()
-	gameplay.hudSystem.updateStarDisplay(true)
 
 	if gameplay.hearts <= 0:
-		gameplay.levelFinished = true
-		gameplay.setObjectiveText("Case Failed. Try again.", OBJECTIVE_MESSAGE_FONT_SIZE)
-	else:
-		gameplay.setObjectiveText("Wrong record. Check the archive clues again.", OBJECTIVE_MESSAGE_FONT_SIZE)
+		gameplay.hearts = 0
+		handleNoHeartsLeft()
+		return
+
+	gameplay.updateHud()
 
 
-# Shows the next available hint.
+# Handles no hearts left.
+# Do not write failure text into the objective header.
+func handleNoHeartsLeft() -> void:
+	gameplay.levelFinished = true
+	gameplay.updateHud()
+
+	if gameplay.hudSystem != null and gameplay.hudSystem.has_method("updateStarDisplay"):
+		gameplay.hudSystem.updateStarDisplay(true)
+
+	# Later: open Game Over UI here.
+
+
+# Handles time expiration.
+# Do not write time-expired text into the objective header.
+func handleTimeExpired() -> void:
+	gameplay.levelFinished = true
+	gameplay.updateHud()
+
+	if gameplay.hudSystem != null and gameplay.hudSystem.has_method("updateStarDisplay"):
+		gameplay.hudSystem.updateStarDisplay(true)
+
+	# Later: open Game Over UI here.
+
+
+# Handles hint button press.
+# Do not write hints into the objective header anymore.
 func onHintPressed() -> void:
 	if gameplay.levelFinished:
 		return
 
-	var hints: Array = gameplay.currentLevel.get("hints", [])
+	gameplay.audioSystem.playFooterClickSound(gameplay.hintClickSound)
 
-	if hints.is_empty():
-		gameplay.setObjectiveText("No hints available.", OBJECTIVE_MESSAGE_FONT_SIZE)
-		return
-
-	if gameplay.hintIndex >= hints.size():
-		gameplay.setObjectiveText("No more hints available.", OBJECTIVE_MESSAGE_FONT_SIZE)
-		return
-
-	gameplay.setObjectiveText(str(hints[gameplay.hintIndex]), OBJECTIVE_FONT_SIZE)
-
-	gameplay.hintIndex += 1
-	gameplay.hintsUsed += 1
-
-	gameplay.hudSystem.updateStarDisplay(true)
-
-# Loads one level from SQLite through the level repository.
-func loadLevelFromDatabase(levelNumber: int) -> Dictionary:
-	if gameplay.levelRepository == null:
-		push_error("LevelRepository is not available.")
-		return {}
-
-	if not gameplay.levelRepository.openDatabase():
-		return {}
-
-	var levelData: Dictionary = gameplay.levelRepository.getLevel(1, levelNumber)
-
-	gameplay.levelRepository.closeDatabase()
-
-	return levelData
+	# Later: open Hint popup / Hint panel here.
+	# Do not consume hints until the new hint UI is implemented.
 
 
-# Shows the level story/objective info.
+# Handles info button press.
+# Do not write story/case report into the objective header anymore.
 func onInfoPressed() -> void:
-	gameplay.setObjectiveText(str(gameplay.currentLevel.get("story", DEFAULT_STORY)), OBJECTIVE_FONT_SIZE)
+	gameplay.audioSystem.playFooterClickSound(gameplay.infoClickSound)
+
+	# Later: open Case Report / Info popup here.
+
+
+# Returns to main menu directly.
+func returnToMainMenu() -> void:
+	gameplay.get_tree().change_scene_to_file(MAIN_MENU_SCENE_PATH)

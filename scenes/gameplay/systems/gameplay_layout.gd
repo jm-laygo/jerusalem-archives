@@ -104,41 +104,27 @@ func positionCenteredBottomNode(
 	node.offset_bottom = 0.0
 
 
-# Fixes the objective scroll and objective label layout.
+# Fixes the objective text layout inside the objective header.
+# The objective header must only show the short level objective.
 func setupObjectiveLabel() -> void:
-	if gameplay.objectiveScroll != null:
-		gameplay.objectiveScroll.anchor_left = 0.0
-		gameplay.objectiveScroll.anchor_top = 0.0
-		gameplay.objectiveScroll.anchor_right = 1.0
-		gameplay.objectiveScroll.anchor_bottom = 1.0
-
-		gameplay.objectiveScroll.offset_left = OBJECTIVE_TEXT_OFFSET_LEFT
-		gameplay.objectiveScroll.offset_top = OBJECTIVE_TEXT_OFFSET_TOP
-		gameplay.objectiveScroll.offset_right = OBJECTIVE_TEXT_OFFSET_RIGHT
-		gameplay.objectiveScroll.offset_bottom = OBJECTIVE_TEXT_OFFSET_BOTTOM
-
-		gameplay.objectiveScroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		gameplay.objectiveScroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-		gameplay.objectiveScroll.mouse_filter = Control.MOUSE_FILTER_PASS
-
 	if gameplay.objectiveText == null:
 		return
 
 	gameplay.objectiveText.anchor_left = 0.0
 	gameplay.objectiveText.anchor_top = 0.0
 	gameplay.objectiveText.anchor_right = 1.0
-	gameplay.objectiveText.anchor_bottom = 0.0
+	gameplay.objectiveText.anchor_bottom = 1.0
 
-	gameplay.objectiveText.offset_left = 0.0
-	gameplay.objectiveText.offset_top = 0.0
-	gameplay.objectiveText.offset_right = 0.0
-	gameplay.objectiveText.offset_bottom = 0.0
+	gameplay.objectiveText.offset_left = OBJECTIVE_TEXT_OFFSET_LEFT
+	gameplay.objectiveText.offset_top = OBJECTIVE_TEXT_OFFSET_TOP
+	gameplay.objectiveText.offset_right = OBJECTIVE_TEXT_OFFSET_RIGHT
+	gameplay.objectiveText.offset_bottom = OBJECTIVE_TEXT_OFFSET_BOTTOM
 
 	gameplay.objectiveText.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	gameplay.objectiveText.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	gameplay.objectiveText.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	gameplay.objectiveText.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gameplay.objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	gameplay.objectiveText.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	gameplay.objectiveText.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	gameplay.objectiveText.clip_text = false
 

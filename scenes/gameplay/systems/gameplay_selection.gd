@@ -1,6 +1,7 @@
 extends RefCounted
 
 const DEFAULT_SELECTION_LIMIT := 1
+const DEFAULT_SELECTION_MODE := "single"
 
 const SELECTED_ID_BOX_SIZE := Vector2(170.0, 86.0)
 const SELECTED_ID_FONT_SIZE := 40
@@ -10,6 +11,7 @@ const SELECTED_ID_BOX_SPACING := 16
 
 var gameplay: Control
 
+var selectionMode: String = DEFAULT_SELECTION_MODE
 var selectionLimit: int = DEFAULT_SELECTION_LIMIT
 var selectedRecords: Array = []
 var selectedRows: Array = []
@@ -28,7 +30,7 @@ func setupSelectionDisplay() -> void:
 
 	if gameplay.selectedCountLabel != null:
 		gameplay.selectedCountLabel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		gameplay.selectedCountLabel.text = "SELECTED 0"
+		gameplay.selectedCountLabel.text = getSelectedCountText()
 
 	if gameplay.selectedIdScroll != null:
 		gameplay.selectedIdScroll.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -45,10 +47,17 @@ func setupSelectionDisplay() -> void:
 
 # Reads selection rules from the current level.
 func configureFromLevel(levelData: Dictionary) -> void:
+	selectionMode = str(levelData.get("selection_mode", DEFAULT_SELECTION_MODE)).to_lower()
 	selectionLimit = int(levelData.get("selection_limit", DEFAULT_SELECTION_LIMIT))
+
+	if selectionMode != "multiple":
+		selectionMode = "single"
 
 	if selectionLimit <= 0:
 		selectionLimit = DEFAULT_SELECTION_LIMIT
+
+	if selectionMode == "single":
+		selectionLimit = 1
 
 
 # Clears all selected rows and selected ID boxes.
@@ -76,13 +85,15 @@ func toggleRowSelection(record: Dictionary, row: Button) -> void:
 		updateSelectedDisplay()
 		return
 
-	if selectionLimit <= 1:
+	if selectionMode == "single":
 		clearCurrentSelection()
 		selectRow(record, row)
 		updateSelectedDisplay()
 		return
 
 	if selectedRows.size() >= selectionLimit:
+		if gameplay.audioSystem != null:
+			gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 		return
 
 	selectRow(record, row)
@@ -140,12 +151,22 @@ func isRowSelected(row: Button) -> bool:
 	return selectedRows.has(row)
 
 
+# Checks if a record ID is currently selected.
+func isRecordIdSelected(recordId: String) -> bool:
+	for record in selectedRecords:
+		if str(record.get("record_id", "")) == recordId:
+			return true
+
+	return false
+
+
 # Returns all selected record IDs.
 func getSelectedRecordIds() -> Array[String]:
 	var selectedIds: Array[String] = []
 
 	for record in selectedRecords:
-		selectedIds.append(str(record.get("record_id", "")))
+		var recordId: String = str(record.get("record_id", ""))
+		selectedIds.append(recordId)
 
 	return selectedIds
 
@@ -161,12 +182,20 @@ func updateSelectedDisplay() -> void:
 	rebuildSelectedIdBoxes()
 
 
+# Builds the selected count text.
+func getSelectedCountText() -> String:
+	if selectionMode == "multiple":
+		return "SELECTED %s / %s" % [selectedRecords.size(), selectionLimit]
+
+	return "SELECTED %s" % selectedRecords.size()
+
+
 # Updates the selected count label.
 func updateSelectedCountLabel() -> void:
 	if gameplay.selectedCountLabel == null:
 		return
 
-	gameplay.selectedCountLabel.text = "SELECTED %s" % selectedRecords.size()
+	gameplay.selectedCountLabel.text = getSelectedCountText()
 
 
 # Rebuilds selected ID boxes inside the horizontal scroll area.
@@ -192,7 +221,11 @@ func refreshSelectedIdLayout() -> void:
 
 	var contentWidth: float = getSelectedBoxesContentWidth()
 	var viewportWidth: float = gameplay.selectedIdScroll.size.x
-	gameplay.selectedIdHBox.custom_minimum_size = Vector2(max(contentWidth, viewportWidth), SELECTED_ID_BOX_SIZE.y)
+
+	gameplay.selectedIdHBox.custom_minimum_size = Vector2(
+		max(contentWidth, viewportWidth),
+		SELECTED_ID_BOX_SIZE.y
+	)
 
 	gameplay.selectedIdScroll.scroll_horizontal = 0
 
@@ -204,6 +237,7 @@ func getSelectedBoxesContentWidth() -> float:
 
 	var boxWidth: float = SELECTED_ID_BOX_SIZE.x
 	var totalSpacing: float = SELECTED_ID_BOX_SPACING * max(selectedRecords.size() - 1, 0)
+
 	return (boxWidth * selectedRecords.size()) + totalSpacing
 
 
@@ -222,20 +256,24 @@ func createSelectedIdBox(recordId: String) -> Control:
 	var label := Label.new()
 	label.name = "SelectedIdLabel"
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+
 	label.offset_left = 8.0
 	label.offset_top = 4.0
 	label.offset_right = -8.0
 	label.offset_bottom = -6.0
+
 	label.text = recordId
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.clip_text = true
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+
 	label.add_theme_color_override("font_color", SELECTED_ID_TEXT_COLOR)
 	label.add_theme_color_override("font_shadow_color", SELECTED_ID_TEXT_SHADOW_COLOR)
 	label.add_theme_constant_override("shadow_offset_x", 2)
 	label.add_theme_constant_override("shadow_offset_y", 2)
 	label.add_theme_font_size_override("font_size", SELECTED_ID_FONT_SIZE)
+
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	box.add_child(label)
