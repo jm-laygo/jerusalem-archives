@@ -2,42 +2,48 @@ extends Control
 
 signal popup_closed
 
-const EMPTY_HINT_TEXT := "No hint available."
+const EMPTY_HINT_TEXT := "No more hints available."
 
 const FADE_IN_DURATION := 0.18
 const FADE_OUT_DURATION := 0.18
 const AUTO_CLOSE_DELAY := 3.4
 
-@onready var popup_background: TextureRect = $PopupBackground
-@onready var hint_label: Label = $PopupBackground/HintLabel
+const BACKGROUND_IMAGE_OPACITY := 0.58
+
+@onready var popupBackground: TextureRect = $PopupBackground
+@onready var hintLabel: Label = $PopupBackground/HintLabel
 
 var closeTween: Tween = null
 var autoCloseTimer: Timer = null
 
 
+# Prepares the hint popup.
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	modulate.a = 0.0
+	modulate.a = 1.0
+	z_index = 900
 
-	if popup_background != null:
-		popup_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		popup_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		popup_background.stretch_mode = TextureRect.STRETCH_SCALE
+	if popupBackground != null:
+		popupBackground.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		popupBackground.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		popupBackground.stretch_mode = TextureRect.STRETCH_SCALE
+		popupBackground.self_modulate = Color(1, 1, 1, BACKGROUND_IMAGE_OPACITY)
 
-	if hint_label != null:
-		hint_label.text = EMPTY_HINT_TEXT
-		hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		hint_label.clip_text = false
-		hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if hintLabel != null:
+		hintLabel.text = EMPTY_HINT_TEXT
+		hintLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		hintLabel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		hintLabel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		hintLabel.clip_text = false
+		hintLabel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hintLabel.modulate = Color(1, 1, 1, 1)
 
 	setupAutoCloseTimer()
 
 
-# Creates the timer used to hide the hint after a few seconds.
+# Creates the timer used to auto-close the popup.
 func setupAutoCloseTimer() -> void:
 	autoCloseTimer = Timer.new()
 	autoCloseTimer.name = "AutoCloseTimer"
@@ -49,13 +55,13 @@ func setupAutoCloseTimer() -> void:
 	autoCloseTimer.timeout.connect(closePopup)
 
 
-# Opens the hint popup with text.
+# Opens the popup with the given hint text.
 func openPopup(hintText: String) -> void:
-	if hint_label != null:
+	if hintLabel != null:
 		if hintText.strip_edges().is_empty():
-			hint_label.text = EMPTY_HINT_TEXT
+			hintLabel.text = EMPTY_HINT_TEXT
 		else:
-			hint_label.text = hintText
+			hintLabel.text = hintText
 
 	visible = true
 	move_to_front()
@@ -66,35 +72,49 @@ func openPopup(hintText: String) -> void:
 		autoCloseTimer.start()
 
 
-# Plays fade in.
+# Plays the fade-in animation.
 func playOpenFade() -> void:
 	killTween()
 
 	modulate.a = 0.0
 
-	closeTween = create_tween()
-	closeTween.tween_property(self, "modulate:a", 1.0, FADE_IN_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	var fadeTween := create_tween()
+	closeTween = fadeTween
+	fadeTween.tween_property(
+		self,
+		"modulate:a",
+		1.0,
+		FADE_IN_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 
-# Starts fade out.
+# Starts fade-out then hides the popup.
 func closePopup() -> void:
 	if not visible:
 		return
 
 	killTween()
 
-	closeTween = create_tween()
-	closeTween.tween_property(self, "modulate:a", 0.0, FADE_OUT_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	closeTween.finished.connect(finishClose)
+	var fadeTween := create_tween()
+	closeTween = fadeTween
+	fadeTween.tween_property(
+		self,
+		"modulate:a",
+		0.0,
+		FADE_OUT_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	fadeTween.finished.connect(_finishClose)
 
 
-# Finishes closing.
-func finishClose() -> void:
+# Finishes the close action.
+func _finishClose() -> void:
 	visible = false
+	modulate.a = 1.0
 	popup_closed.emit()
 
 
-# Stops the current tween.
+# Stops the active tween.
 func killTween() -> void:
 	if closeTween != null and closeTween.is_valid():
 		closeTween.kill()
