@@ -15,8 +15,12 @@ const DATA_TEXT_COLOR := Color(0.972549, 0.909804, 0.74902, 1)
 
 const DATA_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container.png")
 const DATA_NORMAL_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container_pressed.png")
+
 const DATA_LONG_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container_long.png")
 const DATA_LONG_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container_long_pressed.png")
+
+const DATA_SUPER_LONG_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container_superlong.png")
+const DATA_SUPER_LONG_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_data_container_superlong_pressed.png")
 
 @onready var background: TextureRect = $Background
 @onready var valueLabel: Label = $ValueLabel
@@ -32,6 +36,8 @@ func _ready() -> void:
 
 	if background != null:
 		background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		background.stretch_mode = TextureRect.STRETCH_SCALE
 
 	if valueLabel != null:
 		valueLabel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -108,17 +114,21 @@ func applyVisualState() -> void:
 	custom_minimum_size = Vector2(cellWidth, CELL_HEIGHT)
 	size = Vector2(cellWidth, CELL_HEIGHT)
 
-	if background == null:
-		return
+	if background != null:
+		background.custom_minimum_size = Vector2(cellWidth, CELL_HEIGHT)
+		background.size = Vector2(cellWidth, CELL_HEIGHT)
+		background.texture = getTextureForState()
 
-	background.custom_minimum_size = Vector2(cellWidth, CELL_HEIGHT)
-	background.size = Vector2(cellWidth, CELL_HEIGHT)
-	background.texture = getTextureForState()
+	if valueLabel != null:
+		valueLabel.size = Vector2(cellWidth - 24, CELL_HEIGHT)
 
 
 # Returns the correct background texture for type and selection state.
 func getTextureForState() -> Texture2D:
-	if cellType == TYPE_LONG or cellType == TYPE_SUPER_LONG:
+	if cellType == TYPE_SUPER_LONG:
+		return DATA_SUPER_LONG_PRESSED_TEXTURE if isSelected else DATA_SUPER_LONG_TEXTURE
+
+	if cellType == TYPE_LONG:
 		return DATA_LONG_PRESSED_TEXTURE if isSelected else DATA_LONG_TEXTURE
 
 	return DATA_NORMAL_PRESSED_TEXTURE if isSelected else DATA_NORMAL_TEXTURE

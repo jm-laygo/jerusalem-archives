@@ -22,6 +22,7 @@ const ROW_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_g
 const ROW_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_row_container_pressed.png")
 
 const CHECK_CONTAINER_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_check_container.png")
+const CHECK_CONTAINER_PRESSED_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_check_container_pressed.png")
 const CHECK_ICON_TEXTURE: Texture2D = preload("res://assets/interface/icons/icon_check01.png")
 
 const ROW_NORMAL_SCALE := Vector2.ONE
@@ -115,7 +116,7 @@ func resizeRow() -> void:
 
 	if checkBackground != null:
 		checkBackground.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		checkBackground.texture = CHECK_CONTAINER_TEXTURE
+		checkBackground.texture = CHECK_CONTAINER_PRESSED_TEXTURE if isSelected else CHECK_CONTAINER_TEXTURE
 		checkBackground.custom_minimum_size = Vector2(CHECK_WIDTH, CELL_HEIGHT)
 		checkBackground.size = Vector2(CHECK_WIDTH, CELL_HEIGHT)
 		checkBackground.position = Vector2.ZERO
@@ -185,7 +186,7 @@ func applyVisualState() -> void:
 		rowBackground.texture = ROW_PRESSED_TEXTURE if isSelected else ROW_NORMAL_TEXTURE
 
 	if checkBackground != null:
-		checkBackground.texture = CHECK_CONTAINER_TEXTURE
+		checkBackground.texture = CHECK_CONTAINER_PRESSED_TEXTURE if isSelected else CHECK_CONTAINER_TEXTURE
 		checkBackground.visible = true
 
 	if checkIcon != null:

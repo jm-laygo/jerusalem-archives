@@ -12,7 +12,8 @@ const TYPE_LONG := "long"
 const TYPE_SUPER_LONG := "superlong"
 
 const HEADER_FONT: FontFile = preload("res://assets/fonts/mapfont/Paradox_King_Script.otf")
-const HEADER_FONT_SIZE := 50
+const HEADER_HEIGHT := 97.5
+const HEADER_FONT_SIZE := 42
 const HEADER_TEXT_COLOR := Color(0.972549, 0.909804, 0.74902, 1)
 
 const HEADER_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_row_title_header_container.png")
