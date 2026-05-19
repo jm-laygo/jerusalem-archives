@@ -31,6 +31,9 @@ const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_
 const INFO_POPUP_SCENE := preload("res://scenes/gameplay/components/info_popup/info_popup.tscn")
 const HINT_POPUP_SCENE := preload("res://scenes/gameplay/components/hint_popup/hint_popup.tscn")
 
+const RESULT_POPUP_SCENE := preload("res://scenes/gameplay/components/result_popup/result_popup.tscn")
+const TRANSITION_FADE_DURATION := 0.35
+
 
 @onready var header: TextureRect = get_node_or_null("Header") as TextureRect
 @onready var headerLevel: TextureRect = get_node_or_null("HeaderLevel") as TextureRect
@@ -152,6 +155,12 @@ var levelRepository
 var infoPopup: Control = null
 var hintPopup: Control = null
 
+var resultPopup: Control = null
+var currentLevelNumber := 1
+var transitionOverlay: ColorRect = null
+var isResultPopupOpen := false
+var isResultTransitioning := false
+
 
 # Creates gameplay systems and starts the first level.
 func _ready() -> void:
@@ -228,9 +237,14 @@ func setupSystems() -> void:
 	setupInfoPopup()
 	setupHintPopup()
 
+	setupResultPopup()
+	setupTransitionOverlay()
+
 
 # Loads a level by number.
 func loadLevel(levelNumber: int) -> void:
+	currentLevelNumber = levelNumber
+	isResultPopupOpen = false
 	rulesSystem.loadLevel(levelNumber)
 
 
@@ -410,3 +424,152 @@ func openHintPopup() -> void:
 	updateHud()
 
 	hintPopup.openPopup(hintText)
+
+# Creates and connects the result popup.
+func setupResultPopup() -> void:
+	if resultPopup != null:
+		return
+
+	resultPopup = RESULT_POPUP_SCENE.instantiate() as Control
+	add_child(resultPopup)
+	resultPopup.visible = false
+
+	if resultPopup.has_signal("retry_pressed"):
+		resultPopup.retry_pressed.connect(_on_result_popup_retry_pressed)
+
+	if resultPopup.has_signal("next_level_pressed"):
+		resultPopup.next_level_pressed.connect(_on_result_popup_next_level_pressed)
+
+	if resultPopup.has_signal("back_to_menu_pressed"):
+		resultPopup.back_to_menu_pressed.connect(_on_result_popup_back_to_menu_pressed)
+
+	if resultPopup.has_signal("popup_button_pressed"):
+		resultPopup.popup_button_pressed.connect(_on_result_popup_button_pressed)
+
+
+# Creates fade overlay for retry/menu/next transitions.
+func setupTransitionOverlay() -> void:
+	if transitionOverlay != null:
+		return
+
+	transitionOverlay = ColorRect.new()
+	transitionOverlay.name = "ResultTransitionOverlay"
+	transitionOverlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	transitionOverlay.color = Color(0, 0, 0, 1)
+	transitionOverlay.modulate.a = 0.0
+	transitionOverlay.visible = false
+	transitionOverlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	transitionOverlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(transitionOverlay)
+
+
+# Opens the game over popup.
+func openGameOverPopup(descriptionText: String = "") -> void:
+	if resultPopup == null:
+		setupResultPopup()
+
+	if resultPopup == null:
+		return
+
+	isResultPopupOpen = true
+
+	if descriptionText.strip_edges().is_empty():
+		descriptionText = "Time has expired, or lives have been depleted."
+
+	resultPopup.open_game_over(descriptionText)
+
+
+# Opens the level completed popup.
+func openLevelCompletedPopup(descriptionText: String = "") -> void:
+	if resultPopup == null:
+		setupResultPopup()
+
+	if resultPopup == null:
+		return
+
+	isResultPopupOpen = true
+
+	if descriptionText.strip_edges().is_empty():
+		descriptionText = "The archive case has been resolved."
+
+	resultPopup.open_level_completed(descriptionText)
+
+
+# Plays generic select sound for result popup buttons.
+func _on_result_popup_button_pressed() -> void:
+	if audioSystem == null:
+		return
+
+	audioSystem.playFooterClickSound(pauseMenuClickSound)
+
+
+# Retries current level with fade transition.
+func _on_result_popup_retry_pressed() -> void:
+	fadeTransitionToCallable(Callable(self, "retryCurrentLevel"))
+
+
+# Loads next level with fade transition.
+func _on_result_popup_next_level_pressed() -> void:
+	fadeTransitionToCallable(Callable(self, "loadNextLevel"))
+
+
+# Goes back to menu with fade transition.
+func _on_result_popup_back_to_menu_pressed() -> void:
+	fadeTransitionToCallable(Callable(self, "goBackToMenu"))
+
+
+# Reloads current level.
+func retryCurrentLevel() -> void:
+	hideResultPopupImmediately()
+	loadLevel(currentLevelNumber)
+
+
+# Loads next level.
+func loadNextLevel() -> void:
+	hideResultPopupImmediately()
+	loadLevel(currentLevelNumber + 1)
+
+
+# Goes back to main menu.
+func goBackToMenu() -> void:
+	hideResultPopupImmediately()
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE_PATH)
+
+
+# Hides result popup during transition.
+func hideResultPopupImmediately() -> void:
+	isResultPopupOpen = false
+
+	if resultPopup != null and resultPopup.has_method("force_hide"):
+		resultPopup.force_hide()
+
+
+# Runs a fade-out, performs action, then fades in.
+func fadeTransitionToCallable(action: Callable) -> void:
+	if isResultTransitioning:
+		return
+
+	isResultTransitioning = true
+
+	if transitionOverlay == null:
+		setupTransitionOverlay()
+
+	transitionOverlay.visible = true
+	transitionOverlay.move_to_front()
+	transitionOverlay.modulate.a = 0.0
+
+	var fadeOut := create_tween()
+	fadeOut.tween_property(transitionOverlay, "modulate:a", 1.0, TRANSITION_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await fadeOut.finished
+
+	if action.is_valid():
+		action.call()
+
+	await get_tree().process_frame
+
+	var fadeIn := create_tween()
+	fadeIn.tween_property(transitionOverlay, "modulate:a", 0.0, TRANSITION_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await fadeIn.finished
+
+	transitionOverlay.visible = false
+	isResultTransitioning = false

@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" path="res://assets/interface/ui/level_completed/ui_level_completed.png" id="3_level_completed_background"]
 [ext_resource type="FontFile" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="4_game_font"]
 [ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_generic.png" id="5_btn_generic"]
-[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_generic_clicked.png" id="6_btn_generic_clicked"]
-[ext_resource type="AudioStream" path="res://assets/sounds/music/mx_game_over.wav" id="7_mx_game_over"]
-[ext_resource type="AudioStream" path="res://assets/sounds/music/mx_victory.wav" id="8_mx_victory"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_generic_pressed.png" id="6_btn_generic_pressed"]
+[ext_resource type="AudioStream" path="res://assets/music/mx_game_over.wav" id="7_mx_game_over"]
+[ext_resource type="AudioStream" path="res://assets/music/mx_victory.wav" id="8_mx_victory"]
 
 [node name="ResultPopup" type="Control"]
 process_mode = 3
@@ -32,7 +32,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
-color = Color(0, 0, 0, 0.62)
+color = Color(0, 0, 0, 0.82)
 
 [node name="PopupBackground" type="TextureRect" parent="."]
 layout_mode = 1
@@ -115,7 +115,7 @@ layout_mode = 2
 focus_mode = 0
 mouse_filter = 0
 texture_normal = ExtResource("5_btn_generic")
-texture_pressed = ExtResource("6_btn_generic_clicked")
+texture_pressed = ExtResource("6_btn_generic_pressed")
 texture_hover = ExtResource("5_btn_generic")
 texture_disabled = ExtResource("5_btn_generic")
 ignore_texture_size = true
@@ -145,7 +145,7 @@ layout_mode = 2
 focus_mode = 0
 mouse_filter = 0
 texture_normal = ExtResource("5_btn_generic")
-texture_pressed = ExtResource("6_btn_generic_clicked")
+texture_pressed = ExtResource("6_btn_generic_pressed")
 texture_hover = ExtResource("5_btn_generic")
 texture_disabled = ExtResource("5_btn_generic")
 ignore_texture_size = true

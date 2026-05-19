@@ -51,6 +51,10 @@ func loadLevel(levelNumber: int) -> void:
 		gameplay.selectionSystem.configureFromLevel(gameplay.currentLevel)
 		gameplay.selectionSystem.resetSelection()
 
+	gameplay.scrollX = 0.0
+	gameplay.scrollY = 0.0
+	gameplay.dragAxis = ""
+
 	gameplay.updateHud()
 	gameplay.buildTable()
 	gameplay.call_deferred("refreshScrollLimits")
@@ -181,8 +185,6 @@ func getCorrectRecordIds() -> Array[String]:
 	return correctIds
 
 
-# Handles correct answer state.
-# Do not write success text into the objective header.
 func handleCorrectSelection() -> void:
 	gameplay.levelFinished = true
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
@@ -197,11 +199,11 @@ func handleCorrectSelection() -> void:
 			if row != null and is_instance_valid(row) and row.has_method("playCorrectAnimation"):
 				row.playCorrectAnimation()
 
-	# Later: open Level Completed UI here.
+	if gameplay.has_method("openLevelCompletedPopup"):
+		gameplay.openLevelCompletedPopup("The archive case has been resolved.")
 
 
 # Handles wrong selected record.
-# Do not write warning text into the objective header.
 func handleWrongRecord() -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkIncorrectSound)
 
@@ -216,7 +218,6 @@ func handleWrongRecord() -> void:
 
 
 # Handles no hearts left.
-# Do not write failure text into the objective header.
 func handleNoHeartsLeft() -> void:
 	gameplay.levelFinished = true
 	gameplay.updateHud()
@@ -224,7 +225,8 @@ func handleNoHeartsLeft() -> void:
 	if gameplay.hudSystem != null and gameplay.hudSystem.has_method("updateStarDisplay"):
 		gameplay.hudSystem.updateStarDisplay(true)
 
-	# Later: open Game Over UI here.
+	if gameplay.has_method("openGameOverPopup"):
+		gameplay.openGameOverPopup("Lives have been depleted.")
 
 
 # Handles time expiration.
@@ -235,7 +237,8 @@ func handleTimeExpired() -> void:
 	if gameplay.hudSystem != null and gameplay.hudSystem.has_method("updateStarDisplay"):
 		gameplay.hudSystem.updateStarDisplay(true)
 
-	# Later: open Game Over UI here.
+	if gameplay.has_method("openGameOverPopup"):
+		gameplay.openGameOverPopup("Time has expired.")
 
 
 # Handles hint button press.

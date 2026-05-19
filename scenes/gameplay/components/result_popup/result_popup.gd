@@ -35,6 +35,7 @@ const FADE_OUT_DURATION := 0.22
 @onready var title_label: Label = $PopupBackground/TitleLabel
 @onready var description_label: Label = $PopupBackground/DescriptionLabel
 
+@onready var buttons: VBoxContainer = $PopupBackground/Buttons
 @onready var primary_button: TextureButton = $PopupBackground/Buttons/PrimaryButton
 @onready var menu_button: TextureButton = $PopupBackground/Buttons/MenuButton
 
@@ -136,6 +137,8 @@ func open_game_over(description_text: String = DESCRIPTION_GAME_OVER) -> void:
 
 	setup_button_label(primary_label, "RETRY")
 	setup_button_label(menu_label, "BACK TO MENU")
+	apply_game_over_layout()
+	enable_buttons(true)
 
 	play_music(game_over_music)
 	show_popup()
@@ -156,9 +159,53 @@ func open_level_completed(description_text: String = DESCRIPTION_LEVEL_COMPLETED
 
 	setup_button_label(primary_label, "NEXT LEVEL")
 	setup_button_label(menu_label, "BACK TO MENU")
+	apply_level_completed_layout()
+	enable_buttons(true)
 
 	play_music(victory_music)
 	show_popup()
+
+
+# Keeps Game Over title/description/button spacing polished.
+func apply_game_over_layout() -> void:
+	if title_label != null:
+		title_label.offset_left = -480.0
+		title_label.offset_top = 235.0
+		title_label.offset_right = 480.0
+		title_label.offset_bottom = 420.0
+
+	if description_label != null:
+		description_label.offset_left = -420.0
+		description_label.offset_top = 420.0
+		description_label.offset_right = 420.0
+		description_label.offset_bottom = 520.0
+
+	if buttons != null:
+		buttons.offset_left = -260.0
+		buttons.offset_top = 560.0
+		buttons.offset_right = 260.0
+		buttons.offset_bottom = 760.0
+
+
+# Keeps Level Completed spacing consistent with Game Over.
+func apply_level_completed_layout() -> void:
+	if title_label != null:
+		title_label.offset_left = -480.0
+		title_label.offset_top = 185.0
+		title_label.offset_right = 480.0
+		title_label.offset_bottom = 430.0
+
+	if description_label != null:
+		description_label.offset_left = -420.0
+		description_label.offset_top = 430.0
+		description_label.offset_right = 420.0
+		description_label.offset_bottom = 530.0
+
+	if buttons != null:
+		buttons.offset_left = -260.0
+		buttons.offset_top = 570.0
+		buttons.offset_right = 260.0
+		buttons.offset_bottom = 770.0
 
 
 func show_popup() -> void:
@@ -223,6 +270,26 @@ func finish_close() -> void:
 	is_closing = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stop_music()
+	enable_buttons(true)
+
+
+# Instantly hides popup during scene/level transition.
+func force_hide() -> void:
+	kill_animation_tween()
+	visible = false
+	is_closing = false
+	modulate.a = 0.0
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stop_music()
+	enable_buttons(true)
+
+
+func enable_buttons(enabled: bool) -> void:
+	if primary_button != null:
+		primary_button.disabled = not enabled
+
+	if menu_button != null:
+		menu_button.disabled = not enabled
 
 
 func kill_animation_tween() -> void:
@@ -234,6 +301,7 @@ func kill_animation_tween() -> void:
 
 func on_primary_pressed() -> void:
 	popup_button_pressed.emit()
+	enable_buttons(false)
 
 	if mode == MODE_GAME_OVER:
 		retry_pressed.emit()
@@ -243,4 +311,5 @@ func on_primary_pressed() -> void:
 
 func on_menu_pressed() -> void:
 	popup_button_pressed.emit()
+	enable_buttons(false)
 	back_to_menu_pressed.emit()
