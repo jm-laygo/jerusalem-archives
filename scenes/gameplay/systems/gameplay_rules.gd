@@ -245,8 +245,8 @@ func onHintPressed() -> void:
 
 	gameplay.audioSystem.playFooterClickSound(gameplay.hintClickSound)
 
-	# Later: open Hint popup / Hint panel here.
-	# Do not consume hints until the new hint UI is implemented.
+	if gameplay.has_method("openHintPopup"):
+		gameplay.openHintPopup()
 
 
 # Handles info button press.
