@@ -188,6 +188,7 @@ func getCorrectRecordIds() -> Array[String]:
 	return correctIds
 
 
+# Handles correct answer state.
 func handleCorrectSelection() -> void:
 	gameplay.levelFinished = true
 	gameplay.audioSystem.playFooterClickSound(gameplay.checkCorrectSound)
@@ -202,8 +203,36 @@ func handleCorrectSelection() -> void:
 			if row != null and is_instance_valid(row) and row.has_method("playCorrectAnimation"):
 				row.playCorrectAnimation()
 
+	saveLevelProgress()
+
 	if gameplay.has_method("openLevelCompletedPopup"):
 		gameplay.openLevelCompletedPopup("The archive case has been resolved.")
+
+# Saves stars and unlocks the next level.
+func saveLevelProgress() -> void:
+	var progressNode: Node = gameplay.get_node_or_null("/root/LevelProgress")
+
+	if progressNode == null:
+		push_error("LevelProgress autoload is missing. Add res://scripts/level_progress.gd as /root/LevelProgress.")
+		return
+
+	if not progressNode.has_method("completeLevel"):
+		push_error("LevelProgress does not have completeLevel().")
+		return
+
+	var chapterId := 1
+
+	if "currentChapterId" in gameplay:
+		chapterId = int(gameplay.currentChapterId)
+
+	var levelNumber := 1
+
+	if "currentLevelNumber" in gameplay:
+		levelNumber = int(gameplay.currentLevelNumber)
+
+	var stars := int(gameplay.currentStars)
+
+	progressNode.call("completeLevel", chapterId, levelNumber, stars)
 
 
 # Handles wrong selected record.

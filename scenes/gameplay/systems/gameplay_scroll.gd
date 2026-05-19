@@ -222,7 +222,7 @@ func getRealRowsContentHeight() -> float:
 
 			totalHeight += childHeight
 
-	var separation := gameplay.rowsVBox.get_theme_constant("separation")
+	var separation: int = gameplay.rowsVBox.get_theme_constant("separation")
 
 	if gameplay.rowsVBox.get_child_count() > 1:
 		totalHeight += separation * float(gameplay.rowsVBox.get_child_count() - 1)

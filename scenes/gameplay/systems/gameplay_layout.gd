@@ -13,15 +13,14 @@ const OBJECTIVE_TEXT_OFFSET_TOP := 10.0
 const OBJECTIVE_TEXT_OFFSET_RIGHT := -70.0
 const OBJECTIVE_TEXT_OFFSET_BOTTOM := -10.0
 
-const SEARCH_BUTTONS_SIZE := Vector2(240.0, 120.0)
-const SEARCH_BUTTON_SIZE := Vector2(120.0, 120.0)
+const SEARCH_BUTTONS_SIZE := Vector2(240.0, 104.0)
+const SEARCH_BUTTON_SIZE := Vector2(120.0, 104.0)
 
 # Selected panel placement.
-# This sits below the search row and above the table title header.
 const SELECTED_PANEL_LEFT := -524.0
-const SELECTED_PANEL_TOP := 715.0
+const SELECTED_PANEL_TOP := 713.0
 const SELECTED_PANEL_RIGHT := 524.0
-const SELECTED_PANEL_BOTTOM := 870.0
+const SELECTED_PANEL_BOTTOM := 890.0
 
 const SELECTED_LABEL_TOP := 0.0
 const SELECTED_LABEL_BOTTOM := 42.0
@@ -53,7 +52,7 @@ func applyFixedPhoneLayout() -> void:
 
 	positionCenteredNode(gameplay.dataHeader, -540.0, 562.0, 540.0, 903.0)
 	positionCenteredNode(gameplay.searchBar, -524.0, 590.0, 292.0, 710.0)
-	positionCenteredNode(gameplay.searchButtons, 300.0, 590.0, 540.0, 710.0)
+	positionCenteredNode(gameplay.searchButtons, 300.0, 598.0, 540.0, 702.0)
 
 	positionCenteredNode(
 		gameplay.selectedPanel,

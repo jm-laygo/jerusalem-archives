@@ -163,16 +163,38 @@ var hintPopup: Control = null
 
 var resultPopup: Control = null
 var currentLevelNumber := 1
+var currentChapterId := 1
 var transitionOverlay: ColorRect = null
 var isResultPopupOpen := false
 var isResultTransitioning := false
 
+var revealedClueCount := 0
 
-# Creates gameplay systems and starts the first level.
+
+
 func _ready() -> void:
 	createSystems()
 	setupSystems()
-	loadLevel(1)
+	currentChapterId = getSelectedChapterId()
+	currentLevelNumber = getSelectedLevelNumber()
+	loadLevel(currentLevelNumber)
+
+func getSelectedChapterId() -> int:
+	var gameState: Node = get_node_or_null("/root/GameState")
+
+	if gameState == null:
+		return 1
+
+	return int(gameState.get("selected_chapter_id"))
+
+
+func getSelectedLevelNumber() -> int:
+	var gameState: Node = get_node_or_null("/root/GameState")
+
+	if gameState == null:
+		return 1
+
+	return int(gameState.get("selected_level_number"))
 
 
 # Updates the active level timer.
@@ -249,10 +271,14 @@ func setupSystems() -> void:
 
 # Loads a level by number.
 func loadLevel(levelNumber: int) -> void:
+	currentChapterId = getSelectedChapterId()
 	currentLevelNumber = levelNumber
+	rulesSystem.loadLevel(levelNumber)
 	isResultPopupOpen = false
+	revealedClueCount = 0
 	clearSearchForNewLevel()
 	rulesSystem.loadLevel(levelNumber)
+
 
 # Clears search UI and search-related state before loading a new level.
 func clearSearchForNewLevel() -> void:
@@ -349,16 +375,6 @@ func onPauseResumePressed() -> void:
 	pauseSystem.resumeGameplay()
 
 
-# Handles achievements pressed from pause.
-func onPauseAchievementsPressed() -> void:
-	audioSystem.playPauseMenuClickSound()
-
-
-# Handles settings pressed from pause.
-func onPauseSettingsPressed() -> void:
-	audioSystem.playPauseMenuClickSound()
-
-
 # Returns from pause overlay to the main menu.
 func onPauseBackToMenuPressed() -> void:
 	pauseSystem.backToMainMenu()
@@ -413,13 +429,14 @@ func openInfoPopup() -> void:
 	if infoPopup == null:
 		return
 
-	var caseTitle := str(currentLevel.get("case_title", "CASE REPORT"))
+	var caseTitle := ""
 	var caseReport := str(currentLevel.get("story", ""))
+	var cluePhrases: Array = currentLevel.get("clue_phrases", [])
 
 	if caseReport.strip_edges().is_empty():
-		caseReport = "No case report available."
+		caseReport = "No message report available."
 
-	infoPopup.openPopup(caseTitle, caseReport)
+	infoPopup.openPopup(caseTitle, caseReport, cluePhrases, revealedClueCount)
 
 
 # Called when the info popup closes.
@@ -447,25 +464,26 @@ func openHintPopup() -> void:
 		return
 
 	var hints: Array = currentLevel.get("hints", [])
-	var hintLimit: int = mini(MAX_HINT_COUNT, hints.size())
+	var cluePhrases: Array = currentLevel.get("clue_phrases", [])
 
 	if hints.is_empty():
 		hintPopup.openPopup("No hint available.")
-		updateActionButtonsState()
 		return
 
-	if hintIndex >= hintLimit:
+	if hintIndex >= hints.size():
 		hintPopup.openPopup("No more hints available.")
-		updateActionButtonsState()
 		return
 
 	var hintText: String = str(hints[hintIndex])
 
 	hintIndex += 1
 	hintsUsed += 1
+	revealedClueCount = clampi(hintIndex, 0, cluePhrases.size())
 
 	updateHud()
-	updateActionButtonsState()
+
+	if infoPopup != null and infoPopup.visible and infoPopup.has_method("setRevealedClueCount"):
+		infoPopup.setRevealedClueCount(revealedClueCount)
 
 	hintPopup.openPopup(hintText)
 
@@ -504,7 +522,15 @@ func setupTransitionOverlay() -> void:
 	transitionOverlay.visible = false
 	transitionOverlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	transitionOverlay.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# ResultPopup uses z_index = 2000.
+	# This must be higher so the black fade covers the popup too.
+	# Keep under RenderingServer::CANVAS_ITEM_Z_MAX
+	transitionOverlay.z_index = 2100
+	transitionOverlay.z_as_relative = false
+
 	add_child(transitionOverlay)
+	transitionOverlay.move_to_front()
 
 
 # Opens the game over popup.
@@ -560,9 +586,8 @@ func _on_result_popup_next_level_pressed() -> void:
 func _on_result_popup_back_to_menu_pressed() -> void:
 	goBackToMenuWithGlobalFade()
 
+# Goes back to main menu using the same global fade transition style.
 func goBackToMenuWithGlobalFade() -> void:
-	hideResultPopupImmediately()
-
 	var transitionManager: Node = get_node_or_null("/root/SceneTransitionManager")
 
 	if transitionManager != null and transitionManager.has_method("changeSceneWithFade"):
@@ -616,7 +641,7 @@ func hideResultPopupImmediately() -> void:
 		resultPopup.force_hide()
 
 
-# Runs a fade-out, performs action, then fades in.
+# Runs a fade-out, performs action, then fades back in.
 func fadeTransitionToCallable(action: Callable) -> void:
 	if isResultTransitioning:
 		return
@@ -643,6 +668,10 @@ func fadeTransitionToCallable(action: Callable) -> void:
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 	await fadeOut.finished
+
+	# NOW it is safe to hide the result popup because the screen is black.
+	if resultPopup != null and resultPopup.has_method("force_hide"):
+		resultPopup.force_hide()
 
 	if action.is_valid():
 		action.call()

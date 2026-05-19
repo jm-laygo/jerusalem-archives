@@ -159,7 +159,6 @@ func connectPauseOverlaySignals() -> void:
 		return
 
 	connectSignalIfAvailable(gameplay.pauseOverlay, "resumePressed", Callable(gameplay, "onPauseResumePressed"))
-	connectSignalIfAvailable(gameplay.pauseOverlay, "achievementsPressed", Callable(gameplay, "onPauseAchievementsPressed"))
 	connectSignalIfAvailable(gameplay.pauseOverlay, "settingsPressed", Callable(gameplay, "onPauseSettingsPressed"))
 	connectSignalIfAvailable(gameplay.pauseOverlay, "backToMenuPressed", Callable(gameplay, "onPauseBackToMenuPressed"))
 

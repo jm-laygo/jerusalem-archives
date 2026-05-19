@@ -1,7 +1,6 @@
 extends Control
 
 signal resumePressed
-signal achievementsPressed
 signal settingsPressed
 signal backToMenuPressed
 
@@ -12,7 +11,6 @@ const BUTTON_PRESSED_MODULATE := Color(0.85, 0.85, 0.85, 1)
 @onready var pausePanel: TextureRect = $PausePanel
 
 @onready var resumeButton: TextureButton = $PausePanel/Buttons/ResumeButton
-@onready var achievementsButton: TextureButton = $PausePanel/Buttons/AchievementsButton
 @onready var settingsButton: TextureButton = $PausePanel/Buttons/SettingsButton
 @onready var backToMenuButton: TextureButton = $PausePanel/Buttons/BackToMenuButton
 
@@ -41,7 +39,6 @@ func setupOverlayNodes() -> void:
 # Connects all pause menu buttons.
 func setupPauseButtons() -> void:
 	setupPauseButton(resumeButton, Callable(self, "onResumePressed"))
-	setupPauseButton(achievementsButton, Callable(self, "onAchievementsPressed"))
 	setupPauseButton(settingsButton, Callable(self, "onSettingsPressed"))
 	setupPauseButton(backToMenuButton, Callable(self, "onBackToMenuPressed"))
 
@@ -116,11 +113,6 @@ func onPauseButtonMouseExited(button: TextureButton) -> void:
 # Emits resume action.
 func onResumePressed() -> void:
 	resumePressed.emit()
-
-
-# Emits achievements action.
-func onAchievementsPressed() -> void:
-	achievementsPressed.emit()
 
 
 # Emits settings action.

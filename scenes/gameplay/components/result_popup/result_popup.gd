@@ -58,6 +58,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	z_index = 2000
+	z_as_relative = false
 	modulate.a = 0.0
 
 	if dim != null:
@@ -221,6 +223,12 @@ func show_popup() -> void:
 
 
 func play_music(stream: AudioStream) -> void:
+	var musicManager: Node = get_node_or_null("/root/MusicManager")
+
+	if musicManager != null and musicManager.has_method("playResultMusic"):
+		musicManager.call("playResultMusic", stream)
+		return
+
 	if music_player == null:
 		return
 
@@ -231,8 +239,13 @@ func play_music(stream: AudioStream) -> void:
 	if music_player.stream != null:
 		music_player.play()
 
-# Fades result music from 100% to low volume, then to silence.
 func fade_music_to_silence() -> void:
+	var musicManager: Node = get_node_or_null("/root/MusicManager")
+
+	if musicManager != null and musicManager.has_method("fadeOutResultMusic"):
+		musicManager.call("fadeOutResultMusic", 1.25)
+		return
+
 	if music_player == null:
 		return
 
@@ -244,16 +257,9 @@ func fade_music_to_silence() -> void:
 	musicTween.tween_property(
 		music_player,
 		"volume_db",
-		MUSIC_STAGE_ONE_DB,
-		MUSIC_STAGE_ONE_DURATION
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-	musicTween.tween_property(
-		music_player,
-		"volume_db",
 		MUSIC_SILENCE_DB,
-		MUSIC_STAGE_TWO_DURATION
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		1.25
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 	await musicTween.finished
 
@@ -304,17 +310,21 @@ func finish_close() -> void:
 	visible = false
 	is_closing = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stop_music()
 	enable_buttons(true)
 
 
 # Instantly hides popup during scene/level transition.
 func force_hide() -> void:
 	kill_animation_tween()
+
 	visible = false
 	is_closing = false
 	modulate.a = 0.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	if dim != null:
+		dim.modulate.a = 0.0
+
 	enable_buttons(true)
 
 
@@ -337,7 +347,7 @@ func on_primary_pressed() -> void:
 	popup_button_pressed.emit()
 	enable_buttons(false)
 
-	await fade_music_to_silence()
+	fade_music_to_silence()
 
 	if mode == MODE_GAME_OVER:
 		retry_pressed.emit()
@@ -349,6 +359,6 @@ func on_menu_pressed() -> void:
 	popup_button_pressed.emit()
 	enable_buttons(false)
 
-	await fade_music_to_silence()
+	fade_music_to_silence()
 
 	back_to_menu_pressed.emit()

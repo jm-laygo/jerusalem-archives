@@ -37,7 +37,7 @@ func connectButtons() -> void:
 		gameplay.infoIcon,
 		gameplay.infoLabelMargin,
 		gameplay.infoLabel,
-		gameplay.infoClickSound,
+		null,
 		Callable(gameplay, "onInfoPressed")
 	)
 
@@ -117,7 +117,8 @@ func onFooterButtonMouseExited(
 
 # Plays the assigned sound and calls the footer action.
 func onFooterButtonPressed(soundPlayer: AudioStreamPlayer, pressedCallback: Callable) -> void:
-	gameplay.audioSystem.playFooterClickSound(soundPlayer)
+	if soundPlayer != null:
+		gameplay.audioSystem.playFooterClickSound(soundPlayer)
 
 	if pressedCallback.is_valid():
 		pressedCallback.call()

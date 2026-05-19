@@ -24,6 +24,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	modulate.a = 1.0
 	z_index = 900
+	z_as_relative = false
 
 	if popupBackground != null:
 		popupBackground.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -64,7 +65,7 @@ func openPopup(hintText: String) -> void:
 			hintLabel.text = hintText
 
 	visible = true
-	move_to_front()
+	# move_to_front() # REMOVE THIS
 	playOpenFade()
 
 	if autoCloseTimer != null:

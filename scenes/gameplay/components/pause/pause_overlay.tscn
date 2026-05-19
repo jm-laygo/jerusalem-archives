@@ -84,32 +84,6 @@ text = "Resume"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-; Opens achievements.
-[node name="AchievementsButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=919840278]
-custom_minimum_size = Vector2(700, 118)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-texture_normal = ExtResource("3_pause_button")
-texture_pressed = ExtResource("4_pause_button_pressed")
-texture_hover = ExtResource("4_pause_button_pressed")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="AchievementsLabel" type="Label" parent="PausePanel/Buttons/AchievementsButton" unique_id=1424140443]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.819608, 0.572549, 0.376471, 1)
-theme_override_fonts/font = ExtResource("5_pause_button_font")
-theme_override_font_sizes/font_size = 42
-text = "Achievements"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 ; Opens settings.
 [node name="SettingsButton" type="TextureButton" parent="PausePanel/Buttons" unique_id=1970613171]
 custom_minimum_size = Vector2(700, 118)

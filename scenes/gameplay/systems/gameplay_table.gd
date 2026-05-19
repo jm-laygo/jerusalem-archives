@@ -9,7 +9,7 @@ const HEADER_VIEWPORT_HEIGHT := 120.0
 const HEADER_BUTTON_HEIGHT := 97.5
 
 # Moves the smaller header buttons vertically inside the 120px header area.
-const HEADER_BUTTON_Y := 7.8
+const HEADER_BUTTON_Y := 7.8	
 
 const NORMAL_WIDTH := 300.0
 const LONG_WIDTH := 520.0
@@ -201,6 +201,7 @@ func buildRows() -> void:
 			isSelected = gameplay.selectionSystem.isRecordIdSelected(recordId)
 
 		row.setup(gameplay.currentColumns, record, isSelected)
+		applyRowCellFont(row)
 
 		if isSelected and gameplay.selectionSystem != null:
 			if not gameplay.selectionSystem.selectedRows.has(row):
@@ -334,3 +335,22 @@ func applyCurrentScrollPosition() -> void:
 
 	if gameplay.rowsVBox != null:
 		gameplay.rowsVBox.position = Vector2(-gameplay.scrollX, -gameplay.scrollY)
+
+func applyRowCellFont(row: Node) -> void:
+	if row == null:
+		return
+
+	applyFontToLabelsRecursive(row)
+
+
+# Applies the row font to labels recursively.
+func applyFontToLabelsRecursive(node: Node) -> void:
+	if node == null:
+		return
+
+	if node is Label:
+		var label := node as Label
+		label.add_theme_font_override("font", gameplay.ROW_CELL_FONT)
+
+	for child in node.get_children():
+		applyFontToLabelsRecursive(child)
