@@ -251,7 +251,22 @@ func setupSystems() -> void:
 func loadLevel(levelNumber: int) -> void:
 	currentLevelNumber = levelNumber
 	isResultPopupOpen = false
+	clearSearchForNewLevel()
 	rulesSystem.loadLevel(levelNumber)
+
+# Clears search UI and search-related state before loading a new level.
+func clearSearchForNewLevel() -> void:
+	activeSortColumnKey = ""
+
+	if searchInput != null:
+		searchInput.text = ""
+		searchInput.release_focus()
+
+	if searchSystem != null:
+		if searchSystem.has_method("clearSearch"):
+			searchSystem.clearSearch()
+		elif searchSystem.has_method("onClearPressed"):
+			searchSystem.onClearPressed()
 
 
 # Sets the objective header text.
@@ -294,24 +309,24 @@ func onHeaderPressed(columnKey: String) -> void:
 
 # Handles hint button press.
 func onHintPressed() -> void:
-	if gameplay.levelFinished:
+	if levelFinished:
 		return
 
-	var hints: Array = gameplay.currentLevel.get("hints", [])
-	var hintLimit: int = mini(gameplay.MAX_HINT_COUNT, hints.size())
+	var hints: Array = currentLevel.get("hints", [])
+	var hintLimit: int = mini(MAX_HINT_COUNT, hints.size())
 
-	if gameplay.hintIndex >= hintLimit:
-		gameplay.updateActionButtonsState()
+	if hintIndex >= hintLimit:
+		updateActionButtonsState()
 
-		if gameplay.has_method("openHintPopup"):
-			gameplay.openHintPopup()
+		if has_method("openHintPopup"):
+			openHintPopup()
 
 		return
 
-	gameplay.audioSystem.playFooterClickSound(gameplay.hintClickSound)
+	audioSystem.playFooterClickSound(hintClickSound)
 
-	if gameplay.has_method("openHintPopup"):
-		gameplay.openHintPopup()
+	if has_method("openHintPopup"):
+		openHintPopup()
 
 
 # Handles check button press.
@@ -565,6 +580,7 @@ func goBackToMenuWithGlobalFade() -> void:
 # Reloads current level.
 func retryCurrentLevel() -> void:
 	hideResultPopupImmediately()
+	clearSearchForNewLevel()
 	playStartGameplayAgain()
 	loadLevel(currentLevelNumber)
 
@@ -572,6 +588,7 @@ func retryCurrentLevel() -> void:
 # Loads next level.
 func loadNextLevel() -> void:
 	hideResultPopupImmediately()
+	clearSearchForNewLevel()
 	playStartGameplayAgain()
 	loadLevel(currentLevelNumber + 1)
 

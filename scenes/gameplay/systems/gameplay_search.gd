@@ -36,6 +36,16 @@ func setupSearchTools() -> void:
 	setupSearchButton(gameplay.clearButton, Callable(self, "onClearPressed"))
 	restoreSearchBarTexture()
 
+# Clears the search input and restores the full record list.
+func clearSearch() -> void:
+	if gameplay.searchInput != null:
+		gameplay.searchInput.text = ""
+		gameplay.searchInput.release_focus()
+
+	gameplay.currentRecords = gameplay.originalRecords.duplicate(true)
+
+	if gameplay.tableSystem != null:
+		gameplay.tableSystem.rebuildTableKeepScroll()
 
 # Creates the UI select sound player.
 func setupSelectSound() -> void:

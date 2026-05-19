@@ -75,8 +75,7 @@ VALUES
 
 (6, 1, 6, 'Synagogue Ledger',
 'Identify the missing person from the family ledger.',
-'A family ledger from the Jewish quarter is brought to your desk. A woman''s name appears in one roll but disappears from another. The clue is not a direct name; it is hidden in family form and community records.',
-'single', 1, 4, 220, 'generated', 'family_ledger', 60, 'Any',
+'A family ledger from the Jewish quarter is brought to your desk. A woman''s name appears in one roll but disappears from another. The clue is not a direct name, but is hidden in family form and community records.','single', 1, 4, 220, 'generated', 'family_ledger', 60, 'Any',
 'The family ledger is restored to the correct record.',
 'The missing ledger entry remains unresolved.',
 2),
@@ -152,6 +151,66 @@ VALUES
 'The road opens with the dangerous records removed.',
 'The road opens with corrupted files still marked clear.',
 3);
+
+UPDATE levels SET story =
+'Newly landed servant of the archive, your first breath in Jaffa is not of rest, but of ink, salt, and accusation. The harbor does not wait for tired men.|||A merchant has vanished from the departure roll before the road to Jerusalem may open. The clerk swears the name was written. The sealed parchment says otherwise.|||The witness remembers no name, only the place where the merchant stood before disappearing into the crowd. Such places often reveal a man''s people, prayer, and company.|||Search the harbor records. Restore the missing merchant before the roll is sealed in error.'
+WHERE level_id = 1;
+
+UPDATE levels SET story =
+'Keeper of the harbor roll, attend carefully. Sickness walks faster than pilgrims when men pretend not to see it.|||A ship has come to Jaffa with fever among its passengers. The physician marked those who must be held, yet one dangerous traveler was still cleared for departure.|||The name is not your first concern. Illness leaves marks in the record: health, quarantine, and permission to leave.|||Find the traveler whose clearance defies the physician''s order.'
+WHERE level_id = 2;
+
+UPDATE levels SET story =
+'Faithful examiner of pilgrims, know this: not every badge worn near the quay belongs to a holy road.|||One traveler claims the mercy given to pilgrims, but his baggage speaks of trade: weights, slips, and goods meant for profit.|||A true pilgrim leaves a cleaner trail. Compare what he claims, what he carries, and whether his group truly receives him.|||Expose the false pilgrim before he passes inland under borrowed holiness.'
+WHERE level_id = 3;
+
+UPDATE levels SET story =
+'Listen well, servant of the record, for some witnesses bring no names, only shadows.|||A dockhand speaks through a translator. He cannot name the missing person, but remembers the person near a place of prayer before the crowd broke apart.|||Prayer sites are not idle details. They point toward community, habit, and the faith written in the archive.|||Match the witness place to the proper record and name the one he saw.'
+WHERE level_id = 4;
+
+UPDATE levels SET story =
+'Judge of seals and cargo marks, beware the merchant who shouts loudest, and the guard who answers too quickly.|||Venetian traders accuse the port watch of opening a sealed crate. The watch denies it, but the manifest was touched after inspection.|||A sound seal and a clean inspection should speak together. When seal, mark, and note disagree, the lie begins to show.|||Find the cargo record whose seal tells a different story from its inspection.'
+WHERE level_id = 5;
+
+UPDATE levels SET story =
+'Patient keeper of family rolls, not all disappearances happen at sword point. Some are done with careless ink.|||A ledger from the Jewish quarter reaches your table. A woman is remembered by her house, yet missing from the copied harbor roll.|||Names of family are clues of their own. Daughter, son, house, and community may reveal what the damaged roll hides.|||Find the person whose family record should not have vanished.'
+WHERE level_id = 6;
+
+UPDATE levels SET story =
+'Watchman of keys and night entries, theft is rarely done by the man blamed first.|||Frankish blades are missing from a locked storehouse. The captain points at dock workers, but the access list whispers otherwise.|||A thief needs more than desire. Look for night passage, a fitting place, and a key that should have returned.|||Find the record whose access makes the theft possible.'
+WHERE level_id = 7;
+
+UPDATE levels SET story =
+'Keeper of quarrels, write slowly when anger enters the archive. Angry men often bring truth mixed with poison.|||Armenian merchants accuse a porter after goods vanish near their chapel quarter. The accused claims he stood elsewhere.|||Do not judge by accusation alone. Compare where witnesses place him against the alibi written in the record.|||Find the record where the alibi breaks under its own words.'
+WHERE level_id = 8;
+
+UPDATE levels SET story =
+'Servant of the harbor seal, take care with imperial guests. A lost attendant may become a wounded alliance.|||A Byzantine emissary arrives bearing a sealed letter for Jerusalem. His party is counted, but one attendant is not properly accounted for.|||Diplomatic records depend on escort, seal, and duty. A missing listing among such people is no small clerical fault.|||Identify the attendant whose record threatens the envoy''s passage.'
+WHERE level_id = 9;
+
+UPDATE levels SET story =
+'Interpreter of records, not tongues, you must still hear what confusion leaves behind.|||Arabic-speaking merchants and Latin guards nearly draw blades after an order is badly carried across languages. The interpreter assigned to the pier never appeared.|||The clue is not only language. Assignment, place, and status must agree if the record is honest.|||Find the interpreter who was expected, recorded, and absent.'
+WHERE level_id = 10;
+
+UPDATE levels SET story =
+'Now the harbor grows louder, and one wrong record can feed a riot. Grain spoils faster than excuses.|||Rotten grain meant for the garrison has been found at the customs scales. Several manifests were altered after inspection.|||Spoilage alone is trouble, but spoilage joined with correction marks and disputed manifests suggests tampering. More than one record may be stained.|||Select every grain record that bears the mark of both rot and alteration.'
+WHERE level_id = 11;
+
+UPDATE levels SET story =
+'Hold your hand steady, servant of the archive. Safe conduct is a promise, and broken promises make enemies.|||A Muslim envoy enters Jaffa under protection. Frankish guards distrust his escort, and the list before you carries dangerous inconsistencies.|||A protected guest must have a truthful escort, a sound seal, and no warning hidden beneath courtesy. More than one record may endanger the peace.|||Select every record that threatens the safe-conduct list.'
+WHERE level_id = 12;
+
+UPDATE levels SET story =
+'Reader of seals, remember this: wax can lie when the dead are made to speak.|||A road permit bears the authority of a clerk already listed among the dead. Other permits look lawful, but their dates cannot all stand.|||Do not trust the seal alone. Compare the date, the authority, the clerk, and the status of the permit.|||Select every permit that could not have been honestly sealed.'
+WHERE level_id = 13;
+
+UPDATE levels SET story =
+'Before dawn, the caravan gathers, and every traveler becomes a moving secret.|||The commander suspects one or more travelers of wearing false origins like borrowed cloaks. Their words and the archive do not fully agree.|||A lie may appear between claimed origin, recorded origin, witness match, and final clearance. More than one record may carry the same rot.|||Select the caravan records whose identities fail under comparison.'
+WHERE level_id = 14;
+
+UPDATE levels SET story =
+'This is the final seal before Jerusalem. What passes your table may pass into the Holy City itself.|||The road opens at dawn, and all cleared files must be judged one last time. Some carry sickness, false permits, disputed marks, or warnings buried beneath approval.|||A dangerous record is not merely flawed. It is flawed and still cleared. Look for approval standing beside warning.|||Select every record wrongly cleared for the Jerusalem road.'
+WHERE level_id = 15;
 
 INSERT INTO level_columns (level_id, title, key, width_type, column_order) VALUES
 (1, 'Record ID', 'record_id', 'normal', 1),
@@ -279,81 +338,83 @@ INSERT INTO level_columns (level_id, title, key, width_type, column_order) VALUE
 (15, 'Warning Note', 'warning_note', 'superlong', 8),
 (15, 'Road Clearance', 'road_clearance', 'long', 9);
 
+DELETE FROM level_hints;
+
 INSERT INTO level_hints (level_id, hint_order, hint_text) VALUES
-(1, 1, 'Start with the witness setting, not the record ID.'),
-(1, 2, 'The last-seen place points toward a community or habit.'),
-(1, 3, 'Narrow the record by identity fields.'),
-(1, 4, 'Only one record should match every useful clue.'),
+(1, 1, 'Open the case report and focus on the place where the merchant was last seen.'),
+(1, 2, 'Last Seen should point toward a community or faith.'),
+(1, 3, 'Compare Last Seen with Religion and Culture.'),
+(1, 4, 'The correct record is the merchant whose identity fields agree with the witness place.'),
 
-(2, 1, 'Look for a contradiction, not just a sick person.'),
-(2, 2, 'A marked traveler should not be cleared.'),
-(2, 3, 'Compare Health Mark with Quarantine Status.'),
-(2, 4, 'The wrong record is the one cleared despite warning signs.'),
+(2, 1, 'Look for a contradiction in the medical fields.'),
+(2, 2, 'A Fevered traveler should not be allowed to depart.'),
+(2, 3, 'Compare Health Mark, Quarantine Status, and Departure Status.'),
+(2, 4, 'The answer is Fevered, Required, but still Cleared.'),
 
-(3, 1, 'Compare what the traveler claims to be with what he carries.'),
-(3, 2, 'A true pilgrim should appear cleanly in the pilgrim group.'),
-(3, 3, 'Cargo can expose a false role.'),
-(3, 4, 'The false pilgrim has a role that conflicts with the record.'),
+(3, 1, 'The false pilgrim is exposed by his belongings.'),
+(3, 2, 'Compare Declared Role and Cargo first.'),
+(3, 3, 'A Pilgrim with Trade Weights and no proper group is suspicious.'),
+(3, 4, 'Find the record that claims holiness but carries merchant evidence.'),
 
-(4, 1, 'The witness clue is indirect.'),
-(4, 2, 'Prayer site can point toward religious community.'),
-(4, 3, 'Match the place to the religion field.'),
-(4, 4, 'The correct record should fit the witness location.'),
+(4, 1, 'The witness gave a place, not a name.'),
+(4, 2, 'Prayer Site should agree with Religion.'),
+(4, 3, 'Use the religious location to narrow the record.'),
+(4, 4, 'The correct record matches the prayer place and religious community.'),
 
-(5, 1, 'The seal is the first thing to compare.'),
-(5, 2, 'A clean inspection should not require a late correction.'),
-(5, 3, 'Look at Seal Condition and Inspection Note together.'),
-(5, 4, 'The suspicious cargo record was corrected after the seal was checked.'),
+(5, 1, 'Start with Seal Condition.'),
+(5, 2, 'A broken seal becomes suspicious when the inspection note was corrected.'),
+(5, 3, 'Compare Seal Condition, Cargo Mark, and Inspection Note.'),
+(5, 4, 'The answer is the crate whose seal and inspection do not agree.'),
 
-(6, 1, 'Family ledgers often reveal identity through name form.'),
-(6, 2, 'Do not ignore the Sex and Family Line fields.'),
-(6, 3, 'The missing person belongs to a religious community record.'),
-(6, 4, 'The broken record is marked by Ledger Status.'),
+(6, 1, 'This is a ledger identity problem.'),
+(6, 2, 'Look at Sex, Family Line, and Religious Community.'),
+(6, 3, 'Ledger Status should reveal the missing entry.'),
+(6, 4, 'The correct record has a valid family identity but a broken ledger status.'),
 
-(7, 1, 'This is an access problem, not a name problem.'),
-(7, 2, 'Check who had night access.'),
-(7, 3, 'A returned key is less suspicious than an unreturned one.'),
-(7, 4, 'The suspect has access that does not fit their assignment.'),
+(7, 1, 'The theft needed access.'),
+(7, 2, 'Check Night Access before checking names.'),
+(7, 3, 'Compare Night Access, Assigned Area, and Key Status.'),
+(7, 4, 'The suspect had access to the storehouse and a key problem.'),
 
-(8, 1, 'Ignore accusations first; compare locations.'),
-(8, 2, 'A contradicted alibi matters more than culture.'),
-(8, 3, 'Witness Location and Alibi Status should agree.'),
-(8, 4, 'The correct record breaks its own alibi.'),
+(8, 1, 'Ignore the accusation first. Compare the alibi.'),
+(8, 2, 'Witness Location and Alibi Status are the main clues.'),
+(8, 3, 'A contradicted alibi matters more than name or culture.'),
+(8, 4, 'The answer is the record whose witness location breaks the alibi.'),
 
-(9, 1, 'Diplomatic records depend on escort status.'),
-(9, 2, 'A letter bearer should be properly accounted for.'),
-(9, 3, 'Check Diplomatic Seal and Escort Status together.'),
-(9, 4, 'The missing attendant is the one not properly listed.'),
+(9, 1, 'Start with Escort Status.'),
+(9, 2, 'A diplomatic attendant should be properly listed.'),
+(9, 3, 'Compare Diplomatic Seal, Escort Status, and Letter Bearer.'),
+(9, 4, 'The correct record has diplomatic duty but is not properly accounted for.'),
 
-(10, 1, 'Look for assignment without presence.'),
-(10, 2, 'The right interpreter should match the language problem.'),
-(10, 3, 'Assigned Pier and Status matter together.'),
-(10, 4, 'The missing interpreter was assigned but absent.'),
+(10, 1, 'Find someone assigned to help but absent.'),
+(10, 2, 'Language and Assigned Pier should fit the incident.'),
+(10, 3, 'Interpreter Assigned and Status must agree.'),
+(10, 4, 'The answer is assigned Yes but Status Absent.'),
 
-(11, 1, 'You are looking for more than one record.'),
-(11, 2, 'Spoiled grain alone is not enough; check correction marks.'),
-(11, 3, 'Altered manifests are suspicious.'),
-(11, 4, 'Select every grain record that shows both spoilage and tampering.'),
+(11, 1, 'This level has multiple answers.'),
+(11, 2, 'Spoiled grain alone is not enough. Look for tampering too.'),
+(11, 3, 'Compare Condition, Correction Mark, and Manifest Status.'),
+(11, 4, 'Select all Grain records that are Spoiled and Altered or Disputed.'),
 
-(12, 1, 'You are looking for more than one mismatch.'),
-(12, 2, 'Safe-conduct records should have consistent escorts.'),
-(12, 3, 'Guard warnings should not be ignored.'),
-(12, 4, 'Select records where escort status and diplomatic protection do not align.'),
+(12, 1, 'This level has multiple answers.'),
+(12, 2, 'Safe Conduct must match the escort record.'),
+(12, 3, 'Guard Warning and Escort Status can expose the dangerous records.'),
+(12, 4, 'Select all records with valid protection but mismatched or questioned escort details.'),
 
-(13, 1, 'The seal is not enough proof.'),
-(13, 2, 'Compare the seal date with the clerk status.'),
-(13, 3, 'A dead clerk cannot seal a later permit.'),
-(13, 4, 'Select every permit with an impossible authority.'),
+(13, 1, 'This level may have more than one forged permit.'),
+(13, 2, 'Do not trust the seal alone.'),
+(13, 3, 'Compare Seal Date with Clerk Status.'),
+(13, 4, 'Select all records where a dead clerk appears to approve a later permit.'),
 
-(14, 1, 'You are looking for mismatched identity claims.'),
-(14, 2, 'Claimed Origin and Recorded Origin should agree.'),
-(14, 3, 'A failed witness match makes the record more suspicious.'),
-(14, 4, 'Select the suspicious caravan records, not every foreign traveler.'),
+(14, 1, 'This level has multiple suspicious identities.'),
+(14, 2, 'Compare Claimed Origin and Recorded Origin.'),
+(14, 3, 'Witness Match should support the claimed identity.'),
+(14, 4, 'Select all cleared records where origin and witness do not align.'),
 
-(15, 1, 'This is the final review. Look for cleared records with warnings.'),
-(15, 2, 'Any warning sign should be compared with Final Status.'),
-(15, 3, 'Road Clearance should not approve dangerous records.'),
-(15, 4, 'Select every record cleared despite illness, permit issue, or archive warning.');
+(15, 1, 'This is the final review and has multiple answers.'),
+(15, 2, 'Look for Warning Note or Archive Mark first.'),
+(15, 3, 'Final Status and Road Clearance should not approve warned records.'),
+(15, 4, 'Select every record that is warned but still cleared or approved.');
 
 INSERT INTO person_pool (name, surname, culture, religion, sex, role) VALUES
 ('Yusuf', 'al-Din', 'Arabic', 'Muslim', 'Male', 'Merchant'),
