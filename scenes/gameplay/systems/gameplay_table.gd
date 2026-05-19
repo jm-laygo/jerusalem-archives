@@ -1,7 +1,15 @@
 extends RefCounted
 
 const CHECK_HEADER_WIDTH := 150.0
-const HEADER_HEIGHT := 120.0
+
+# This is the whole header metal/viewport area.
+const HEADER_VIEWPORT_HEIGHT := 120.0
+
+# This is ONLY the red/brown clickable header button height.
+const HEADER_BUTTON_HEIGHT := 97.5
+
+# Moves the smaller header buttons vertically inside the 120px header area.
+const HEADER_BUTTON_Y := 7.8
 
 const NORMAL_WIDTH := 300.0
 const LONG_WIDTH := 520.0
@@ -22,12 +30,10 @@ const RECORD_ID_KEY := "record_id"
 var gameplay: Control
 
 
-# Stores the gameplay screen reference used by this table system.
 func _init(gameplayOwner: Control) -> void:
 	gameplay = gameplayOwner
 
 
-# Creates the manual table viewport nodes used by headers and rows.
 func setupManualTableNodes() -> void:
 	if gameplay.dataHeader == null:
 		return
@@ -43,7 +49,6 @@ func setupManualTableNodes() -> void:
 		gameplay.scrollSystem.moveCustomScrollbarsToFront()
 
 
-# Removes the old ScrollContainer table if it still exists in the scene.
 func removeLegacyTableViewport() -> void:
 	var oldTableViewport: Node = gameplay.dataHeader.get_node_or_null("TableViewport")
 
@@ -51,7 +56,6 @@ func removeLegacyTableViewport() -> void:
 		oldTableViewport.queue_free()
 
 
-# Creates or retrieves the clipped header viewport.
 func setupHeaderViewport() -> void:
 	gameplay.tableHeaderViewport = gameplay.dataHeader.get_node_or_null("TableHeaderViewport") as Control
 
@@ -60,9 +64,10 @@ func setupHeaderViewport() -> void:
 		gameplay.tableHeaderViewport.name = "TableHeaderViewport"
 		gameplay.dataHeader.add_child(gameplay.tableHeaderViewport)
 
+	# Keep this tall. This is the full metal/header area.
 	gameplay.tableHeaderViewport.position = Vector2(0.0, HEADER_Y)
-	gameplay.tableHeaderViewport.size = Vector2(TABLE_WIDTH, HEADER_HEIGHT)
-	gameplay.tableHeaderViewport.custom_minimum_size = Vector2(TABLE_WIDTH, HEADER_HEIGHT)
+	gameplay.tableHeaderViewport.size = Vector2(TABLE_WIDTH, HEADER_VIEWPORT_HEIGHT)
+	gameplay.tableHeaderViewport.custom_minimum_size = Vector2(TABLE_WIDTH, HEADER_VIEWPORT_HEIGHT)
 	gameplay.tableHeaderViewport.clip_contents = true
 	gameplay.tableHeaderViewport.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -74,10 +79,11 @@ func setupHeaderViewport() -> void:
 		gameplay.tableHeaderViewport.add_child(gameplay.headerHBox)
 
 	gameplay.headerHBox.position = Vector2.ZERO
+	gameplay.headerHBox.size = Vector2(calculateTableWidth() + TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
+	gameplay.headerHBox.custom_minimum_size = Vector2(calculateTableWidth() + TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
 	gameplay.headerHBox.add_theme_constant_override("separation", 0)
 
 
-# Creates or retrieves the clipped rows viewport.
 func setupRowsViewport() -> void:
 	gameplay.tableRowsViewport = gameplay.dataHeader.get_node_or_null("TableRowsViewport") as Control
 
@@ -86,6 +92,7 @@ func setupRowsViewport() -> void:
 		gameplay.tableRowsViewport.name = "TableRowsViewport"
 		gameplay.dataHeader.add_child(gameplay.tableRowsViewport)
 
+	# Keep rows in the same place. Do not move them up.
 	gameplay.tableRowsViewport.position = Vector2(0.0, ROWS_Y)
 	gameplay.tableRowsViewport.size = Vector2(TABLE_WIDTH, DEFAULT_ROWS_VIEWPORT_HEIGHT)
 	gameplay.tableRowsViewport.custom_minimum_size = Vector2(TABLE_WIDTH, DEFAULT_ROWS_VIEWPORT_HEIGHT)
@@ -104,7 +111,6 @@ func setupRowsViewport() -> void:
 	gameplay.rowsVBox.add_theme_constant_override("separation", 0)
 
 
-# Builds the table headers and rows.
 func buildTable() -> void:
 	clearContainer(gameplay.headerHBox)
 	clearContainer(gameplay.rowsVBox)
@@ -115,7 +121,6 @@ func buildTable() -> void:
 	gameplay.call_deferred("refreshScrollLimits")
 
 
-# Removes all children from a container.
 func clearContainer(container: Node) -> void:
 	if container == null:
 		return
@@ -124,35 +129,63 @@ func clearContainer(container: Node) -> void:
 		child.queue_free()
 
 
-# Builds the table header row.
 func buildHeaders() -> void:
 	if gameplay.headerHBox == null:
 		return
 
+	# Header viewport stays tall.
+	gameplay.tableHeaderViewport.size = Vector2(TABLE_WIDTH, HEADER_VIEWPORT_HEIGHT)
+	gameplay.tableHeaderViewport.custom_minimum_size = Vector2(TABLE_WIDTH, HEADER_VIEWPORT_HEIGHT)
+
+	gameplay.headerHBox.position = Vector2.ZERO
+	gameplay.headerHBox.size = Vector2(calculateTableWidth() + TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
+	gameplay.headerHBox.custom_minimum_size = Vector2(calculateTableWidth() + TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
+
+	# Empty check spacer still uses full header area.
 	var checkSpacer := Control.new()
-	checkSpacer.custom_minimum_size = Vector2(CHECK_HEADER_WIDTH, HEADER_HEIGHT)
+	checkSpacer.custom_minimum_size = Vector2(CHECK_HEADER_WIDTH, HEADER_VIEWPORT_HEIGHT)
+	checkSpacer.size = Vector2(CHECK_HEADER_WIDTH, HEADER_VIEWPORT_HEIGHT)
 	gameplay.headerHBox.add_child(checkSpacer)
 
 	for column in gameplay.currentColumns:
+		var columnType := str(column.get("type", COLUMN_TYPE_NORMAL))
+		var cellWidth := getColumnWidth(columnType)
+
+		# Wrapper keeps the full header area height.
+		# This prevents HBoxContainer from forcing the button back to 120px.
+		var headerWrapper := Control.new()
+		headerWrapper.custom_minimum_size = Vector2(cellWidth, HEADER_VIEWPORT_HEIGHT)
+		headerWrapper.size = Vector2(cellWidth, HEADER_VIEWPORT_HEIGHT)
+		headerWrapper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		gameplay.headerHBox.add_child(headerWrapper)
+
 		var headerCell = gameplay.HEADER_CELL_SCENE.instantiate()
-		gameplay.headerHBox.add_child(headerCell)
+		headerWrapper.add_child(headerCell)
 
 		var columnKey := str(column.get("key", ""))
 		var isActiveSort: bool = columnKey == gameplay.activeSortColumnKey
 
 		headerCell.setup(column, isActiveSort)
 
+		# This is the actual smaller clickable button.
+		headerCell.position = Vector2(0.0, HEADER_BUTTON_Y)
+		headerCell.custom_minimum_size = Vector2(cellWidth, HEADER_BUTTON_HEIGHT)
+		headerCell.size = Vector2(cellWidth, HEADER_BUTTON_HEIGHT)
+		headerCell.set_deferred("custom_minimum_size", Vector2(cellWidth, HEADER_BUTTON_HEIGHT))
+		headerCell.set_deferred("size", Vector2(cellWidth, HEADER_BUTTON_HEIGHT))
+
 		if headerCell.has_signal("headerPressed"):
 			headerCell.headerPressed.connect(Callable(gameplay, "onHeaderPressed"))
 		elif headerCell.has_signal("header_pressed"):
 			headerCell.header_pressed.connect(Callable(gameplay, "onHeaderPressed"))
 
+	# Right spacer also keeps full header area.
 	var rightSpacer := Control.new()
-	rightSpacer.custom_minimum_size = Vector2(TABLE_RIGHT_PADDING, HEADER_HEIGHT)
+	rightSpacer.custom_minimum_size = Vector2(TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
+	rightSpacer.size = Vector2(TABLE_RIGHT_PADDING, HEADER_VIEWPORT_HEIGHT)
 	gameplay.headerHBox.add_child(rightSpacer)
 
 
-# Builds the table record rows.
 func buildRows() -> void:
 	if gameplay.rowsVBox == null:
 		return
@@ -161,7 +194,17 @@ func buildRows() -> void:
 		var row = gameplay.TABLE_ROW_SCENE.instantiate()
 		gameplay.rowsVBox.add_child(row)
 
-		row.setup(gameplay.currentColumns, record, false)
+		var recordId: String = str(record.get(RECORD_ID_KEY, ""))
+		var isSelected := false
+
+		if gameplay.selectionSystem != null:
+			isSelected = gameplay.selectionSystem.isRecordIdSelected(recordId)
+
+		row.setup(gameplay.currentColumns, record, isSelected)
+
+		if isSelected and gameplay.selectionSystem != null:
+			if not gameplay.selectionSystem.selectedRows.has(row):
+				gameplay.selectionSystem.selectedRows.append(row)
 
 		if row.has_signal("rowSelected"):
 			row.rowSelected.connect(Callable(gameplay, "onRowSelected").bind(row))
@@ -169,24 +212,26 @@ func buildRows() -> void:
 			row.row_selected.connect(Callable(gameplay, "onRowSelected").bind(row))
 
 
-# Calculates full table width from column definitions.
+func getColumnWidth(columnType: String) -> float:
+	if columnType == COLUMN_TYPE_SUPER_LONG:
+		return SUPER_LONG_WIDTH
+
+	if columnType == COLUMN_TYPE_LONG:
+		return LONG_WIDTH
+
+	return NORMAL_WIDTH
+
+
 func calculateTableWidth() -> float:
 	var total := CHECK_HEADER_WIDTH
 
 	for column in gameplay.currentColumns:
 		var columnType := str(column.get("type", COLUMN_TYPE_NORMAL))
-
-		if columnType == COLUMN_TYPE_SUPER_LONG:
-			total += SUPER_LONG_WIDTH
-		elif columnType == COLUMN_TYPE_LONG:
-			total += LONG_WIDTH
-		else:
-			total += NORMAL_WIDTH
+		total += getColumnWidth(columnType)
 
 	return total
 
 
-# Handles a header click and toggles sorting without resetting scroll.
 func onHeaderPressed(columnKey: String) -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.titleHeaderClickSound)
 
@@ -212,7 +257,6 @@ func onHeaderPressed(columnKey: String) -> void:
 	rebuildTableKeepScrollAt(savedScrollX, savedScrollY)
 
 
-# Sorts the currently displayed records using the given column key.
 func sortCurrentRecordsByColumn(columnKey: String) -> void:
 	if columnKey == RECORD_ID_KEY:
 		gameplay.currentRecords.sort_custom(func(a, b) -> bool:
@@ -231,7 +275,6 @@ func sortCurrentRecordsByColumn(columnKey: String) -> void:
 	)
 
 
-# Extracts the number inside a record id.
 func getRecordIdNumber(record: Dictionary) -> int:
 	var rawId := str(record.get(RECORD_ID_KEY, ""))
 	var digits := ""
@@ -246,15 +289,16 @@ func getRecordIdNumber(record: Dictionary) -> int:
 	return int(digits)
 
 
-# Rebuilds the table without resetting the scroll position.
 func rebuildTableKeepScroll() -> void:
 	rebuildTableKeepScrollAt(gameplay.scrollX, gameplay.scrollY)
 
 
-# Rebuilds the table and restores a specific saved scroll position.
 func rebuildTableKeepScrollAt(savedScrollX: float, savedScrollY: float) -> void:
 	clearContainer(gameplay.headerHBox)
 	clearContainer(gameplay.rowsVBox)
+
+	if gameplay.selectionSystem != null:
+		gameplay.selectionSystem.selectedRows.clear()
 
 	buildHeaders()
 	buildRows()
@@ -264,7 +308,6 @@ func rebuildTableKeepScrollAt(savedScrollX: float, savedScrollY: float) -> void:
 	call_deferred("restoreTableScrollPosition", savedScrollX, savedScrollY)
 
 
-# Restores scroll and reapplies the table/header positions.
 func restoreTableScrollPosition(savedScrollX: float, savedScrollY: float) -> void:
 	gameplay.scrollX = savedScrollX
 	gameplay.scrollY = savedScrollY
@@ -285,7 +328,6 @@ func restoreTableScrollPosition(savedScrollX: float, savedScrollY: float) -> voi
 			gameplay.scrollSystem.updateCustomScrollbars()
 
 
-# Directly applies the current scroll values to the header and rows.
 func applyCurrentScrollPosition() -> void:
 	if gameplay.headerHBox != null:
 		gameplay.headerHBox.position = Vector2(-gameplay.scrollX, 0.0)
