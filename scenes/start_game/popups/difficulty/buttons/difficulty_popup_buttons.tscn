@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://c5qtqmdf5pd7x"]
+
+[ext_resource type="Texture2D" uid="uid://b6ugpd4fjppne" path="res://assets/interface/buttons/easy_button.png" id="1_button"]
+[ext_resource type="Texture2D" uid="uid://b5dtekqmyytrb" path="res://assets/interface/buttons/normal_button.png" id="2_button"]
+[ext_resource type="Texture2D" uid="uid://cml5clfr37so0" path="res://assets/interface/buttons/hard_button.png" id="3_button"]
+[ext_resource type="Texture2D" uid="uid://d4e76y7xb4bqt" path="res://assets/interface/icons/disabled_achievements_icon.png" id="4_disabled_icon"]
+[ext_resource type="Texture2D" uid="uid://carbu324n34nj" path="res://assets/interface/icons/achievements_icon.png" id="5_achievements_icon"]
+[ext_resource type="FontFile" uid="uid://ca2eduxjra50j" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="6_font"]
+[ext_resource type="Script" uid="uid://d1nsgb0kgiwri" path="res://scenes/start_game/popups/difficulty/buttons/difficulty_popup_buttons.gd" id="7_buttons_script"]
+
+[node name="DifficultyButtonsRoot" type="Control" unique_id=2081590913]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -145.0
+offset_right = 300.0
+offset_bottom = 345.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_buttons_script")
+
+[node name="DifficultyButtons" type="VBoxContainer" parent="." unique_id=520155876]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_right = 300.0
+offset_bottom = 490.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="EasyButton" type="TextureButton" parent="DifficultyButtons" unique_id=1930257251]
+custom_minimum_size = Vector2(600, 150)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("1_button")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="EasyIcon" type="TextureRect" parent="DifficultyButtons/EasyButton" unique_id=2064480190]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 100.0
+offset_top = -55.0
+offset_right = 200.0
+offset_bottom = 45.0
+grow_vertical = 2
+texture = ExtResource("4_disabled_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EasyLabel" type="Label" parent="DifficultyButtons/EasyButton" unique_id=695095240]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 250.0
+offset_top = 35.0
+offset_right = -233.0
+offset_bottom = -41.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 50
+text = "Easy"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NormalButton" type="TextureButton" parent="DifficultyButtons" unique_id=2002322362]
+custom_minimum_size = Vector2(600, 150)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("2_button")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="NormalLabel" type="Label" parent="DifficultyButtons/NormalButton" unique_id=1145416621]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 227.0
+offset_top = 41.0
+offset_right = -177.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 50
+text = "Normal"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HardButton" type="TextureButton" parent="DifficultyButtons" unique_id=830613576]
+custom_minimum_size = Vector2(600, 150)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("3_button")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="HardIcon" type="TextureRect" parent="DifficultyButtons/HardButton" unique_id=1402121852]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 100.0
+offset_top = -55.0
+offset_right = 200.0
+offset_bottom = 45.0
+grow_vertical = 2
+texture = ExtResource("5_achievements_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HardLabel" type="Label" parent="DifficultyButtons/HardButton" unique_id=1353817421]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 250.0
+offset_top = 35.0
+offset_right = -221.0
+offset_bottom = -41.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 50
+text = "Hard"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DifficultyNote" type="Label" parent="." unique_id=1408252578]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -258.0
+offset_top = 577.0
+offset_right = 262.0
+offset_bottom = 647.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.88, 0.84, 0.74, 1)
+theme_override_constants/line_spacing = -5
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 28
+text = "Achievements are only available
+on Hard difficulty."
+horizontal_alignment = 1
+vertical_alignment = 1
