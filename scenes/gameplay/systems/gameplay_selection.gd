@@ -181,6 +181,9 @@ func updateSelectedDisplay() -> void:
 	updateSelectedCountLabel()
 	rebuildSelectedIdBoxes()
 
+	if gameplay != null and gameplay.has_method("updateActionButtonsState"):
+		gameplay.updateActionButtonsState()
+
 
 # Builds the selected count text.
 func getSelectedCountText() -> String:

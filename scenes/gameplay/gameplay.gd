@@ -34,6 +34,12 @@ const HINT_POPUP_SCENE := preload("res://scenes/gameplay/components/hint_popup/h
 const RESULT_POPUP_SCENE := preload("res://scenes/gameplay/components/result_popup/result_popup.tscn")
 const TRANSITION_FADE_DURATION := 0.35
 
+const ROW_CELL_FONT: FontFile = preload("res://assets/fonts/Fondamento/Fondamento-Regular.ttf")
+
+const ENABLED_BUTTON_COLOR := Color(1, 1, 1, 1)
+const DISABLED_BUTTON_COLOR := Color(0.45, 0.45, 0.45, 0.65)
+const MAX_HINT_COUNT := 4
+
 
 @onready var header: TextureRect = get_node_or_null("Header") as TextureRect
 @onready var headerLevel: TextureRect = get_node_or_null("HeaderLevel") as TextureRect
@@ -288,7 +294,24 @@ func onHeaderPressed(columnKey: String) -> void:
 
 # Handles hint button press.
 func onHintPressed() -> void:
-	rulesSystem.onHintPressed()
+	if gameplay.levelFinished:
+		return
+
+	var hints: Array = gameplay.currentLevel.get("hints", [])
+	var hintLimit: int = mini(gameplay.MAX_HINT_COUNT, hints.size())
+
+	if gameplay.hintIndex >= hintLimit:
+		gameplay.updateActionButtonsState()
+
+		if gameplay.has_method("openHintPopup"):
+			gameplay.openHintPopup()
+
+		return
+
+	gameplay.audioSystem.playFooterClickSound(gameplay.hintClickSound)
+
+	if gameplay.has_method("openHintPopup"):
+		gameplay.openHintPopup()
 
 
 # Handles check button press.
@@ -397,6 +420,7 @@ func setupHintPopup() -> void:
 	hintPopup = HINT_POPUP_SCENE.instantiate() as Control
 	add_child(hintPopup)
 	hintPopup.visible = false
+	hintPopup.move_to_front()
 
 
 # Opens the hint popup and reveals the next hint.
@@ -408,20 +432,25 @@ func openHintPopup() -> void:
 		return
 
 	var hints: Array = currentLevel.get("hints", [])
+	var hintLimit: int = mini(MAX_HINT_COUNT, hints.size())
 
 	if hints.is_empty():
 		hintPopup.openPopup("No hint available.")
+		updateActionButtonsState()
 		return
 
-	if hintIndex >= hints.size():
+	if hintIndex >= hintLimit:
 		hintPopup.openPopup("No more hints available.")
+		updateActionButtonsState()
 		return
 
 	var hintText: String = str(hints[hintIndex])
 
 	hintIndex += 1
 	hintsUsed += 1
+
 	updateHud()
+	updateActionButtonsState()
 
 	hintPopup.openPopup(hintText)
 
@@ -503,19 +532,34 @@ func _on_result_popup_button_pressed() -> void:
 	audioSystem.playFooterClickSound(pauseMenuClickSound)
 
 
-# Retries current level with fade transition.
+# Retries current level with a local fade transition.
 func _on_result_popup_retry_pressed() -> void:
 	fadeTransitionToCallable(Callable(self, "retryCurrentLevel"))
 
 
-# Loads next level with fade transition.
+# Loads next level with a local fade transition.
 func _on_result_popup_next_level_pressed() -> void:
 	fadeTransitionToCallable(Callable(self, "loadNextLevel"))
 
 
-# Goes back to menu with fade transition.
 func _on_result_popup_back_to_menu_pressed() -> void:
-	fadeTransitionToCallable(Callable(self, "goBackToMenu"))
+	goBackToMenuWithGlobalFade()
+
+func goBackToMenuWithGlobalFade() -> void:
+	hideResultPopupImmediately()
+
+	var transitionManager: Node = get_node_or_null("/root/SceneTransitionManager")
+
+	if transitionManager != null and transitionManager.has_method("changeSceneWithFade"):
+		transitionManager.call(
+			"changeSceneWithFade",
+			MAIN_MENU_SCENE_PATH,
+			0.95,
+			0.55
+		)
+		return
+
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE_PATH)
 
 
 # Reloads current level.
@@ -565,22 +609,89 @@ func fadeTransitionToCallable(action: Callable) -> void:
 	if transitionOverlay == null:
 		setupTransitionOverlay()
 
+	if transitionOverlay == null:
+		isResultTransitioning = false
+		return
+
 	transitionOverlay.visible = true
 	transitionOverlay.move_to_front()
 	transitionOverlay.modulate.a = 0.0
 
 	var fadeOut := create_tween()
-	fadeOut.tween_property(transitionOverlay, "modulate:a", 1.0, TRANSITION_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fadeOut.tween_property(
+		transitionOverlay,
+		"modulate:a",
+		1.0,
+		0.95
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
 	await fadeOut.finished
 
 	if action.is_valid():
 		action.call()
 
+	if not is_inside_tree():
+		return
+
+	await get_tree().process_frame
 	await get_tree().process_frame
 
 	var fadeIn := create_tween()
-	fadeIn.tween_property(transitionOverlay, "modulate:a", 0.0, TRANSITION_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fadeIn.tween_property(
+		transitionOverlay,
+		"modulate:a",
+		0.0,
+		0.55
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
 	await fadeIn.finished
 
-	transitionOverlay.visible = false
+	if transitionOverlay != null and is_instance_valid(transitionOverlay):
+		transitionOverlay.visible = false
+
 	isResultTransitioning = false
+
+
+# Updates footer action button states.
+func updateActionButtonsState() -> void:
+	updateCheckButtonState()
+	updateHintButtonState()
+
+
+# Disables Check when no record is selected.
+func updateCheckButtonState() -> void:
+	var hasSelection := false
+
+	if selectionSystem != null:
+		hasSelection = selectionSystem.hasSelection()
+	else:
+		hasSelection = not selectedRecord.is_empty()
+
+	if checkButton != null:
+		checkButton.disabled = not hasSelection
+
+	var color := ENABLED_BUTTON_COLOR if hasSelection else DISABLED_BUTTON_COLOR
+
+	if checkIcon != null:
+		checkIcon.modulate = color
+
+	if checkLabel != null:
+		checkLabel.modulate = color
+
+
+# Greys out Hint after all hints are used.
+func updateHintButtonState() -> void:
+	var hints: Array = currentLevel.get("hints", [])
+	var hintLimit: int = mini(MAX_HINT_COUNT, hints.size())
+	var hasHintsLeft: bool = hintIndex < hintLimit
+
+	if hintButton != null:
+		hintButton.disabled = not hasHintsLeft
+
+	var color := ENABLED_BUTTON_COLOR if hasHintsLeft else DISABLED_BUTTON_COLOR
+
+	if hintIcon != null:
+		hintIcon.modulate = color
+
+	if hintLabel != null:
+		hintLabel.modulate = color

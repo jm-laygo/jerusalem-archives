@@ -6,9 +6,9 @@ const EMPTY_HINT_TEXT := "No more hints available."
 
 const FADE_IN_DURATION := 0.18
 const FADE_OUT_DURATION := 0.18
-const AUTO_CLOSE_DELAY := 3.4
+const AUTO_CLOSE_DELAY := 10.0
 
-const BACKGROUND_IMAGE_OPACITY := 0.58
+const BACKGROUND_IMAGE_OPACITY := 0.90
 
 @onready var popupBackground: TextureRect = $PopupBackground
 @onready var hintLabel: Label = $PopupBackground/HintLabel

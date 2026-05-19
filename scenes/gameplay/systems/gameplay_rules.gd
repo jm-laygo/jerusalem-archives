@@ -59,6 +59,9 @@ func loadLevel(levelNumber: int) -> void:
 	gameplay.buildTable()
 	gameplay.call_deferred("refreshScrollLimits")
 
+	if gameplay.has_method("updateActionButtonsState"):
+		gameplay.updateActionButtonsState()
+
 
 # Shows only the short objective in the objective header.
 func setLevelObjectiveHeader() -> void:
@@ -244,6 +247,17 @@ func handleTimeExpired() -> void:
 # Handles hint button press.
 func onHintPressed() -> void:
 	if gameplay.levelFinished:
+		return
+
+	var hints: Array = gameplay.currentLevel.get("hints", [])
+	var hintLimit: int = mini(gameplay.MAX_HINT_COUNT, hints.size())
+
+	if gameplay.hintIndex >= hintLimit:
+		gameplay.updateActionButtonsState()
+
+		if gameplay.has_method("openHintPopup"):
+			gameplay.openHintPopup()
+
 		return
 
 	gameplay.audioSystem.playFooterClickSound(gameplay.hintClickSound)

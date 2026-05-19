@@ -25,6 +25,11 @@ const BUTTON_FONT_SIZE := 34
 const FADE_IN_DURATION := 0.28
 const FADE_OUT_DURATION := 0.22
 
+const MUSIC_STAGE_ONE_DB := -14.0
+const MUSIC_SILENCE_DB := -60.0
+const MUSIC_STAGE_ONE_DURATION := 0.35
+const MUSIC_STAGE_TWO_DURATION := 0.45
+
 @export var game_over_background: Texture2D
 @export var level_completed_background: Texture2D
 @export var game_over_music: AudioStream
@@ -221,9 +226,39 @@ func play_music(stream: AudioStream) -> void:
 
 	music_player.stop()
 	music_player.stream = stream
+	music_player.volume_db = 0.0
 
 	if music_player.stream != null:
 		music_player.play()
+
+# Fades result music from 100% to low volume, then to silence.
+func fade_music_to_silence() -> void:
+	if music_player == null:
+		return
+
+	if not music_player.playing:
+		return
+
+	var musicTween := create_tween()
+
+	musicTween.tween_property(
+		music_player,
+		"volume_db",
+		MUSIC_STAGE_ONE_DB,
+		MUSIC_STAGE_ONE_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	musicTween.tween_property(
+		music_player,
+		"volume_db",
+		MUSIC_SILENCE_DB,
+		MUSIC_STAGE_TWO_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	await musicTween.finished
+
+	music_player.stop()
+	music_player.volume_db = 0.0
 
 
 func stop_music() -> void:
@@ -280,7 +315,6 @@ func force_hide() -> void:
 	is_closing = false
 	modulate.a = 0.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stop_music()
 	enable_buttons(true)
 
 
@@ -303,6 +337,8 @@ func on_primary_pressed() -> void:
 	popup_button_pressed.emit()
 	enable_buttons(false)
 
+	await fade_music_to_silence()
+
 	if mode == MODE_GAME_OVER:
 		retry_pressed.emit()
 	else:
@@ -312,4 +348,7 @@ func on_primary_pressed() -> void:
 func on_menu_pressed() -> void:
 	popup_button_pressed.emit()
 	enable_buttons(false)
+
+	await fade_music_to_silence()
+
 	back_to_menu_pressed.emit()

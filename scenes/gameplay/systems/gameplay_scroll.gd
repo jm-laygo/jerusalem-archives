@@ -174,27 +174,28 @@ func refreshScrollLimits() -> void:
 	gameplay.tableContentHeight = getRealRowsContentHeight()
 
 	if gameplay.headerHBox != null:
-		gameplay.headerHBox.custom_minimum_size = Vector2(gameplay.tableContentWidth, HEADER_HEIGHT)
-		gameplay.headerHBox.size = Vector2(gameplay.tableContentWidth, HEADER_HEIGHT)
+		gameplay.headerHBox.custom_minimum_size = Vector2(gameplay.tableContentWidth, gameplay.tableHeaderViewport.size.y)
+		gameplay.headerHBox.size = Vector2(gameplay.tableContentWidth, gameplay.tableHeaderViewport.size.y)
 
 	if gameplay.rowsVBox != null:
 		gameplay.rowsVBox.custom_minimum_size = Vector2(gameplay.tableContentWidth, gameplay.tableContentHeight)
 		gameplay.rowsVBox.size = Vector2(gameplay.tableContentWidth, gameplay.tableContentHeight)
 
 	var screenHeight: float = gameplay.get_viewport_rect().size.y
-	var rowsAbsoluteY: float = gameplay.tableRowsViewport.get_global_rect().position.y
-	var footerAbsoluteY: float = screenHeight - FOOTER_HEIGHT
-	var availableViewportHeight: float = footerAbsoluteY - rowsAbsoluteY
-	var dynamicViewportHeight: float = minf(availableViewportHeight, gameplay.tableContentHeight)
+	var rowsTop: float = gameplay.tableRowsViewport.get_global_rect().position.y
+	var footerTop: float = screenHeight - gameplay.FOOTER_HEIGHT
+	var availableHeight: float = maxf(0.0, footerTop - rowsTop)
 
-	gameplay.tableRowsViewport.size = Vector2(TABLE_WIDTH, dynamicViewportHeight)
-	gameplay.tableRowsViewport.custom_minimum_size = Vector2(TABLE_WIDTH, dynamicViewportHeight)
+	var viewportHeight: float = minf(availableHeight, gameplay.tableContentHeight)
 
-	gameplay.maxScrollX = max(0.0, gameplay.tableContentWidth - gameplay.tableRowsViewport.size.x)
-	gameplay.maxScrollY = max(0.0, gameplay.tableContentHeight - gameplay.tableRowsViewport.size.y)
+	gameplay.tableRowsViewport.size = Vector2(gameplay.tableRowsViewport.size.x, viewportHeight)
+	gameplay.tableRowsViewport.custom_minimum_size = Vector2(gameplay.tableRowsViewport.size.x, viewportHeight)
 
-	gameplay.scrollX = clamp(gameplay.scrollX, 0.0, gameplay.maxScrollX)
-	gameplay.scrollY = clamp(gameplay.scrollY, 0.0, gameplay.maxScrollY)
+	gameplay.maxScrollX = maxf(0.0, gameplay.tableContentWidth - gameplay.tableRowsViewport.size.x)
+	gameplay.maxScrollY = maxf(0.0, gameplay.tableContentHeight - gameplay.tableRowsViewport.size.y)
+
+	gameplay.scrollX = clampf(gameplay.scrollX, 0.0, gameplay.maxScrollX)
+	gameplay.scrollY = clampf(gameplay.scrollY, 0.0, gameplay.maxScrollY)
 
 	applyTableScroll()
 	setupCustomScrollbarPositions()
@@ -210,7 +211,21 @@ func getRealRowsContentHeight() -> float:
 
 	for child in gameplay.rowsVBox.get_children():
 		if child is Control:
-			totalHeight += child.custom_minimum_size.y
+			var control := child as Control
+			var childHeight := control.size.y
+
+			if childHeight <= 0.0:
+				childHeight = control.custom_minimum_size.y
+
+			if childHeight <= 0.0:
+				childHeight = control.get_combined_minimum_size().y
+
+			totalHeight += childHeight
+
+	var separation := gameplay.rowsVBox.get_theme_constant("separation")
+
+	if gameplay.rowsVBox.get_child_count() > 1:
+		totalHeight += separation * float(gameplay.rowsVBox.get_child_count() - 1)
 
 	return totalHeight
 
