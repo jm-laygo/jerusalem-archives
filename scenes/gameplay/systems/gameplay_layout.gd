@@ -8,10 +8,10 @@ const FOOTER_BUTTON_HEIGHT := 217.0
 const FOOTER_CONTENT_Y_OFFSET := 14.0
 
 const OBJECTIVE_FONT_SIZE := 40
-const OBJECTIVE_TEXT_OFFSET_LEFT := 55.0
-const OBJECTIVE_TEXT_OFFSET_TOP := 20.0
-const OBJECTIVE_TEXT_OFFSET_RIGHT := -120.0
-const OBJECTIVE_TEXT_OFFSET_BOTTOM := -45.0
+const OBJECTIVE_TEXT_OFFSET_LEFT := 70.0
+const OBJECTIVE_TEXT_OFFSET_TOP := 10.0
+const OBJECTIVE_TEXT_OFFSET_RIGHT := -70.0
+const OBJECTIVE_TEXT_OFFSET_BOTTOM := -10.0
 
 const SEARCH_BUTTONS_SIZE := Vector2(240.0, 120.0)
 const SEARCH_BUTTON_SIZE := Vector2(120.0, 120.0)
@@ -42,14 +42,19 @@ func _init(gameplayOwner: Control) -> void:
 # Applies the fixed 1080-width phone layout to the gameplay screen.
 func applyFixedPhoneLayout() -> void:
 	positionCenteredNode(gameplay.header, -540.0, 0.0, 540.0, 167.0)
-	positionCenteredNode(gameplay.headerLevel, -540.0, 68.0, 541.0, 404.0)
-	positionCenteredNode(gameplay.headerObjective, -583.0, 300.0, 644.0, 570.0)
+	positionCenteredNode(gameplay.headerLevel, -540.0, 68.0, 540.0, 404.0)
+
+	# FIXED: stays inside 1080 width, but keeps original height so no huge gap appears
+	positionCenteredNode(gameplay.headerObjective, -540.0, 300.0, 540.0, 570.0)
+
+	if gameplay.headerObjective != null:
+		gameplay.headerObjective.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		gameplay.headerObjective.stretch_mode = TextureRect.STRETCH_SCALE
 
 	positionCenteredNode(gameplay.dataHeader, -540.0, 562.0, 540.0, 903.0)
 	positionCenteredNode(gameplay.searchBar, -524.0, 590.0, 292.0, 710.0)
 	positionCenteredNode(gameplay.searchButtons, 300.0, 590.0, 540.0, 710.0)
 
-	# Selected ID display must be under search, above table header.
 	positionCenteredNode(
 		gameplay.selectedPanel,
 		SELECTED_PANEL_LEFT,
@@ -105,7 +110,6 @@ func positionCenteredBottomNode(
 
 
 # Fixes the objective text layout inside the objective header.
-# The objective header must only show the short level objective.
 func setupObjectiveLabel() -> void:
 	if gameplay.objectiveText == null:
 		return
