@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://cptj85da1x1c6"]
 
 [ext_resource type="Script" uid="uid://djqwbgqasplxb" path="res://scenes/start_game/start_game.gd" id="1_start_game_script"]
-[ext_resource type="PackedScene" path="res://scenes/start_game/components/background/start_game_background.tscn" id="2_background"]
-[ext_resource type="PackedScene" path="res://scenes/start_game/carousel/chapter_carousel.tscn" id="3_chapter_carousel"]
-[ext_resource type="PackedScene" uid="uid://btbe6ygcwjmdp" path="res://scenes/ui/components/game_footer/game_footer.tscn" id="4_footer"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/components/background/start_game_background.tscn" id="2_start_game_background"]
+[ext_resource type="PackedScene" path="res://scenes/start_game/chapter_slider/chapter_slider.tscn" id="3_chapter_slider"]
+[ext_resource type="PackedScene" uid="uid://btbe6ygcwjmdp" path="res://scenes/ui/components/game_footer/game_footer.tscn" id="4_game_footer"]
 
+; Root screen used for chapter selection before gameplay starts.
 [node name="StartGame" type="Control" unique_id=652060014]
 layout_mode = 3
 anchors_preset = 15
@@ -20,17 +21,21 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_start_game_script")
 
-[node name="Background" parent="." unique_id=1620003181 instance=ExtResource("2_background")]
+; Full-screen background component for the start game screen.
+[node name="Background" parent="." unique_id=1620003181 instance=ExtResource("2_start_game_background")]
 
-[node name="ChapterCarousel" parent="." unique_id=13970158 instance=ExtResource("3_chapter_carousel")]
+; Chapter slider component used to browse and select chapters.
+[node name="ChapterSlider" parent="." unique_id=13970158 instance=ExtResource("3_chapter_slider")]
 
-[node name="Footer" parent="." unique_id=313211312 instance=ExtResource("4_footer")]
+; Shared footer component used for back, settings, and achievements.
+[node name="Footer" parent="." unique_id=313211312 instance=ExtResource("4_game_footer")]
 layout_mode = 0
 offset_left = 0.0
 offset_top = 1720.0
 offset_right = 1080.0
 offset_bottom = 1920.0
 
+; Full-screen layer used to display popups above the start game screen.
 [node name="PopupLayer" type="Control" parent="." unique_id=496698004]
 visible = false
 layout_mode = 1

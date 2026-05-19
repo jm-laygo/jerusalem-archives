@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" uid="uid://chye48wbc8ae7" path="res://scenes/start_game/chapter_slider/chapter_slider.gd" id="1_chapter_slider_script"]
-[ext_resource type="Texture2D" uid="uid://slabi8hnrpw3" path="res://assets/interface/ui/start_game/tutorial_header.png" id="2_tutorial_header"]
-[ext_resource type="Texture2D" uid="uid://immlo6jvrg7e" path="res://assets/interface/illustrations/ill_chapter_0.png" id="3_tutorial_illustration"]
+[ext_resource type="Texture2D" uid="uid://slabi8hnrpw3" path="res://assets/interface/ui/start_game/chapter_one_header.png" id="2_chapter_one_header"]
+[ext_resource type="Texture2D" uid="uid://immlo6jvrg7e" path="res://assets/interface/illustrations/ill_chapter_1.png" id="3_chapter_one_illustration"]
 [ext_resource type="FontFile" uid="uid://ce41tnfupvmgc" path="res://assets/fonts/Fondamento/Fondamento-Regular.ttf" id="4_title_font"]
 [ext_resource type="FontFile" uid="uid://co34ocreyucng" path="res://assets/fonts/Open_Sans_Condensed/OpenSansCondensed-Light.ttf" id="5_description_font"]
 [ext_resource type="PackedScene" uid="uid://byswx0bo76rwa" path="res://scenes/start_game/chapter_slider/components/chapter_navigation/chapter_navigation.tscn" id="6_chapter_navigation"]
@@ -25,7 +25,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_tutorial_illustration")
+texture = ExtResource("3_chapter_one_illustration")
 stretch_mode = 6
 
 ; Header image shown at the top of the chapter slider.
@@ -35,7 +35,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 171.0
 grow_horizontal = 2
-texture = ExtResource("2_tutorial_header")
+texture = ExtResource("2_chapter_one_header")
 expand_mode = 1
 stretch_mode = 6
 
@@ -57,7 +57,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_fonts/font = ExtResource("4_title_font")
 theme_override_font_sizes/font_size = 90
-text = "Tutorial"
+text = "Level 1 / 15"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -79,7 +79,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("5_description_font")
 theme_override_font_sizes/font_size = 40
-text = "Before reaching the Port of Jaffa, the journey begins upon open waters, where the first lessons unfold aboard a weathered vessel bound for Jerusalem."
+text = "At Jaffa, every arrival is recorded through customs ledgers, merchant manifests, and cargo inspections. Multiple overlapping records create inconsistencies in ownership and movement."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3

@@ -1,8 +1,5 @@
 extends RefCounted
 
-const TUTORIAL_HEADER: Texture2D = preload("res://assets/interface/ui/start_game/tutorial_header.png")
-const TUTORIAL_ILLUSTRATION: Texture2D = preload("res://assets/interface/illustrations/ill_chapter_0.png")
-
 const CHAPTER_1_HEADER: Texture2D = preload("res://assets/interface/ui/start_game/chapter_one_header.png")
 const CHAPTER_2_HEADER: Texture2D = preload("res://assets/interface/ui/start_game/chapter_two_header.png")
 const CHAPTER_3_HEADER: Texture2D = preload("res://assets/interface/ui/start_game/chapter_three_header.png")
@@ -14,13 +11,6 @@ const CHAPTER_3_ILLUSTRATION: Texture2D = preload("res://assets/interface/illust
 
 static func getPages() -> Array[Dictionary]:
 	return [
-		{
-			"id": "tutorial",
-			"header": TUTORIAL_HEADER,
-			"illustration": TUTORIAL_ILLUSTRATION,
-			"title": "Tutorial",
-			"description": "Before reaching the Port of Jaffa, the journey begins upon open waters, where the first lessons unfold aboard a weathered vessel bound for Jerusalem."
-		},
 		{
 			"id": "chapter_1",
 			"header": CHAPTER_1_HEADER,

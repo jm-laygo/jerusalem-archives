@@ -9,7 +9,6 @@ const ChapterSliderAnimator = preload("res://scenes/start_game/chapter_slider/ch
 const DESIGN_WIDTH := 1080.0
 const DEFAULT_DESIGN_HEIGHT := 1720.0
 const MINIMUM_DESIGN_HEIGHT := 900.0
-
 const ILLUSTRATION_EXTRA_HEIGHT := 350.0
 const HEADER_HEIGHT := 171.0
 
@@ -126,7 +125,7 @@ func playIntroAnimation() -> void:
 	forceNavigationVisible()
 
 
-# Plays the select button intro animation before opening the difficulty popup.
+# Plays the select button intro animation before the chapter selection advances.
 func playSelectIntroAnimation() -> void:
 	if chapterNavigation != null and chapterNavigation.has_method("playSelectIntroAnimation"):
 		chapterNavigation.call("playSelectIntroAnimation")
