@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 const OVERLAY_COLOR := Color(0, 0, 0, 1)
-const TRANSITION_LAYER := 100
+const TRANSITION_LAYER := 9999
 
 var overlay: ColorRect
 var isTransitioning := false
