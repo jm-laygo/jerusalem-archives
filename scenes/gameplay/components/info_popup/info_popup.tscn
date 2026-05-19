@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/components/info_popup/info_popup.gd" id="1_info_popup_script"]
 [ext_resource type="Texture2D" path="res://assets/interface/ui/level_gameplay/ui_info_background.png" id="2_info_background"]
 [ext_resource type="FontFile" path="res://assets/fonts/mapfont/Paradox_King_Script.otf" id="3_game_font"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_generic.png" id="4_btn_generic"]
+[ext_resource type="Texture2D" path="res://assets/interface/buttons/btn_generic_pressed.png" id="5_btn_generic_pressed"]
+
 
 [node name="InfoPopup" type="Control"]
 process_mode = 3
@@ -23,7 +26,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
-color = Color(0, 0, 0, 0.55)
+color = Color(0, 0, 0, 0.62)
 
 [node name="PopupBackground" type="TextureRect" parent="."]
 layout_mode = 1
@@ -32,10 +35,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -390.0
-offset_top = -390.0
-offset_right = 390.0
-offset_bottom = 390.0
+offset_left = -555.0
+offset_top = -610.0
+offset_right = 555.0
+offset_bottom = 610.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -48,10 +51,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -320.0
-offset_top = 120.0
-offset_right = 320.0
-offset_bottom = 205.0
+offset_left = -455.0
+offset_top = 220.0
+offset_right = 455.0
+offset_bottom = 315.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
@@ -59,7 +62,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_fonts/font = ExtResource("3_game_font")
-theme_override_font_sizes/font_size = 62
+theme_override_font_sizes/font_size = 72
 text = "CASE REPORT"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -71,10 +74,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -75.0
-offset_right = 320.0
-offset_bottom = 125.0
+offset_left = -440.0
+offset_top = -130.0
+offset_right = 440.0
+offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -83,7 +86,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_game_font")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 38
 text = "Case report text"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -97,35 +100,101 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -330.0
-offset_top = -175.0
-offset_right = 330.0
-offset_bottom = -115.0
+offset_left = -450.0
+offset_top = -275.0
+offset_right = 450.0
+offset_bottom = -185.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 35
+theme_override_constants/separation = 45
 alignment = 1
 
-[node name="BackButton" type="Button" parent="PopupBackground/Buttons"]
-custom_minimum_size = Vector2(190, 60)
+[node name="BackButton" type="TextureButton" parent="PopupBackground/Buttons"]
+custom_minimum_size = Vector2(270, 88)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
+texture_normal = ExtResource("4_btn_generic")
+texture_pressed = ExtResource("5_btn_generic_pressed")
+texture_hover = ExtResource("4_btn_generic")
+texture_disabled = ExtResource("4_btn_generic")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="PopupBackground/Buttons/BackButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_game_font")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 text = "BACK"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="CloseButton" type="Button" parent="PopupBackground/Buttons"]
-custom_minimum_size = Vector2(190, 60)
+[node name="CloseButton" type="TextureButton" parent="PopupBackground/Buttons"]
+custom_minimum_size = Vector2(270, 88)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
+texture_normal = ExtResource("4_btn_generic")
+texture_pressed = ExtResource("5_btn_generic_pressed")
+texture_hover = ExtResource("4_btn_generic")
+texture_disabled = ExtResource("4_btn_generic")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="PopupBackground/Buttons/CloseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_game_font")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 text = "CLOSE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="NextButton" type="Button" parent="PopupBackground/Buttons"]
-custom_minimum_size = Vector2(190, 60)
+[node name="NextButton" type="TextureButton" parent="PopupBackground/Buttons"]
+custom_minimum_size = Vector2(270, 88)
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 0
+texture_normal = ExtResource("4_btn_generic")
+texture_pressed = ExtResource("5_btn_generic_pressed")
+texture_hover = ExtResource("4_btn_generic")
+texture_disabled = ExtResource("4_btn_generic")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="PopupBackground/Buttons/NextButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.972549, 0.909804, 0.74902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_game_font")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 text = "NEXT"
+horizontal_alignment = 1
+vertical_alignment = 1
