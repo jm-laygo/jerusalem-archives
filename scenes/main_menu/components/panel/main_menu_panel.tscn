@@ -12,30 +12,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-; Main glass pane background behind the menu content.
-[node name="GlassPaneBackground" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -418.0
-offset_top = 63.0
-offset_right = 423.0
-offset_bottom = 1870.0
-grow_horizontal = 2
-texture = ExtResource("1_glass_pane_background")
-stretch_mode = 6
-
-; Decorative frame border around the main menu panel.
-[node name="FrameBorder" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -528.5
-offset_top = 10.0
-offset_right = 529.5
-offset_bottom = 1930.0
-grow_horizontal = 2
-texture = ExtResource("2_frame_border")
-stretch_mode = 6

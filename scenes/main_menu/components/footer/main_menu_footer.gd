@@ -1,14 +1,12 @@
 extends Control
 
 signal creditsPressed
-signal rankingPressed
 signal achievementsPressed
 
 const FOOTER_NORMAL_MODULATE := Color(1, 1, 1, 1)
 const FOOTER_PRESSED_MODULATE := Color(0.55, 0.55, 0.55, 1)
 
 @onready var creditsIcon: TextureButton = $CreditsIcon
-@onready var rankingIcon: TextureButton = $RankingIcon
 @onready var achievementsIcon: TextureButton = $AchievementsIcon
 
 
@@ -21,7 +19,6 @@ func _ready() -> void:
 # Applies shared setup to all footer icon buttons.
 func setupFooterButtons() -> void:
 	setupFooterButton(creditsIcon)
-	setupFooterButton(rankingIcon)
 	setupFooterButton(achievementsIcon)
 
 
@@ -29,9 +26,6 @@ func setupFooterButtons() -> void:
 func connectFooterSignals() -> void:
 	if not creditsIcon.pressed.is_connected(creditsPressed.emit):
 		creditsIcon.pressed.connect(creditsPressed.emit)
-
-	if not rankingIcon.pressed.is_connected(rankingPressed.emit):
-		rankingIcon.pressed.connect(rankingPressed.emit)
 
 	if not achievementsIcon.pressed.is_connected(achievementsPressed.emit):
 		achievementsIcon.pressed.connect(achievementsPressed.emit)

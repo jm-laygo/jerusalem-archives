@@ -20,46 +20,30 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -280.0
-offset_top = 834.0
+offset_top = 954.0
 offset_right = 300.0
-offset_bottom = 954.0
+offset_bottom = 1074.0
 grow_horizontal = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("1_button_font")
 theme_override_font_sizes/font_size = 40
 text = "Start Game"
 
-; Opens the player profile screen.
-[node name="ProfileButton" type="Button" parent="."]
+; Opens the credits screen.
+[node name="CreditsButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -280.0
-offset_top = 1014.0
+offset_top = 1134.0
 offset_right = 300.0
-offset_bottom = 1134.0
+offset_bottom = 1254.0
 grow_horizontal = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("1_button_font")
 theme_override_font_sizes/font_size = 40
-text = "Profile"
-
-; Opens the settings screen.
-[node name="SettingsButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -280.0
-offset_top = 1194.0
-offset_right = 300.0
-offset_bottom = 1314.0
-grow_horizontal = 2
-focus_mode = 0
-theme_override_fonts/font = ExtResource("1_button_font")
-theme_override_font_sizes/font_size = 40
-text = "Settings"
+text = "Credits"
 
 ; Opens the exit confirmation flow.
 [node name="ExitGameButton" type="Button" parent="."]
@@ -68,9 +52,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -280.0
-offset_top = 1374.0
+offset_top = 1314.0
 offset_right = 300.0
-offset_bottom = 1494.0
+offset_bottom = 1434.0
 grow_horizontal = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("1_button_font")

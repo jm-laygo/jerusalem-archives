@@ -39,8 +39,6 @@ grow_vertical = 2
 
 [node name="MainMenuButtons" parent="MenuContent" unique_id=639260295 instance=ExtResource("5_buttons")]
 
-[node name="MainMenuFooter" parent="MenuContent" unique_id=312823968 instance=ExtResource("6_footer")]
-
 [node name="PopupLayer" type="Control" parent="." unique_id=969565107]
 layout_mode = 1
 anchors_preset = 15

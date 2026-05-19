@@ -1,8 +1,7 @@
 extends Control
 
 signal startGamePressed
-signal profilePressed
-signal settingsPressed
+signal creditsPressed
 signal exitGamePressed
 
 const MAIN_NORMAL_TEXTURE: Texture2D = preload("res://assets/interface/buttons/btn_main_menu.png")
@@ -24,8 +23,7 @@ const TEXT_NORMAL_COLOR := Color(1, 1, 1, 1)
 const TEXT_PRESSED_COLOR := Color(0.90, 0.62, 0.39, 1)
 
 @onready var startGameButton: Button = $StartGameButton
-@onready var profileButton: Button = $ProfileButton
-@onready var settingsButton: Button = $SettingsButton
+@onready var creditsButton: Button = $CreditsButton
 @onready var exitGameButton: Button = $ExitGameButton
 
 var mainNormalStyle: StyleBoxTexture
@@ -66,8 +64,7 @@ func createButtonStyle(texture: Texture2D) -> StyleBoxTexture:
 # Applies shared setup to all main menu buttons.
 func setupButtons() -> void:
 	setupMainButton(startGameButton)
-	setupMainButton(profileButton)
-	setupMainButton(settingsButton)
+	setupMainButton(creditsButton)
 	setupMainButton(exitGameButton)
 
 
@@ -76,11 +73,8 @@ func connectButtonSignals() -> void:
 	if not startGameButton.pressed.is_connected(startGamePressed.emit):
 		startGameButton.pressed.connect(startGamePressed.emit)
 
-	if not profileButton.pressed.is_connected(profilePressed.emit):
-		profileButton.pressed.connect(profilePressed.emit)
-
-	if not settingsButton.pressed.is_connected(settingsPressed.emit):
-		settingsButton.pressed.connect(settingsPressed.emit)
+	if not creditsButton.pressed.is_connected(creditsPressed.emit):
+		creditsButton.pressed.connect(creditsPressed.emit)
 
 	if not exitGameButton.pressed.is_connected(exitGamePressed.emit):
 		exitGameButton.pressed.connect(exitGamePressed.emit)

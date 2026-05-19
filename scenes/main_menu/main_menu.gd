@@ -20,18 +20,16 @@ const START_GAME_FADE_IN_TIME := 0.30
 
 @onready var menuContent: Control = $MenuContent
 @onready var mainMenuButtons: Control = $MenuContent/MainMenuButtons
-@onready var mainMenuFooter: Control = $MenuContent/MainMenuFooter
 
 var clickPlayer: AudioStreamPlayer
 var startGamePlayer: AudioStreamPlayer
-var containerShowPlayer: AudioStreamPlayer
 
 var menuContentOriginalPosition := Vector2.ZERO
 var menuTween: Tween
 var isLeavingPage := false
 
 
-# Prepares audio, connects components, and plays the main menu intro.
+# Prepares audio, connects components.
 func _ready() -> void:
 	setupAudioPlayers()
 	connectComponentSignals()
@@ -39,14 +37,14 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	menuContentOriginalPosition = menuContent.position
-	playMenuContentIntro()
 
 
+# Creates the audio players used by the main menu.
 # Creates the audio players used by the main menu.
 func setupAudioPlayers() -> void:
 	clickPlayer = createAudioPlayer(CLICK_SOUND)
 	startGamePlayer = createAudioPlayer(START_GAME_SOUND)
-	containerShowPlayer = createAudioPlayer(CONTAINER_SHOW_SOUND)
+
 
 
 # Creates one audio player and attaches it to this scene.
@@ -62,14 +60,8 @@ func createAudioPlayer(stream: AudioStream) -> AudioStreamPlayer:
 func connectComponentSignals() -> void:
 	if mainMenuButtons != null:
 		connectSignalIfAvailable(mainMenuButtons, "startGamePressed", Callable(self, "onStartGamePressed"))
-		connectSignalIfAvailable(mainMenuButtons, "profilePressed", Callable(self, "onProfilePressed"))
-		connectSignalIfAvailable(mainMenuButtons, "settingsPressed", Callable(self, "onSettingsPressed"))
+		connectSignalIfAvailable(mainMenuButtons, "creditsPressed", Callable(self, "onCreditsPressed"))
 		connectSignalIfAvailable(mainMenuButtons, "exitGamePressed", Callable(self, "onExitGamePressed"))
-
-	if mainMenuFooter != null:
-		connectSignalIfAvailable(mainMenuFooter, "creditsPressed", Callable(self, "onCreditsPressed"))
-		connectSignalIfAvailable(mainMenuFooter, "rankingPressed", Callable(self, "onRankingPressed"))
-		connectSignalIfAvailable(mainMenuFooter, "achievementsPressed", Callable(self, "onAchievementsPressed"))
 
 
 # Connects a signal only when the target has it and it is not already connected.
@@ -99,8 +91,6 @@ func playMenuContentIntro() -> void:
 
 	menuContent.position = menuContentOriginalPosition + MENU_SLIDE_OFFSET
 	menuContent.modulate = Color(1, 1, 1, 0)
-
-	playSound(containerShowPlayer)
 
 	menuTween = create_tween()
 	menuTween.set_parallel(true)
@@ -164,24 +154,6 @@ func onStartGamePressed() -> void:
 	goToStartGame()
 
 
-# Placeholder for opening the profile page.
-func onProfilePressed() -> void:
-	if isLeavingPage:
-		return
-
-	playSound(clickPlayer)
-	print("Profile pressed")
-
-
-# Placeholder for opening the settings page.
-func onSettingsPressed() -> void:
-	if isLeavingPage:
-		return
-
-	playSound(clickPlayer)
-	print("Settings pressed")
-
-
 # Exits the game after playing the outro animation.
 func onExitGamePressed() -> void:
 	if isLeavingPage:
@@ -205,22 +177,7 @@ func onCreditsPressed() -> void:
 	print("Credits pressed")
 
 
-# Placeholder for opening the ranking page.
-func onRankingPressed() -> void:
-	if isLeavingPage:
-		return
 
-	playSound(clickPlayer)
-	print("Ranking pressed")
-
-
-# Placeholder for opening the achievements page.
-func onAchievementsPressed() -> void:
-	if isLeavingPage:
-		return
-
-	playSound(clickPlayer)
-	print("Achievements pressed")
 
 
 # Changes from the main menu to the start game screen.
