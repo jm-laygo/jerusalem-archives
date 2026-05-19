@@ -228,7 +228,6 @@ func handleNoHeartsLeft() -> void:
 
 
 # Handles time expiration.
-# Do not write time-expired text into the objective header.
 func handleTimeExpired() -> void:
 	gameplay.levelFinished = true
 	gameplay.updateHud()
@@ -240,7 +239,6 @@ func handleTimeExpired() -> void:
 
 
 # Handles hint button press.
-# Do not write hints into the objective header anymore.
 func onHintPressed() -> void:
 	if gameplay.levelFinished:
 		return
@@ -252,11 +250,11 @@ func onHintPressed() -> void:
 
 
 # Handles info button press.
-# Do not write story/case report into the objective header anymore.
 func onInfoPressed() -> void:
 	gameplay.audioSystem.playFooterClickSound(gameplay.infoClickSound)
 
-	# Later: open Case Report / Info popup here.
+	if gameplay.has_method("openInfoPopup"):
+		gameplay.openInfoPopup()
 
 
 # Returns to main menu directly.

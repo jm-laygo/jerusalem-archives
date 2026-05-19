@@ -28,6 +28,8 @@ const FOOTER_HEIGHT := 217.0
 
 const SELECTED_ID_TEXTURE: Texture2D = preload("res://assets/interface/ui/level_gameplay/ui_selected_id.png")
 
+const INFO_POPUP_SCENE := preload("res://scenes/gameplay/components/info_popup/info_popup.tscn")
+
 
 @onready var header: TextureRect = get_node_or_null("Header") as TextureRect
 @onready var headerLevel: TextureRect = get_node_or_null("HeaderLevel") as TextureRect
@@ -146,6 +148,8 @@ var selectionSystem
 
 var levelRepository
 
+var infoPopup: Control = null
+
 
 # Creates gameplay systems and starts the first level.
 func _ready() -> void:
@@ -218,6 +222,8 @@ func setupSystems() -> void:
 
 	searchSystem.setupSearchTools()
 	selectionSystem.setupSelectionDisplay()
+
+	setupInfoPopup()
 
 
 # Loads a level by number.
@@ -316,3 +322,37 @@ func buildTable() -> void:
 # Rebuilds the table while preserving scroll position.
 func rebuildTableKeepScroll() -> void:
 	tableSystem.rebuildTableKeepScroll()
+
+# Creates and connects the case report popup.
+func setupInfoPopup() -> void:
+	if infoPopup != null:
+		return
+
+	infoPopup = INFO_POPUP_SCENE.instantiate() as Control
+	add_child(infoPopup)
+	infoPopup.visible = false
+
+	if infoPopup.has_signal("popup_closed"):
+		infoPopup.popup_closed.connect(_on_info_popup_closed)
+
+
+# Opens the case report popup.
+func openInfoPopup() -> void:
+	if infoPopup == null:
+		setupInfoPopup()
+
+	if infoPopup == null:
+		return
+
+	var caseTitle := str(currentLevel.get("case_title", "CASE REPORT"))
+	var caseReport := str(currentLevel.get("story", ""))
+
+	if caseReport.strip_edges().is_empty():
+		caseReport = "No case report available."
+
+	infoPopup.openPopup(caseTitle, caseReport)
+
+
+# Called when the info popup closes.
+func _on_info_popup_closed() -> void:
+	pass
